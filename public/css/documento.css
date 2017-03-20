@@ -1,0 +1,148 @@
+.table-fixed thead {
+    width: 97%;
+}
+
+.table-fixed tbody {
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+}
+.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
+    display: block;
+}
+.table-fixed tbody td, .table-fixed thead > tr> th {
+    float: left;
+    border-bottom-width: 0;
+}
+
+.tabla_ubicacion{
+    max-height: 200px;
+    overflow-y: scroll;
+}
+#formularioDocumento {opacity:0.3;}
+#cargando {
+    position:absolute;
+    top:150px;
+    left:0px;
+    width:100%;
+    height:100%;
+}
+
+.mi_placeholder::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    color: red;
+}
+.mi_placeholder::-moz-placeholder { /* Firefox 19+ */
+    color: red;
+}
+.mi_placeholder:-ms-input-placeholder { /* IE 10+ */
+    color: red;
+}
+.mi_placeholder:-moz-placeholder { /* Firefox 19+ */
+    color: red;
+}
+ul.tab {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Float the list items side by side */
+ul.tab li {float: left;}
+
+/* Style the links inside the list items */
+ul.tab li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of links on hover */
+ul.tab li a:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+ul.tab li a:focus, .active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.box {
+    border-top: 0;
+}    
+
+.busqueda{
+    float: none;
+}
+.campos{
+    padding: 10px;
+}
+
+.campos label{
+    margin-right: 15px;
+}
+.form-inline .form-control {
+    display: inline-block;
+    width: 270px;
+    vertical-align: middle;
+}
+
+
+.modal-header
+{
+    background-color: #3c8dbc;
+    color: white;
+    font-weight: 700;
+}
+
+.datos_tabcontent{
+    background: rgba(120, 173, 204, 0.68);
+}
+
+.checkbox label, .radio label {
+    min-height: 20px;
+    padding-left: 20px;
+    font-weight: 400;
+    cursor: pointer;
+    margin: 5px 10px;
+}
+
+.form-inline .linderos{
+    margin-left: 0.5%; 
+    margin-right: 0px; width: 90%;
+}
+
+.form-control.ingresado{
+    border: solid 1px #8aaae2;
+    background-color: #deeef7;
+    color: black;
+}
+
+.form-control.sistema{
+    border: solid 1px #add0ad;
+    background-color: #e3efe5;
+    color: black;
+}
+.form-control.modificado{
+    border: solid 2px #f97a7a;
+    background-color:#f9dede;
+    color: black;
+}
+
+select[readonly] option{
+    display:none;
+}
