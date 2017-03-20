@@ -22,7 +22,7 @@
             {{Form::token()}}
             <div class="form-group col-md-6 ocultar">
                 <!--                <label>Imagen:</label>-->
-                <input class="form-control" type="file" name="imagen" id="imagen"> </input>
+                <input class="form-control" type="file" name="gral[imagen]" id="imagen"> </input>
             </div>
             <div class="col-md-12"  id="formularioDocumento" style="display: none">
                 <div class="col-md-12 container-fluid">
@@ -45,8 +45,8 @@
                 <div id="ubicacion" class="tabcontent datos_tabcontent">
                     @include('documento.create.datosUbicacion')
                 </div>
-                <input type="hidden"  value="0" id="biss" name="bis">
-                <input type="hidden" value="2" name="estado">
+                <input type="hidden"  value="0" id="biss" name="gral[bis]">
+                <input type="hidden" value="2" name="gral[estado]">
                 <input type="submit" id="enviar" style="display: none">
                 {{Form::close()}}
 
@@ -93,8 +93,8 @@
             <div class="col-md-2">
                 <input type="submit" class="btn btn-success" style="margin-top: 25px;" value="Aceptar">
             </div>
-            <input type="hidden" name="estado" value="6">
-            <input type="hidden" name="imagen" value="">
+            <input type="hidden" name="gral[estado]" value="6">
+            <input type="hidden" name="gral[imagen]" value="">
             {{Form::close()}}
         </div>
 

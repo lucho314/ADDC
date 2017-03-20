@@ -469,14 +469,14 @@ function setUbicacion(datos) {
     $.each(datos.existentes, function (i, value) {
         $('#tabla_ubicacion').append('<tr id="ubicacion_' + i + '">\n\
                                                     \n\<td class="col-xs-3"><input type="text"  value="' + value.plano + '" required class="modificar form-control anexado" readonly/></td>\n\
-                                                     <td class="col-xs-1"><input type="text" name="grupo[' + i + ']" value="' + value.grupo + '" id="grupo_' + i + '" class="form-control modificar" placeholder="Grupo" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="manzana[' + i + ']"  id="manzana_' + i + '" value="' + value.manzana + '" placeholder="manzana" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="parcela[' + i + ']"  id="parcela_' + i + '" value="' + value.parcela + '" placeholder="parcela" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="subparcela[' + i + ']" id="subparcela_' + i + '" value="' + value.subparcela + '" placeholder="subparcela" readonly></td>\n\
-                                                    \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="chacra[' + i + ']" id="chacra_' + i + '" value="" placeholder="chacra" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="quinta[' + i + ']" id="quinta_' + i + '" value="" placeholder="quinta" readonly></td>\n\
-                                                    \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lamina[' + i + ']" id="lamina_' + i + '" value="' + value.lamina + '" placeholder="lamina" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="sublamina[' + i + ']" id="sublamina_' + i + '" value="' + value.sublamina + '" placeholder="sublamina" readonly></td>\n\
+                                                     <td class="col-xs-1"><input type="text" name="lote['+i+'][grupo]" value="' + value.grupo + '" id="grupo_' + i + '" class="form-control modificar" placeholder="Grupo" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][manzana]"  id="manzana_' + i + '" value="' + value.manzana + '" placeholder="manzana" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][parcela]"  id="parcela_' + i + '" value="' + value.parcela + '" placeholder="parcela" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][subparcela]" id="subparcela_' + i + '" value="' + value.subparcela + '" placeholder="subparcela" readonly></td>\n\
+                                                    \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][chacra]" id="chacra_' + i + '" value="" placeholder="chacra" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][quinta]" id="quinta_' + i + '" value="" placeholder="quinta" readonly></td>\n\
+                                                    \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][lamina]" id="lamina_' + i + '" value="' + value.lamina + '" placeholder="lamina" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][sublamina]" id="sublamina_' + i + '" value="' + value.sublamina + '" placeholder="sublamina" readonly></td>\n\
 \n\                                                \n\<td class="col-xs-1"><a href=javascript:eliminar("' + i + '")><i class="glyphicon glyphicon-remove" style="color: red"></i></td></a> \n\
                                                     </tr>');
     });
@@ -535,13 +535,13 @@ function partidas_y_superficies(data) {
     $.each(data.existentes, function (i, value) {
         j++;
         $('#tbody-seleccion-partidas').append('<tr id="' + i + '">\n\
-                                                 \n\<td class="col-xs-2"><input type="text" name="plano[' + i + ']" value="' + value.plano + '" required  id="plano_' + i + '" class="modificar form-control anexado" readonly/></td>\n\
-                                                    <td class="col-xs-3"> <input type="text" name="partida[' + i + ']" value="' + value.partida + '" id="partida_' + i + '" required class="modificar form-control anexado" readonly /></td>\n\
-                                                            \n\<td class="col-xs-3"><div class="row col-xs-11"><input type="text" name="sup_terreno[' + i + ']" value="' + value.sup_terreno + '" id="sup_terreno_' + i + '" required class="modificar form-control" readonly /></div><label class="col-xs-1">' + unidadMedida + '</label></td>\n\
-\n\                                                         \n\ <td class="col-xs-3"><div class="row col-xs-11"><input type="text" name="sup_edificada[' + i + ']" value="' + value.sup_edif_total + '" id="sup_edif_total_' + i + '" required class="modificar form-control anexado" readonly /></div><label class="col-xs-1">' + unidadMedida + '</label></td>\n\
+                                                 \n\<td class="col-xs-2"><input type="text" name="lote['+i+'][nro_plano]" value="' + value.plano + '" required  id="plano_' + i + '" class="modificar form-control anexado" readonly/></td>\n\
+                                                    <td class="col-xs-3"> <input type="text" name="lote['+i+'][nro_partida]" value="' + value.partida + '" id="partida_' + i + '" required class="modificar form-control anexado" readonly /></td>\n\
+                                                            \n\<td class="col-xs-3"><div class="row col-xs-11"><input type="text" name="lote['+i+'][sup_terreno]" value="' + value.sup_terreno + '" id="sup_terreno_' + i + '" required class="modificar form-control" readonly /></div><label class="col-xs-1">' + unidadMedida + '</label></td>\n\
+\n\                                                         \n\ <td class="col-xs-3"><div class="row col-xs-11"><input type="text" name="lote['+i+'][sup_edificada]" value="' + value.sup_edif_total + '" id="sup_edif_total_' + i + '" required class="modificar form-control anexado" readonly /></div><label class="col-xs-1">' + unidadMedida + '</label></td>\n\
                                                             \n\<td class="col-xs-1"><a href="javascript:eliminar(' + i + ')"><i class="glyphicon glyphicon-remove" style="color: red"></i></td></a> \n\
-\n\                                                         \n\ <input type="hidden" name="imponible_id[' + i + ']" value="' + value.clave + '">\n\
-\n\                                                         \n\ <input type="hidden" name="catastro_id[' + i + ']" value="' + value.catastro_id + '">\n\
+\n\                                                         \n\ <input type="hidden" name="lote['+i+'][imponible_id]" value="' + value.clave + '">\n\
+\n\                                                         \n\ <input type="hidden" name="lote['+i+'][catastro_id]" value="' + value.catastro_id + '">\n\
                                                     </tr>');
     });
 //    $.each(data.inexistentes, function (i, value) {

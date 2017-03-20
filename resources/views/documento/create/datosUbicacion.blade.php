@@ -11,7 +11,7 @@
                             <select  id="departamento" class="form-control select-modificar">
 
                             </select> 
-                            <input type="hidden" name="departamento" id="departamento_input">
+                            <input type="hidden"  name="gral[departamento]" id="departamento_input">
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -21,7 +21,7 @@
 
                             </select> 
 
-                            <input type="hidden" name="distrito" id="distrito_input">
+                            <input type="hidden"  name="gral[distrito]" id="distrito_input">
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -30,25 +30,25 @@
                             <select id="localidad" class="form-control select-modificar">
 
                             </select>
-                            <input type="hidden" name="localidad" id="localidad_input">
+                            <input type="hidden"  name="gral[localidad]" id="localidad_input">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Sección</label>
-                            <input class="form-control modificar" type="text" readonly name="seccion" id="seccion" value="{{$documento->temporal[0]->seccion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control modificar" type="text" readonly  name="gral[seccion]" id="seccion" value="{{$documento->temporal[0]->seccion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Latitud (grados decimales):</label>
-                            <input class="form-control modificar" type="text"  name="latitud" id="latitud" value="{{$documento->latitud or old('latitud')}}" placeholder=" ej: Paraná= -31.73197"> </input>
+                            <input class="form-control modificar" type="text"   name="gral[latitud]" id="latitud" value="{{$documento->latitud or old('latitud')}}" placeholder=" ej: Paraná= -31.73197"> </input>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Longitud (grados decimales):</label>
-                            <input class="form-control modificar" type="text"  name="longitud" id="longitud" value="{{$documento->longitud or old('longitud')}}" placeholder="ej: Paraná= -60.5238"> </input>
+                            <input class="form-control modificar" type="text"   name="gral[longitud]" id="longitud" value="{{$documento->longitud or old('longitud')}}" placeholder="ej: Paraná= -60.5238"> </input>
                         </div>
                     </div>
                 </div>

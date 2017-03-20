@@ -13,7 +13,7 @@
 
                 <div class="form-group">
                     <label>Observaciones</label>
-                    <textarea name="observacion" class="form-control" id="observacion"></textarea>
+                    <textarea name="gral[observacion]" class="form-control" id="observacion"></textarea>
                 </div>
 
             </div>

@@ -18,7 +18,7 @@
                                     </option>
                                     @endforeach
                                 </select> 
-                                <input type="hidden" name="departamento" id="departamento_input" value="{{$documento->temporal[0]->departamento}}">
+                                <input type="hidden"  name="gral[departamento]" id="departamento_input" value="{{$documento->temporal[0]->departamento}}">
                                 </div>
                                 </div>
                                 <div class="col-md-6">
@@ -35,7 +35,7 @@
                                                 </option>
                                                 @endforeach
                                             </select> 
-                                            <input type="hidden" name="distrito" id="distrito_input" value="{{$documento->temporal[0]->distrito}}">
+                                            <input type="hidden"  name="gral[distrito]" id="distrito_input" value="{{$documento->temporal[0]->distrito}}">
                                             </div>
                                             </div>
                                             <div class="col-md-6">
@@ -54,25 +54,25 @@
                                                             </option>
                                                             @endforeach
                                                         </select> 
-                                                        <input type="hidden" name="localidad" id="localidad_input" value="{{$documento->temporal[0]->localidad}}">
+                                                        <input type="hidden"  name="gral[localidad]" id="localidad_input" value="{{$documento->temporal[0]->localidad}}">
                                                         </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label>Sección</label>
-                                                                <input class="form-control modificar sistema" type="text" readonly name="seccion" id="seccion" value="{{$documento->temporal[0]->seccion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                                                                <input class="form-control modificar sistema" type="text" readonly  name="gral[seccion]" id="seccion" value="{{$documento->temporal[0]->seccion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label>Latitud (grados decimales):</label>
-                                                                <input class="form-control sistema" type="text"  name="latitud" id="latitud" value="{{$documento->latitud or old('latitud')}}" placeholder=" ej: Paraná= -31.73197"> </input>
+                                                                <input class="form-control sistema" type="text"   name="gral[latitud]" id="latitud" value="{{$documento->latitud or old('latitud')}}" placeholder=" ej: Paraná= -31.73197"> </input>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label>Longitud (grados decimales):</label>
-                                                                <input class="form-control sistema" type="text"  name="longitud" id="longitud" value="{{$documento->longitud or old('longitud')}}" placeholder="ej: Paraná= -60.5238"> </input>
+                                                                <input class="form-control sistema" type="text"   name="gral[longitud]" id="longitud" value="{{$documento->longitud or old('longitud')}}" placeholder="ej: Paraná= -60.5238"> </input>
                                                             </div>
                                                         </div>
                                                 </div>
@@ -98,17 +98,17 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="tabla_ubicacion">
-                                                    @foreach($documento->temporal as $temporal)
+                                                    @foreach($documento->temporal as $key=>$temporal)
                                                     <tr id="ubicacion_{{$temporal->id}}">
                                                         <td class="col-xs-3"><input type="text" value="{{$temporal->nro_plano}}" class="form-control modificar sistema" id="plano" readonly></td>
-                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->grupo}}" name="grupo[]" class="form-control modificar sistema" id="gru" readonly></td>
-                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->manzana}}" class="form-control modificar sistema" name="manzana[]" id="manz" readonly></td>
-                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->parcela}}" class="form-control modificar sistema" name="parcela[]" id="parc" readonly></td>
-                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->subparcela}}" name="subparcela[]" class="form-control sistema modificar" id="subparc" readonly></td>
-                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->chacra}}" class="form-control modificar sistema" name="chacra[]" id="chac" readonly></td>
-                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->quinta}}" class="form-control modificar sistema" name="quinta[]"  id="quint" readonly></td>
-                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->lamina}}" name="lamina[]" class="form-control sistema modificar" id="lam" readonly></td>
-                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->sublamina}}" class="form-control modificar sistema" name="sublamina[]" id="sublam" readonly></td>
+                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->grupo}}"  name="lote[{{$key}}][grupo]" class="form-control modificar sistema" id="gru" readonly></td>
+                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->manzana}}" class="form-control modificar sistema"  name="lote[{{$key}}][manzana]" id="manz" readonly></td>
+                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->parcela}}" class="form-control modificar sistema"  name="lote[{{$key}}][parcela]" id="parc" readonly></td>
+                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->subparcela}}"  name="lote[{{$key}}][subparcela]" class="form-control sistema modificar" id="subparc" readonly></td>
+                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->chacra}}" class="form-control modificar sistema"  name="lote[{{$key}}][chacra]" id="chac" readonly></td>
+                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->quinta}}" class="form-control modificar sistema"  name="lote[{{$key}}][quinta]"  id="quint" readonly></td>
+                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->lamina}}"  name="lote[{{$key}}][lamina]" class="form-control sistema modificar" id="lam" readonly></td>
+                                                        <td class="col-xs-1"><input type="text" value="{{$temporal->sublamina}}" class="form-control modificar sistema"  name="lote[{{$key}}][sublamina]" id="sublam" readonly></td>
                                                         <td class="col-xs-1"><a href="javascript:eliminar_registro('{{$temporal->id}}')"><i class="glyphicon glyphicon-remove" style="color: red"></i></a></td>
                                                       <tr>
                                                     @endforeach

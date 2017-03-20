@@ -33,20 +33,14 @@ class DocumentoController extends Controller {
     }
 
     public function store(Request $datos) {
-       // return  $datos->all();
-        $doc = Doc::create($datos->all());
+        $doc = Doc::create($datos->gral);
         if ($datos->estado === '6') {
             $this->cambiarEstado(6, $doc->id, null, 'Carga del documento en falta');
             return redirect('documento/create');
         }
         \App\Antecedente::guardar($datos->plano_ant, $doc);
         $this->cambiarEstado(2, $doc->id, null, 'Carga del documento');
-
-        foreach ($this->arrayCarga($datos) as $datos) {
-            $datos['doc_id'] = $doc->id;
-            $datos['estado'] = '2';
-            \App\TemporalCatastroSat::create($datos);
-        }
+        \App\TemporalCatastroSat::insertar($datos->all(), $doc->id);
 
         return redirect('documento/create');
     }
@@ -77,7 +71,9 @@ class DocumentoController extends Controller {
         $objetos = \App\Doc_objeto::all();
         $documento = Doc::with(['temporal', 'antecedentes'])
                 ->whereRaw('(usuario_actual is null or usuario_actual=' . auth()->user()->getAuthIdentifier() . ')')
-                ->findOrFail($id);
+                ->where('estado', '<>', 2);
+        if (auth()->user()->isValidador())$documento->orWhere('estado', '=', 2);
+        $documento = $documento->findOrFail($id);
         if (auth()->user()->isCorrector()) {
             $documento->usuario_actual = auth()->user()->getAuthIdentifier();
             $documento->save();
@@ -96,56 +92,13 @@ class DocumentoController extends Controller {
     }
 
     public function aceptarValidacion(Request $datos) {
-
-        $doc = Doc::findOrFail($datos->id);
-        $insertar = $datos->all();
-        //return $insertar;
-        $insertar['usuario_actual'] = $datos->user_derivar[0];
-        $doc->update($insertar);
-//        if ($datos->estado == 1) {
-//            foreach ($this->arrayCarga($datos) as $dato) {
-//                if ($dato['catastro_id'] != '') {
-////                    $catastros = \App\Catastro::findOrFail($dato['catastro_id']);
-////                    $catastros->update($dato);
-//                    $this->cambiarEstado(1, $datos->id);
-//                }
-//            }
-//        } else {
-        foreach ($this->arrayCarga($datos) as $dato) {
-            $temporal = \App\TemporalCatastroSat::findOrFail($dato['temporal_id']);
-            $temporal->fill($dato);
-            $temporal->update();
-        }
-
-        $this->cambiarEstado($datos->estado, $datos->id, $datos->user_derivar, $datos->observacion);
-        //}
+        $doc = Doc::findOrFail($datos->gral['id']);
+        $doc->update($datos->gral);
+        \App\Antecedente::guardar($datos->plano_ant, $doc);
+        \App\TemporalCatastroSat::editar($datos->all());
+        $this->cambiarEstado($datos->gral['estado'], $datos->gral['id'], $datos->user_derivar, $datos->gral['observacion']);
 
         return redirect('documento/validar/lista/0');
-    }
-
-    private function arrayCarga(Request $datos) {
-
-        $i = 0;
-        foreach ($datos->plano as $indice => $plano) {
-            $insertar[$i] = $datos->all();
-            $insertar[$i]['nro_partida'] = $datos->partida[$indice];
-            $insertar[$i]['nro_plano'] = $plano;
-            $insertar[$i]['imponible_id'] = $datos->imponible_id[$indice];
-            $insertar[$i]['catastro_id'] = $datos->catastro_id[$indice];
-            $insertar[$i]['grupo'] = $datos->grupo[$indice];
-            $insertar[$i]['manzana'] = $datos->manzana[$indice];
-            $insertar[$i]['parcela'] = $datos->parcela[$indice];
-            $insertar[$i]['subparcela'] = $datos->subparcela[$indice];
-            $insertar[$i]['lamina'] = $datos->lamina[$indice];
-            $insertar[$i]['sublamina'] = $datos->sublamina[$indice];
-            $insertar[$i]['chacra'] = ($datos->chacra[$indice] == null) ? null : $datos->chacra[$indice];
-            $insertar[$i]['quinta'] = ($datos->quinta[$indice] == null) ? null : $datos->quinta[$indice];
-            $insertar[$i]['sup_terreno'] = $datos->sup_terreno[$indice];
-            $insertar[$i]['sup_edificada'] = $datos->sup_edificada[$indice];
-            $insertar[$i]['temporal_id'] = $datos->temporal_id[$indice];
-            $i++;
-        }
-        return $insertar;
     }
 
 //    private function storeValidado(Request $datos, $imagenId) {
@@ -542,12 +495,12 @@ class DocumentoController extends Controller {
     public function eliminar(Request $request) {
         if ($request->ajax()) {
             $documento = Doc::findOrFail($request->id);
-            if ($documento->estado==2) {
+            if ($documento->estado == 2) {
                 \App\TemporalCatastroSat::where('doc_id', '=', $request->id)->delete();
                 \App\documentoCambiosEstados::where('doc_id', '=', $request->id)->delete();
                 return ['Error' => $documento->delete()];
             } else {
-                return ['Error' =>0,'mensaje'=>'El documento esta asignado a otro usuario, No se puede eliminar!'];
+                return ['Error' => 0, 'mensaje' => 'El documento esta asignado a otro usuario, No se puede eliminar!'];
             }
         } else {
             abort(404);

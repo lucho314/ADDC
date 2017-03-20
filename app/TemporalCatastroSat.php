@@ -41,6 +41,7 @@ class TemporalCatastroSat extends Model {
     ];
 
     public function update(array $attributes = [], array $options = []) {
+        $this->fill($attributes);
         if ($this->estado == '1') {
             foreach ($this->getAttributes() as $key => $value) {
                 $this->$key = str_replace("*", '', $value);
@@ -51,6 +52,21 @@ class TemporalCatastroSat extends Model {
             }
         }
         parent::save();
+    }
+
+    public static function insertar(array $insert, $doc_id) {
+        foreach ($insert['lote'] as $key => $val) {
+            $insert['lote'][$key]['doc_id'] = $doc_id;
+            TemporalCatastroSat::create(array_merge($insert['gral'], $insert['lote'][$key]));
+        }
+    }
+
+    public static function editar(array $insert) {
+        foreach ($insert['lote'] as $key => $val) {
+            $insert['lote'][$key]['doc_id'] = $insert['gral']['id'];
+            $lotes= TemporalCatastroSat::findOrFail($val['temporal_id']);
+            $lotes->update(array_merge($insert['gral'], $insert['lote'][$key]));
+        }
     }
 
     public static function boot() {
@@ -67,7 +83,7 @@ class TemporalCatastroSat extends Model {
     }
 
     public function Documento() {
-        return $this->hasOne(Doc::class,'id', 'doc_id');
+        return $this->hasOne(Doc::class, 'id', 'doc_id');
     }
 
 }
