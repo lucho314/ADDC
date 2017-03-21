@@ -13,7 +13,8 @@
         "yajra/laravel-datatables-oracle": "^6.22",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^1.6",
-        "elibyy/tcpdf-laravel": " 5.3.*"
+        "elibyy/tcpdf-laravel": " 5.3.*",
+        "lrgt/laravel-form-ajax-validation": "^5.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

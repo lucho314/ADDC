@@ -123,7 +123,28 @@ class Doc extends Eloquent {
                 $doc->whereNull('usuario_actual');
             }
         }
-      //  dd($doc->getQuery());
+        //  dd($doc->getQuery());
+        return $doc;
+    }
+
+    public static function getDocumentForValidation($id) {
+        $doc = Doc::with(['temporal', 'antecedentes']);
+        if (auth()->user()->isAdmin()) {
+            $doc->where('estado', '<>', 3)
+                    ->orWhere(function ($query) {
+                        $query->where('estado', '=', 3)
+                        ->whereNull('usuario_actual')
+                        ->orWhere('usuario_actual', '=', auth()->user()->getAuthIdentifier());
+                    });
+        } else if (auth()->user()->isValidador()) {
+            $doc->where('estado', '=', 2);
+        } else if (auth()->user()->isCorrector()) {
+            $doc->where('estado', '=', 3)
+                    ->where(function ($query) {
+                        $query->whereNull('usuario_actual')
+                        ->orWhere('usuario_actual', '=', auth()->user()->getAuthIdentifier());
+                    });
+        }
         return $doc;
     }
 

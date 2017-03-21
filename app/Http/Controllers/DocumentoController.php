@@ -69,12 +69,8 @@ class DocumentoController extends Controller {
     public function validarDocumento($id) {
         $plantas = DB::table('tbl_valores_set_validaciones')->where('set_validacion', '=', '0054')->get();
         $objetos = \App\Doc_objeto::all();
-        $documento = Doc::with(['temporal', 'antecedentes'])
-                ->whereRaw('(usuario_actual is null or usuario_actual=' . auth()->user()->getAuthIdentifier() . ')')
-                ->where('estado', '<>', 2);
-        if (auth()->user()->isValidador())$documento->orWhere('estado', '=', 2);
-        $documento = $documento->findOrFail($id);
-        if (auth()->user()->isCorrector()) {
+        $documento = Doc::getDocumentForValidation($id)->findOrFail($id);
+        if (!auth()->user()->isValidador()) {
             $documento->usuario_actual = auth()->user()->getAuthIdentifier();
             $documento->save();
         }
@@ -94,10 +90,9 @@ class DocumentoController extends Controller {
     public function aceptarValidacion(Request $datos) {
         $doc = Doc::findOrFail($datos->gral['id']);
         $doc->update($datos->gral);
-        \App\Antecedente::guardar($datos->plano_ant, $doc);
+        \App\Antecedente::Editar($doc,(empty($datos->plano_ant)?[]:$datos->plano_ant));
         \App\TemporalCatastroSat::editar($datos->all());
         $this->cambiarEstado($datos->gral['estado'], $datos->gral['id'], $datos->user_derivar, $datos->gral['observacion']);
-
         return redirect('documento/validar/lista/0');
     }
 
@@ -243,10 +238,11 @@ class DocumentoController extends Controller {
 
     public function view($idDocumento) {
         $plantas = DB::table('tbl_valores_set_validaciones')->where('set_validacion', '=', '0054')->get();
-        $documento = Doc::with('temporal')->findOrFail($idDocumento);
+        $documento = Doc::with(['temporal', 'antecedentes'])->findOrFail($idDocumento);
         if ($documento->estado == '6') {
             return view('documento.view');
         }
+        $objetos = \App\Doc_objeto::all();
         $incidencias = \App\documentoCambiosEstados::where('doc_id', '=', $idDocumento)->orderBy('fecha_cambio', 'desc')->get();
         $dtos = $this->getDtos($documento->temporal[0]->departamento);
         $localidades = $this->getLocalidades($documento->temporal[0]->distrito);
@@ -258,7 +254,7 @@ class DocumentoController extends Controller {
         } else {
             $unidadMedida = 'm2';
         }
-        return view('documento.view', compact('documento', 'plantas', 'min', 'unidadMedida', 'dptos', 'dtos', 'localidades', 'usuarios', 'incidencias', 'ubicacionFisica'));
+        return view('documento.view', compact('documento','objetos', 'plantas', 'min', 'unidadMedida', 'dptos', 'dtos', 'localidades', 'usuarios', 'incidencias', 'ubicacionFisica'));
     }
 
 //########################### FUNCIONES GETTERS USADAS EN AJAX ##########################################   
@@ -470,9 +466,7 @@ class DocumentoController extends Controller {
     }
 
     public function Prueba() {
-        // select peritos.*,plano.Corrector from plano,peritos where plano.Perito=peritos.nombre and plano.plano=47595 and plano.dpto=01
-        //return DB::connection('theclip')->table('acajas')->get();
-        return \App\Caja::buscar('01', 4365);
+        
     }
 
     public function eliminarRegistro(Request $dato) {

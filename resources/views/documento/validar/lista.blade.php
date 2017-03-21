@@ -14,7 +14,7 @@
                     <th>Nro plano hasta</th>
                     <th>Fecha de alta</th>
                     <th>Usuario ultima modificacion</th>
-                    <th>Accion</th>
+                   <th>Accion</th>
                 </tr>   
             </thead>
         </table>

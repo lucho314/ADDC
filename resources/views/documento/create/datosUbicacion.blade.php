@@ -8,7 +8,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Departamento</label>
-                            <select  id="departamento" class="form-control select-modificar">
+                            <select  id="departamento" class="form-control select-modificar" onchange="$('#departamento_input').val(this.value)">
 
                             </select> 
                             <input type="hidden"  name="gral[departamento]" id="departamento_input">
@@ -17,20 +17,20 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Distrito</label>
-                            <select id="distrito" class="form-control select-modificar">
+                            <select id="distrito" class="form-control select-modificar" onchange="$('#distrito_input').val(this.value)">
 
                             </select> 
 
-                            <input type="hidden"  name="gral[distrito]" id="distrito_input">
+                            <input type="hidden"  name="gral[distrito]" id="distrito_input" >
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Localidad</label>
-                            <select id="localidad" class="form-control select-modificar">
+                            <select id="localidad" class="form-control select-modificar" onchange="$('#localidad_input').val(this.value)">
 
                             </select>
-                            <input type="hidden"  name="gral[localidad]" id="localidad_input">
+                            <input type="hidden"  name="gral[localidad]" id="localidad_input" >
                         </div>
                     </div>
                     <div class="col-md-6">

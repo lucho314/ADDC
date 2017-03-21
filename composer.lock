@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a9717be7dd2bf600f5f7e379fb0ff6e1",
-    "content-hash": "87eebe8335737ae8f3b1239415198b03",
+    "hash": "6f930767958f26a886667fbe68781ccd",
+    "content-hash": "47e1de8f3f47144293426d2db91e27f8",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -863,6 +863,51 @@
                 "rest"
             ],
             "time": "2016-12-28 01:30:30"
+        },
+        {
+            "name": "lrgt/laravel-form-ajax-validation",
+            "version": "5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guicho0601/laravel-form-ajax-validation.git",
+                "reference": "9a54ed5ce0bf56ec23a12932320718ab1fa471f0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guicho0601/laravel-form-ajax-validation/zipball/9a54ed5ce0bf56ec23a12932320718ab1fa471f0",
+                "reference": "9a54ed5ce0bf56ec23a12932320718ab1fa471f0",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": ">=5.2.0",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Lrgt\\LaravelFormAjaxValidation": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Luis Ramos",
+                    "email": "guicholarg@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Make ajax validation with Laravel Requests for forms with bootstrap",
+            "homepage": "https://github.com/guicho0601/laravel-form-ajax-validation",
+            "keywords": [
+                "ajax",
+                "form",
+                "laravel",
+                "validation"
+            ],
+            "time": "2016-05-03 12:36:48"
         },
         {
             "name": "maatwebsite/excel",

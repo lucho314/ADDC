@@ -8,9 +8,9 @@
                             <label>Departamento</label>
                             @if(strpos($documento->temporal[0]->departamento, '*'))
 
-                            <select  id="departamento" class="form-control select-modificar sistema" style="border: solid 1px blue" readonly>
+                            <select  id="departamento" class="form-control select-modificar sistema" style="border: solid 1px blue" readonly onchange="$('#departamento_input').val(this.value)">
                                 @else
-                                <select  id="departamento" class="form-control select-modificar sistema" readonly>
+                                <select  id="departamento" class="form-control select-modificar sistema" readonly onchange="$('#departamento_input').val(this.value)">
                                     @endif
                                     @foreach($dptos as $dpto) 
                                     <option value="{{$dpto->div_de}}" 
@@ -25,9 +25,9 @@
                                     <div class="form-group">
                                         <label>Distrito</label>
                                         @if(strpos($documento->temporal[0]->distrito, '*'))
-                                        <select  id="distrito" readonly class="form-control select-modificar sistema" style="border: solid 1px blue">
+                                        <select  id="distrito" readonly class="form-control select-modificar sistema" style="border: solid 1px blue" onchange="$('#distrito_input').val(this.value)"> 
                                             @else
-                                            <select id="distrito" readonly class="form-control select-modificar sistema">
+                                            <select id="distrito" readonly class="form-control select-modificar sistema" onchange="$('#distrito_input').val(this.value)">
                                                 @endif
                                                 @foreach($dtos as $dto) 
                                                 <option value="{{$dto->div_di}}" 
@@ -43,10 +43,10 @@
                                                     <label>Localidad</label>
                                                     @if(strpos($documento->temporal[0]->localidad, '*'))
 
-                                                    <select  id="localidad" readonly class="form-control select-modificar sistema" style="border: solid 1px blue">
+                                                    <select  id="localidad" readonly class="form-control select-modificar sistema" style="border: solid 1px blue" onchange="$('#localidad_input').val(this.value)">
                                                         @else
 
-                                                        <select  readonly id="localidad" class="form-control select-modificar sistema">
+                                                        <select  readonly id="localidad" class="form-control select-modificar sistema" onchange="$('#localidad_input').val(this.value)">
                                                             @endif
                                                             @foreach($localidades as $loc) 
                                                             <option value="{{$loc->div_lo}}" 
