@@ -8,7 +8,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Departamento</label>
-                            <select  id="departamento" class="form-control select-modificar" onchange="$('#departamento_input').val(this.value)">
+                            <select  id="departamento" class="form-control select-modificar">
 
                             </select> 
                             <input type="hidden"  name="gral[departamento]" id="departamento_input">
@@ -17,7 +17,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Distrito</label>
-                            <select id="distrito" class="form-control select-modificar" onchange="$('#distrito_input').val(this.value)">
+                            <select id="distrito" class="form-control select-modificar">
 
                             </select> 
 
@@ -27,7 +27,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Localidad</label>
-                            <select id="localidad" class="form-control select-modificar" onchange="$('#localidad_input').val(this.value)">
+                            <select id="localidad" class="form-control select-modificar">
 
                             </select>
                             <input type="hidden"  name="gral[localidad]" id="localidad_input" >
@@ -36,21 +36,22 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Sección</label>
-                            <input class="form-control modificar" type="text" readonly  name="gral[seccion]" id="seccion" value="{{$documento->temporal[0]->seccion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control modificar" type="text" readonly  name="gral[seccion]" id="gral_seccion" value="{{$documento->temporal[0]->seccion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Latitud (grados decimales):</label>
-                            <input class="form-control modificar" type="text"   name="gral[latitud]" id="latitud" value="{{$documento->latitud or old('latitud')}}" placeholder=" ej: Paraná= -31.73197"> </input>
+                            <input class="form-control modificar" type="text"   name="gral[latitud]" id="gral_latitud" value="{{$documento->latitud or old('latitud')}}" placeholder=" ej: Paraná= -31.73197"> </input>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Longitud (grados decimales):</label>
-                            <input class="form-control modificar" type="text"   name="gral[longitud]" id="longitud" value="{{$documento->longitud or old('longitud')}}" placeholder="ej: Paraná= -60.5238"> </input>
+                            <input class="form-control modificar" type="text"   name="gral[longitud]" id="gral_longitud" value="{{$documento->longitud or old('longitud')}}" placeholder="ej: Paraná= -60.5238"> </input>
                         </div>
                     </div>
+                    <div class="col-md-12  errores"></div>
                 </div>
             </div>
 
@@ -79,6 +80,7 @@
                     </tbody>
                 </table>
                 <a class="btn btn-default btn-xs glyphicon glyphicon-plus" href="javascript:agregar_ubicacion()" style="float: right;margin-right: 0.3%;" id="agregar_ubicacion"></a>
+            <div class="col-md-12  errores"></div>
             </div>
         </div>
     </div>

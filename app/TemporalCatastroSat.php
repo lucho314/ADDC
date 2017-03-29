@@ -41,13 +41,14 @@ class TemporalCatastroSat extends Model {
     ];
 
     public function update(array $attributes = [], array $options = []) {
-        $this->fill($attributes);
+        $this->fill(array_filter($attributes));
         if ($this->estado == '1') {
             foreach ($this->getAttributes() as $key => $value) {
                 $this->$key = str_replace("*", '', $value);
             }
         } else {
             foreach ($this->getDirty() as $key => $value) {
+                $value=str_replace("*", '', $value);
                 $this->$key = $value . "*";
             }
         }

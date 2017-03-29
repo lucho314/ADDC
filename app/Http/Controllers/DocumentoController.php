@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Response;
 use App\Vw_Partidas_Archivo;
 use DB;
 use App\Contenido;
+use App\Http\Requests\DocumentoFormRequest;
 
 class DocumentoController extends Controller {
 
@@ -32,7 +33,7 @@ class DocumentoController extends Controller {
         return view('documento.carga', ['min' => 'sidebar-collapse', 'plantas' => $plantas, 'objetos' => $objetos, 'dptos' => $dptos, 'documento' => []]);
     }
 
-    public function store(Request $datos) {
+    public function store(DocumentoFormRequest $datos) {
         $doc = Doc::create($datos->gral);
         if ($datos->estado === '6') {
             $this->cambiarEstado(6, $doc->id, null, 'Carga del documento en falta');
@@ -70,7 +71,7 @@ class DocumentoController extends Controller {
         $plantas = DB::table('tbl_valores_set_validaciones')->where('set_validacion', '=', '0054')->get();
         $objetos = \App\Doc_objeto::all();
         $documento = Doc::getDocumentForValidation($id)->findOrFail($id);
-        if (!auth()->user()->isValidador()) {
+        if (auth()->user()->isCorrector() || auth()->user()->isAdmin()) {
             $documento->usuario_actual = auth()->user()->getAuthIdentifier();
             $documento->save();
         }

@@ -169,7 +169,7 @@
                                 <i class="fa fa-angle-left pull-right"></i>
                             </a>
                             <ul class="treeview-menu">
-                                <li><a href="{{URL('/usuario/micuenta',auth()->user()->getAuthIdentifier())}}"><i class="fa fa-circle-o"></i>Datos de usuario</a></li>
+                                <!--<li><a href="{{URL('/usuario/micuenta',auth()->user()->getAuthIdentifier())}}"><i class="fa fa-circle-o"></i>Datos de usuario</a></li>-->
                                 <li>
                                     <a href="{{ url('/logout') }}"
                                        onclick="event.preventDefault();

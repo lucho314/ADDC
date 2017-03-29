@@ -78,6 +78,8 @@
  @include('documento.validar.modal_eliminar')
 @endsection
 @section('script')
+@include('vendor.lrgt.ajax_script', ['form' => '#form_validar',
+'request'=>'App/Http/Requests/DocumentoFormRequest','on_start'=>false])
 <script>
     $('.clik').eq(0).css('background-color', '#ccc');
     function openSearch(index, city) {

@@ -32,8 +32,9 @@
                     <li class="clik generales"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(0, 'generales')">Datos Generales</a></li>
                     <li class="clik partidas"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(1, 'partidas')">Partidas y Superficies</a></li>
                     <li class="clik ubicacion"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(2, 'ubicacion')">Ubicación Geográfica</a></li>
-                    <button style="float: right;margin-right: 6px; margin-top: 9px;" type="reset" id="cancelar" class="btn btn-danger">Cancelar</button>
-                    <button style="float: right;margin-right: 12px; margin-top: 9px;" class="btn btn-success" id="submit">Aceptar</button>
+                    <button style="float: right;margin-right: 6px; margin-top: 9px;" class="btn btn-success" id="submit">Aceptar</button>
+                    <button style="float: right;margin-right: 10px; margin-top: 9px;" type="reset" id="cancelar" class="btn btn-danger">Cancelar</button>
+                    
 
                 </ul>
                 <div id="generales" class="tabcontent  datos_tabcontent" style="display: block">
@@ -54,6 +55,7 @@
                     <img src="{{asset('img/cargando.gif')}}" >
                     <div class="text-center">CARGANDO...</div>
                 </div>
+              
             </div>
 
         </div>
@@ -78,7 +80,7 @@
             <div class="form-group col-md-2">
                 <label>Tipo documento:</label>
                 <select name="tipo_doc" class="form-control">
-                     <option>Plano de mensura</option>
+                    <option>Plano de mensura</option>
                     <option>Ficha de transferencia</option>
                 </select>
             </div>
@@ -102,6 +104,8 @@
 </div>
 @endsection
 @section('script')
+@include('vendor.lrgt.ajax_script', ['form' => '#form_carga',
+'request'=>'App/Http/Requests/DocumentoFormRequest','on_start'=>false])
 <script>
     $('.clik').eq(0).css('background-color', '#ccc');
     function openSearch(index, city) {

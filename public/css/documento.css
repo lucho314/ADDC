@@ -1,7 +1,10 @@
 .table-fixed thead {
     width: 97%;
 }
-
+.errores{
+    color: red;
+    font-weight: 500;
+}
 .table-fixed tbody {
     max-height: 200px;
     overflow-y: auto;

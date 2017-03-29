@@ -12,7 +12,7 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-
+    'doc_unico'            => 'El rango comprendido entre número de plano desde y hasta ya existe',
     'accepted'             => 'El campo :attribute debe ser aceptado.',
     'active_url'           => 'El campo :attribute no es una URL válida.',
     'after'                => 'El campo :attribute debe ser una fecha posterior a :date.',
@@ -54,13 +54,13 @@ return [
     ],
     'mimes'                => 'El campo :attribute debe ser un archivo de tipo :values.',
     'min'                  => [
-        'numeric' => 'El campo :attribute debe tener al menos :min.',
+        'numeric' => 'El campo :attribute debe ser mayor o igual a :min.',
         'file'    => 'El archivo :attribute debe pesar al menos :min kilobytes.',
         'string'  => 'El campo :attribute debe contener al menos :min caracteres.',
         'array'   => 'El campo :attribute no debe contener más de :min elementos.',
     ],
     'not_in'               => 'El campo :attribute seleccionado es invalido.',
-    'numeric'              => 'El campo :attribute debe ser un numero.',
+    'numeric'              => 'El campo :attribute debe ser un número.',
     'present'              => 'El campo :attribute debe estar presente.',
     'regex'                => 'El formato del campo :attribute es inválido.',
     'required'             => 'El campo :attribute es obligatorio',

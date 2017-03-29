@@ -32,6 +32,7 @@ $(function () {
     });
 
     if ($("#form_validar").length > 0) {
+        initialize();
         $('input').each(function (i, v) {
             if ($(this).val().indexOf('*') != -1) {
                 $(this).removeClass('ingresado').removeClass('sistema').addClass('modificado');
@@ -43,6 +44,7 @@ $(function () {
 })
 
 $('#submit').click(function () {
+
     $('#observacion').attr('required', false);
     $('#user2').attr('required', false);
     if (($('#estado').val() === '3' || $('#estado').val() === '4') && $('#observacion').val() === '') {
@@ -111,8 +113,8 @@ var nomeclatura = {
 
 $('#imagen').change(function (event) {
     $('.ocultar').hide();
-    var nombre = $(this).val();
-    var arrayNombre = nombre.split('-');
+    var nombre = $(this).val();           
+    var arrayNombre = nombre.split('-');//10-456pl-4564p
     var longitud = arrayNombre.length; //3 si es plano y 4 si es ficha de lo contrario nomeclatura error.
     $('#biss').val(0);
     if (longitud > 4 || longitud < 3) {
@@ -281,11 +283,12 @@ function setPlano(array) {
     var nroPlanoHasta = planoHasta;
     console.log(planoDesde, planoHasta);
     getDatos();
-    $('#nro_plano').val(nroPlanoDesde);
-    $('#nro_plano_hasta').val(nroPlanoHasta);
-    $('#nro_dpto').val(dpto);
-    $('#tipo_doc').val('Plano de mensura');
+    $('#gral_nro_plano').val(nroPlanoDesde);
+    $('#gral_nro_plano_hasta').val(nroPlanoHasta);
+    $('#gral_nro_dpto').val(dpto);
+    $('#gral_tipo_doc').val('Plano de mensura');
     $('.partida').hide();
+
     //checkDatosInex();
 
 }
@@ -298,14 +301,16 @@ function setFicha(array) {
     nroPlano = nroPlano.substring(nroPlano.length - 2, 0); //le restamos al tamaño total 2 para obtener el num de plano eje: 14574pl->14574
     partida = nroPartida.substring(nroPartida.length - 1, 0);
     $('.partida').show();
-    $('#nro_plano').val(planoDesde);
-    $('#nro_plano_hasta').val(planoHasta);
-    $('#nro_dpto').val(dpto);
-    $('#tipo_doc').val('Ficha de transferencia');
-    $('#fecha_registro').val(fechaRegistro);
-    $('#nro_partida').val(partida);
-    $('#grupo-objeto').hide();
+    $('#gral_nro_plano').val(planoDesde);
+    $('#gral_nro_plano_hasta').val(planoHasta);
+    $('#gral_nro_dpto').val(dpto);
+    $('#gral_tipo_doc').val('Ficha de transferencia');
+    $('#gral_fecha_registro').val(fechaRegistro);
+    $('#gral_nro_partida').val(partida);
+    $('#gral_grupo-objeto').hide();
     getDatos();
+    
+
 }
 
 function extraeDpto(nroDpto) {
@@ -420,11 +425,13 @@ function getDatos(partidas = null) {
             {'dpto': dpto, 'plano': planoDesde, 'plano_hasta': planoHasta},
             function (data) {
                 if (data.existentes.length > 0) {
-                    $('#nro_partida').val(data.existentes[0].partida);
-                    $('#inscripcion').val(data.existentes[0].inscripcion);
-                    $('#matricula').val(data.existentes[0].matricula);
-                    $('#titular').val(data.existentes[0].responsable);
+                    $('#gral_nro_partida').val(data.existentes[0].partida);
+                    $('#gral_inscripcion').val(data.existentes[0].inscripcion);
+                    $('#gral_nro_matricula').val(data.existentes[0].matricula);
+                    $('#gral_titular').val(data.existentes[0].responsable);
                     $('#tipo_planta').val(data.existentes[0].tipo_planta);
+                    $('#tipo_planta_input').val(data.existentes[0].tipo_planta);
+                     $('#gral_tipo_planta').val(data.existentes[0].tipo_planta);
                     if (data.existentes[0].tipo_planta > '0003') {
                         unidadMedida = 'Has';
                     } else {
@@ -436,31 +443,34 @@ function getDatos(partidas = null) {
                     getDeptos(data.existentes[0].div_de);
                     getDistritos(data.existentes[0].div_de, data.existentes[0].div_di);
                     getLocalidades(data.existentes[0].div_di, data.existentes[0].div_lo);
+                   initialize();
                 } else {
-                    $('form input:text').val('sin datos');
-                    $('#nro_plano').val(planoDesde);
-                    $('#nro_plano_hasta').val(planoHasta);
-                    $('#nro_dpto').val(dpto);
-                    $('#nro_partida').val(partida);
+                    $('form input:text').attr('placeholder',"sin datos");
+                    $('#gral_nro_plano').val(planoDesde);
+                    $('#gral_nro_plano_hasta').val(planoHasta);
+                    $('#gral_nro_dpto').val(dpto);
+                    $('#gral_nro_partida').val(partida);
                     $('#cargando').hide();
                     $('#formularioDocumento').css('opacity', '1');
+                    getDeptos();
+                    initialize();
                 }
 
-                setUbicacionFisica(data.ubicacionFisica);
+                //setUbicacionFisica(data.ubicacionFisica);
 
 
             });
 }
 
-function setUbicacionFisica(ubicacion) {
-    console.log(ubicacion.caja);
-    $('#sector').val(ubicacion.caja.sector);
-    $('#modulo').val(ubicacion.caja.modulo);
-    $('#estante').val(ubicacion.caja.estante);
-    $('#posicion').val(ubicacion.caja.posicion);
-    $('#profundidad').val(ubicacion.caja.profundidad);
-}
-;
+//function setUbicacionFisica(ubicacion) {
+//    console.log(ubicacion.caja);
+//    $('#sector').val(ubicacion.caja.sector);
+//    $('#modulo').val(ubicacion.caja.modulo);
+//    $('#estante').val(ubicacion.caja.estante);
+//    $('#posicion').val(ubicacion.caja.posicion);
+//    $('#profundidad').val(ubicacion.caja.profundidad);
+//}
+//;
 
 
 function setUbicacion(datos) {
@@ -469,14 +479,14 @@ function setUbicacion(datos) {
     $.each(datos.existentes, function (i, value) {
         $('#tabla_ubicacion').append('<tr id="ubicacion_' + i + '">\n\
                                                     \n\<td class="col-xs-3"><input type="text"  value="' + value.plano + '" required class="modificar form-control anexado" readonly/></td>\n\
-                                                     <td class="col-xs-1"><input type="text" name="lote['+i+'][grupo]" value="' + value.grupo + '" id="grupo_' + i + '" class="form-control modificar" placeholder="Grupo" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][manzana]"  id="manzana_' + i + '" value="' + value.manzana + '" placeholder="manzana" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][parcela]"  id="parcela_' + i + '" value="' + value.parcela + '" placeholder="parcela" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][subparcela]" id="subparcela_' + i + '" value="' + value.subparcela + '" placeholder="subparcela" readonly></td>\n\
-                                                    \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][chacra]" id="chacra_' + i + '" value="" placeholder="chacra" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][quinta]" id="quinta_' + i + '" value="" placeholder="quinta" readonly></td>\n\
-                                                    \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][lamina]" id="lamina_' + i + '" value="' + value.lamina + '" placeholder="lamina" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lote['+i+'][sublamina]" id="sublamina_' + i + '" value="' + value.sublamina + '" placeholder="sublamina" readonly></td>\n\
+                                                     <td class="col-xs-1"><input type="text" name="lote[' + i + '][grupo]" value="' + value.grupo + '" id="lote_' + i + '_grupo" class="form-control anexado modificar" placeholder="Grupo" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][manzana]"  id="lote_' + i + '_manzana" value="' + value.manzana + '" placeholder="manzana" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][parcela]"  id="lote_' + i + '_parcela" value="' + value.parcela + '" placeholder="parcela" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar anexado"  type="text" name="lote[' + i + '][subparcela]" id="lote_' + i + '_subparcela" value="' + value.subparcela + '" placeholder="subparcela" readonly></td>\n\
+                                                    \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][chacra]" id="lote_' + i + '_chacra" value="" placeholder="chacra" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][quinta]" id="lote_' + i + '_quinta" value="" placeholder="quinta" readonly></td>\n\
+                                                    \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][lamina]" id="lote_' + i + '_lamina" value="' + value.lamina + '" placeholder="lamina" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][sublamina]" id="lote_' + i + '_sublamina" value="' + value.sublamina + '" placeholder="sublamina" readonly></td>\n\
 \n\                                                \n\<td class="col-xs-1"><a href=javascript:eliminar("' + i + '")><i class="glyphicon glyphicon-remove" style="color: red"></i></td></a> \n\
                                                     </tr>');
     });
@@ -498,25 +508,25 @@ function agregar_ubicacion() {
         i = parseInt(id.match(/\d+$/)) + 1;
     }
     $('#tabla_ubicacion').append('<tr id="ubicacion_' + i + '">\n\
-                                                    <td class="col-xs-3"><input type="text" value="" id="plano_' + i + '"  required class="form-control modificar" placeholder="Plano" readonly></td>\n\
-                                                     <td class="col-xs-1"><input type="text" name="grupo[' + i + ']" required value="" id="grupo_' + i + '" class="form-control modificar" placeholder="Grupo" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="manzana[' + i + ']"  id="manzana_' + i + '"  placeholder="manzana" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="parcela[' + i + ']"  id="parcela_' + i + '"  placeholder="parcela" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="subparcela[' + i + ']" id="subparcela_' + i + '"  placeholder="subparcela" readonly></td>\n\
-                                                    \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="chacra[' + i + ']" id="chacra_' + i + '" value="" placeholder="chacra" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="quinta[' + i + ']" id="quinta_' + i + '" value="" placeholder="quinta" readonly></td>\n\
-                                                    \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="lamina[' + i + ']" id="lamina_' + i + '"  placeholder="lamina" readonly></td>\n\
-                                                  \n\<td class="col-xs-1"><input class="form-control modificar" type="text" name="sublamina[' + i + ']" id="sublamina_' + i + '"  placeholder="sublamina" readonly></td>\n\
+                                                    <td class="col-xs-3"><input type="text" value="" id="lote_' + i + '_nro_plano"  required class="form-control modificar anexado" placeholder="Plano" readonly></td>\n\
+                                                     <td class="col-xs-1"><input type="text" name="lote[' + i + '][grupo]" required value="" id="lote_' + i + '_grupo" class="form-control modificar" placeholder="Grupo" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][manzana]"  id="lote_' + i + '_manzana"  placeholder="manzana" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][parcela]"  id="lote_' + i + '_parcela"  placeholder="parcela" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][subparcela]" id="lote_' + i + '_subparcela"  placeholder="subparcela" readonly></td>\n\
+                                                    \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][chacra]" id="lote_' + i + '_chacra" value="" placeholder="chacra" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][quinta]" id="lote_' + i + '_quinta" value="" placeholder="quinta" readonly></td>\n\
+                                                    \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][lamina]" id="lote_' + i + '_lamina"  placeholder="lamina" readonly></td>\n\
+                                                  \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text" name="lote[' + i + '][sublamina]" id="lote_' + i + '_sublamina"  placeholder="sublamina" readonly></td>\n\
                                                    \n\<td class="col-xs-1"><a href=javascript:eliminar("' + i + '")><i class="glyphicon glyphicon-remove" style="color: red"></i></td></a> \n\
 \n\                                                  </tr>'
             );
 
     $('#tbody-seleccion-partidas').append('<tr id="' + i + '">\n\
-\n\                                                 \n\<td class="col-xs-2"> <input type="text" class="form-control modificar" required name="plano[' + i + ']" value="" id="plano_' + i + '"  placeholder="Plano" readonly/></td>\n\
-                                                    \n\<td class="padre col-xs-3"> <input type="text" name="partida[' + i + ']" value="" required  validate="false" class="modificar form-control conflicto" id="partida_' + i + '"  onchange="repetidos(this);" placeholder="Ingrese la partida" readonly/>\n\
+\n\                                                 \n\<td class="col-xs-2"> <input type="text" class="form-control modificar anexado" required name="lote[' + i + '][nro_plano]" value="" id="lote_' + i + '_nro_plano"  placeholder="Plano" readonly/></td>\n\
+                                                    \n\<td class="padre col-xs-3"> <input type="text" name="lote[' + i + '][nro_partida]" value="" required  validate="false" class="anexado modificar form-control conflicto" id="lote_' + i + '_nro_partida"  onchange="repetidos(this);" placeholder="Ingrese la partida" readonly/>\n\
                                                     \n\<div class="error" style="display:none; color:red"></div></td>\n\
-\n\                                                 \n\<td class="col-xs-3"><div class="row col-xs-11"><input type="text" name="sup_terreno[' + i + ']" value="" required class="modificar form-control" readonly id="sup_terreno_' + i + '"  placeholder="Superficie del terreno"/></div><label class="col-xs-1">' + unidadMedida + '</label></td>\n\
-\n\                                                 \n\<td class="col-xs-3"><div class="row col-xs-11"><input type="text" value="" name="sup_edificada[' + i + ']" required class="modificar form-control" readonly id="sup_edif_' + i + '"  placeholder="Superficie edificada" /></div><label class="col-xs-1">' + unidadMedida + '</label></td>\n\
+\n\                                                 \n\<td class="col-xs-3"><div class="row col-xs-11"><input type="text" name="lote[' + i + '][sup_terreno]" value="" required class="anexado modificar form-control" readonly id="lote_' + i + '_sup_terreno"  placeholder="Superficie del terreno"/></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
+\n\                                                 \n\<td class="col-xs-3"><div class="row col-xs-11"><input type="text" value="" name="lote[' + i + '][sup_edificada]" required class="anexado modificar form-control" readonly id="lote_' + i + '_sup_edificada"  placeholder="Superficie edificada" /></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
 \n\                                                 \n\ \n\<td class="col-xs-1"><a href=javascript:eliminar("' + i + '")><i class="glyphicon glyphicon-remove" style="color: red"></i></td></a> \n\
                                                     \n\ <input type="hidden" name="imponible_id[' + i + ']" value="">\n\
 \n\                                                 \n\ <input type="hidden" name="catastro_id[' + i + ']" value="">\n\
@@ -535,13 +545,13 @@ function partidas_y_superficies(data) {
     $.each(data.existentes, function (i, value) {
         j++;
         $('#tbody-seleccion-partidas').append('<tr id="' + i + '">\n\
-                                                 \n\<td class="col-xs-2"><input type="text" name="lote['+i+'][nro_plano]" value="' + value.plano + '" required  id="plano_' + i + '" class="modificar form-control anexado" readonly/></td>\n\
-                                                    <td class="col-xs-3"> <input type="text" name="lote['+i+'][nro_partida]" value="' + value.partida + '" id="partida_' + i + '" required class="modificar form-control anexado" readonly /></td>\n\
-                                                            \n\<td class="col-xs-3"><div class="row col-xs-11"><input type="text" name="lote['+i+'][sup_terreno]" value="' + value.sup_terreno + '" id="sup_terreno_' + i + '" required class="modificar form-control" readonly /></div><label class="col-xs-1">' + unidadMedida + '</label></td>\n\
-\n\                                                         \n\ <td class="col-xs-3"><div class="row col-xs-11"><input type="text" name="lote['+i+'][sup_edificada]" value="' + value.sup_edif_total + '" id="sup_edif_total_' + i + '" required class="modificar form-control anexado" readonly /></div><label class="col-xs-1">' + unidadMedida + '</label></td>\n\
+                                                 \n\<td class="col-xs-2"><input type="text" name="lote[' + i + '][nro_plano]" value="' + value.plano + '" required  id="lote_' + i + '_nro_plano" class="modificar form-control anexado" readonly/></td>\n\
+                                                    <td class="col-xs-3"> <input type="text" name="lote[' + i + '][nro_partida]" value="' + value.partida + '" id="lote_' + i + '_nro_partida" required class="modificar form-control anexado" readonly /></td>\n\
+                                                            \n\<td class="col-xs-3"><div class="row col-xs-11"><input type="text" name="lote[' + i + '][sup_terreno]" value="' + value.sup_terreno + '" id="lote_' + i + '_sup_terreno" required class="modificar form-control" readonly /></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
+\n\                                                         \n\ <td class="col-xs-3"><div class="row col-xs-11"><input type="text" name="lote[' + i + '][sup_edificada]" value="' + value.sup_edif_total + '" id="lote_' + i + '_sup_edificada" required class="modificar form-control anexado" readonly /></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
                                                             \n\<td class="col-xs-1"><a href="javascript:eliminar(' + i + ')"><i class="glyphicon glyphicon-remove" style="color: red"></i></td></a> \n\
-\n\                                                         \n\ <input type="hidden" name="lote['+i+'][imponible_id]" value="' + value.clave + '">\n\
-\n\                                                         \n\ <input type="hidden" name="lote['+i+'][catastro_id]" value="' + value.catastro_id + '">\n\
+\n\                                                         \n\ <input type="hidden" name="lote[' + i + '][imponible_id]" value="' + value.clave + '">\n\
+\n\                                                         \n\ <input type="hidden" name="lote[' + i + '][catastro_id]" value="' + value.catastro_id + '">\n\
                                                     </tr>');
     });
 //    $.each(data.inexistentes, function (i, value) {
@@ -600,19 +610,22 @@ function getDistritos(numDpto, dato = '') {
         $.each(datos, function (i, value) {
             $('#distrito').append('<option value="' + value.div_di + '">' + value.distrito + '</option>');
         });
-
         $('#distrito').val(dato);
+        $('#gral_distrito').val(dato);
         $('#distrito_input').val(dato);
     });
 }
 
 function getLocalidades(dto, dato = '') {
     $.get(path + 'getLocalidades/' + dto, function (datos) {
+        
         $('#localidad').html('<option value="">Seleccione localidad..</option>');
         $.each(datos, function (i, value) {
+            console.log(value);
             $('#localidad').append('<option value="' + value.div_lo + '">' + value.localidad + '</option>');
-        });
+           });
         $('#localidad').val(dato);
+        $('#gral_localidad').val(dato);
         $('#localidad_input').val(dato);
     });
 }
@@ -696,7 +709,7 @@ function armarDatatable(url, datos) {
             {data: 'documento.tipo_doc', name: 'documento.tipo_doc', searchable: false},
             {data: 'nro_dpto', name: 'nro_dpto', "searchable": false},
             {data: 'nro_plano', name: 'nro_plano', searchable: false},
-            {data: 'nro_partida', name: 'nro_partida',searchable: false},
+            {data: 'nro_partida', name: 'nro_partida', searchable: false},
             {data: 'documento.fecha_registro', name: 'documento.fecha_registro', "searchable": false},
             {data: 'documento.estado.descripcion', name: 'documento.estado.descripcion'},
             {data: 'accion', name: 'accion', orderable: false, searchable: false}
@@ -757,7 +770,7 @@ function checkDatosInex() {
 
 
 function repetidos(partida) {
-    if (partida.value == '0') {
+    if (partida.value == '9999') {
         $(partida).removeClass('repetido').css('background', '#fff').css('border-color', '#d2d6de').parent('.padre').children('.error').hide();
         return false;
     }
@@ -793,7 +806,7 @@ function repetidaPartidaDb(partida) {
 
 $('#cancelar').click(function () {
     $('#formularioDocumento').hide();
-    $('#grupo_imagen').show();
+    $('.ocultar').show();
 })
 
 $('input').dblclick(function () {
@@ -801,13 +814,13 @@ $('input').dblclick(function () {
 })
 
 $('select').dblclick(function () {
-   $(this).attr('readonly', false).css('background', 'none').css('border', 'solid 1px #d2d6de')
+    $(this).attr('readonly', false).css('background', 'none').css('border', 'solid 1px #d2d6de')
 })
 
 
 
 $(document).on("dblclick", '.modificar', function () {
-
+    $(this).attr('readonly', false).css('background', 'none').css('border', 'solid 1px #d2d6de');
     if (datosModificados.indexOf($(this).attr('id')) === -1) {
         datosModificados.push($(this).attr('id'));
     }
@@ -815,8 +828,8 @@ $(document).on("dblclick", '.modificar', function () {
 })
 
 $('.select-modificar').change(function () {
+    $('#' + $(this).attr('id') + '_input').val($(this).val())
     if (datosModificados.indexOf($(this).attr('id') + '_input') === -1) {
-        $('#' + $(this).attr('id') + '_input').val($(this).val())
         datosModificados.push($(this).attr('id') + '_input');
         console.log(datosModificados);
     }
@@ -850,12 +863,12 @@ function eliminar_registro(id) {
 }
 
 
-$('#responsable').change(function () {
+$('#gral_responsable').change(function () {
     var responsable = $(this).val();
     if (!isNaN(responsable))
     {
         $.get(path + 'get_persona', {'dni': responsable}, function (dato) {
-            $('#responsable').val(dato.nombre_completo);
+            $('#gral_responsable').val(dato.nombre_completo);
         }, 'json').fail(function () {});
     }
 });
@@ -865,8 +878,8 @@ function agregar_antecedente() {
     $('#grupo_antecedente').append('<input type="number" placeholder="Nro plano antecedente" name="plano_ant[]" class="form-control" style="margin-bottom: 6%">');
 }
 
-function eliminar_carga(id){
-     swal({
+function eliminar_carga(id) {
+    swal({
         title: "Está seguro?",
         text: "Esta acción eliminará el documento seleccionado",
         type: "warning",
@@ -889,3 +902,17 @@ function eliminar_carga(id){
                 }, 'JSON');
             });
 }
+
+
+$(document).on('change', '.anexado', function () {
+    validate();
+})
+
+$('#gral_tipo_planta').change(function(){
+    if($(this).val()>3){
+        $('.unidad').text('Has');
+    }
+    else{
+        $('.unidad').text('m²');
+    }
+})

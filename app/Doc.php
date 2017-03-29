@@ -30,6 +30,26 @@ class Doc extends Eloquent {
         'latitud',
         'longitud'
     ];
+
+    public function update(array $attributes = [], array $options = []) {
+        $this->fill(array_filter($attributes));
+        //dd($this->getDirty());
+        if ($this->estado == '1') {
+            foreach ($this->getAttributes() as $key => $value) {
+                if($key!='imagen'){
+                $this->$key = str_replace("*", '', $value);}
+            }
+        } else {
+            foreach ($this->getDirty() as $key => $value) {
+                if ($key != 'estado') {
+                    $value = str_replace("*", '', $value);
+                    $this->$key = $value . "*";
+                }
+            }
+        }
+        parent::save();
+    }
+
     protected $binaries = ['imagen'];
 
     public function temporal() {
@@ -130,12 +150,14 @@ class Doc extends Eloquent {
     public static function getDocumentForValidation($id) {
         $doc = Doc::with(['temporal', 'antecedentes']);
         if (auth()->user()->isAdmin()) {
-            $doc->where('estado', '<>', 3)
-                    ->orWhere(function ($query) {
-                        $query->where('estado', '=', 3)
-                        ->whereNull('usuario_actual')
-                        ->orWhere('usuario_actual', '=', auth()->user()->getAuthIdentifier());
-                    });
+            $doc->Where(function ($query) {
+                $query->where('estado', '<>', 3)
+                        ->orWhere(function ($sql) {
+                            $sql->where('estado', '=', 3)
+                            ->whereNull('usuario_actual')
+                            ->orWhere('usuario_actual', '=', auth()->user()->getAuthIdentifier());
+                        });
+            });
         } else if (auth()->user()->isValidador()) {
             $doc->where('estado', '=', 2);
         } else if (auth()->user()->isCorrector()) {

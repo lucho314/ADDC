@@ -13,7 +13,7 @@
                         <div class="col-md-6">
                             <div class="form-group row">   <!--    posible_valor planta, Descripcion-->
                                 <label>Tipo planta:</label>
-                                <div class="col-md-11"> <select  name="gral[tipo_planta]" id="tipo_planta" class="form-control row">
+                                <div class="col-md-11"> <select  id="tipo_planta" class="form-control select-modificar row">
                                         @foreach($plantas as $pl)
                                         @if(isset($datosSAT))
                                         <option value="{{$pl->posible_valor}}" <?= ($documento->temporal[0]->tipo_planta === $pl->posible_valor) ? 'selected' : '' ?>> {{$pl->descripcion}}</option>
@@ -21,13 +21,15 @@
                                         <option value="{{$pl->posible_valor}}"> {{$pl->descripcion}}</option>
                                         @endif
                                         @endforeach
-                                    </select></div>
+                                    </select>
+                                </div>
+                                <input type="hidden" name="gral[tipo_planta]" id="tipo_planta_input">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group row">
                                 <label>Superficie según mensura:</label>
-                                <div class="col-md-11"><input class="form-control row" type="text"   value="0"  name="gral[sup_mensura]" id="sup_mensura" value="{{$documento->sup_mensura or ''}}"> </input></div><div class="row col-md-1"><label class="unidad">m2</label></div>
+                                <div class="col-md-11"><input class="form-control row" type="text"   value="0"  name="gral[sup_mensura]" id="gral_sup_mensura" value="{{$documento->sup_mensura or ''}}"> </input></div><div class="row col-md-1"><label class="unidad">m2</label></div>
                             </div>
                         </div>
                     </div>
@@ -35,17 +37,19 @@
                         <div class="col-md-6">
                             <div class="form-group row">
                                 <label>Superficie según título:</label>
-                                <div class="col-md-11"><input class="row form-control" type="text"  value="0"  name="gral[sup_titulo]" id="sup_titulo" value="{{$documento->sup_titulo or ''}}"> </input></div><div class="row col-md-1"><label class="unidad">m2</label></div>
+                                <div class="col-md-11"><input class="row form-control" type="text"  value="0"  name="gral[sup_titulo]" id="gral_sup_titulo" value="{{$documento->sup_titulo or ''}}"> </input></div><div class="row col-md-1"><label class="unidad">m2</label></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group row">
                                 <label>Exceso:</label>
-                                <div class="col-md-11"><input class="row form-control" type="text"  value="0000"  name="gral[exeso]" id="exeso"  value="{{$documento->exeso or ''}}"> </input></div><div class="row col-md-1"><label class="unidad">m2</label></div>
+                                <div class="col-md-11"><input class="row form-control" type="text"  value="0000"  name="gral[exeso]" id="gral_exeso"  value="{{$documento->exeso or ''}}"> </input></div><div class="row col-md-1"><label class="unidad">m2</label></div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-12  errores"></div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -67,6 +71,7 @@
 
                 </table>
                 <a class="btn btn-default btn-xs glyphicon glyphicon-plus" href="javascript:agregar_ubicacion()" style="float: right;margin-right: 1%;" id="agregar_partida"></a>
+                <div class="col-md-12  errores"></div>
             </div>
         </div>
     </div>
