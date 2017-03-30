@@ -11,6 +11,7 @@ use App\Vw_Partidas_Archivo;
 use DB;
 use App\Contenido;
 use App\Http\Requests\DocumentoFormRequest;
+use Adldap\Laravel\Facades\Adldap;
 
 class DocumentoController extends Controller {
 
@@ -91,7 +92,7 @@ class DocumentoController extends Controller {
     public function aceptarValidacion(Request $datos) {
         $doc = Doc::findOrFail($datos->gral['id']);
         $doc->update($datos->gral);
-        \App\Antecedente::Editar($doc,(empty($datos->plano_ant)?[]:$datos->plano_ant));
+        \App\Antecedente::Editar($doc, (empty($datos->plano_ant) ? [] : $datos->plano_ant));
         \App\TemporalCatastroSat::editar($datos->all());
         $this->cambiarEstado($datos->gral['estado'], $datos->gral['id'], $datos->user_derivar, $datos->gral['observacion']);
         return redirect('documento/validar/lista/0');
@@ -255,7 +256,7 @@ class DocumentoController extends Controller {
         } else {
             $unidadMedida = 'm2';
         }
-        return view('documento.view', compact('documento','objetos', 'plantas', 'min', 'unidadMedida', 'dptos', 'dtos', 'localidades', 'usuarios', 'incidencias', 'ubicacionFisica'));
+        return view('documento.view', compact('documento', 'objetos', 'plantas', 'min', 'unidadMedida', 'dptos', 'dtos', 'localidades', 'usuarios', 'incidencias', 'ubicacionFisica'));
     }
 
 //########################### FUNCIONES GETTERS USADAS EN AJAX ##########################################   
@@ -284,11 +285,13 @@ class DocumentoController extends Controller {
                 ->whereRaw("cast(plano as integer) between " . $datos->get('plano') . " and " . $datos->get('plano_hasta'))
                 ->get();
         $ubicacionFisica = \App\Contenido::buscar($datos->dpto, $datos->get('plano'));
+        $mesa = '\App\Mesa_' . $datos->tipo_doc;
+        $datos_mesa = $mesa::get($datos->dpto, $datos->get('plano'));
         $totalPlano = array_flip(range($datos->plano, $datos->plano_hasta));
         foreach ($planos as $plano) {
             unset($totalPlano[$plano->plano]);
         }
-        return ['existentes' => $planos, 'inexistentes' => array_flip($totalPlano), 'ubicacionFisica' => $ubicacionFisica];
+        return ['existentes' => $planos, 'inexistentes' => array_flip($totalPlano), 'ubicacionFisica' => $ubicacionFisica,'mesa'=>$datos_mesa];
     }
 
 //Select Departamento,codigo_de From Vw_Localidades where Codigo_Pr ='08'  Group by Departamento,codigo_de order by Codigo_De
@@ -467,7 +470,10 @@ class DocumentoController extends Controller {
     }
 
     public function Prueba() {
-        
+        /* $username='CB25907280';
+          $password='cb25907280';
+          Adldap::auth()->attempt($username, $password); */
+        return \App\Mesa_plano::get(1, 55395);
     }
 
     public function eliminarRegistro(Request $dato) {

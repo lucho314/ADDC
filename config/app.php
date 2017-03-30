@@ -159,6 +159,7 @@ return [
         Yajra\Datatables\DatatablesServiceProvider::class,
         Elibyy\TCPDF\ServiceProvider::class,
         'Lrgt\LaravelFormAjaxValidation\LaravelFormAjaxValidationServiceProvider',
+        Adldap\Laravel\AdldapServiceProvider::class
         
     ],
     /*
@@ -206,6 +207,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
-        'PDF' => Elibyy\TCPDF\Facades\TCPDF::class
+        'PDF' => Elibyy\TCPDF\Facades\TCPDF::class,
+        'Adldap' => Adldap\Laravel\Facades\Adldap::class
     ],
 ];

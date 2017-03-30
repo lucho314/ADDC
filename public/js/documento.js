@@ -3,6 +3,7 @@ var dpto = 0;
 var planoDesde = 0;
 var planoHasta = 0;
 var partida = 0;
+var tipo_doc=null;
 var partidasFallidas = null;
 var listaTotalPlanos = null;
 var datosModificados = [];
@@ -107,6 +108,12 @@ var nomeclatura = {
     '3': comprobarNomeclaturaPlano,
     '4': comprobarNomeclaturaFicha
 };
+
+var mesa = {
+    'ficha': setDatosMesaFicha,
+    'plano': setDatosMesaPlano
+};
+
 
 
 
@@ -282,7 +289,7 @@ function setPlano(array) {
     var nroPlanoDesde = planoDesde;
     var nroPlanoHasta = planoHasta;
     console.log(planoDesde, planoHasta);
-    getDatos();
+    getDatos(null,'plano');
     $('#gral_nro_plano').val(nroPlanoDesde);
     $('#gral_nro_plano_hasta').val(nroPlanoHasta);
     $('#gral_nro_dpto').val(dpto);
@@ -308,7 +315,7 @@ function setFicha(array) {
     $('#gral_fecha_registro').val(fechaRegistro);
     $('#gral_nro_partida').val(partida);
     $('#gral_grupo-objeto').hide();
-    getDatos();
+    getDatos(null,'ficha');
     
 
 }
@@ -418,11 +425,11 @@ $('#cancelar_partida').click(function () {
 
 
 
-function getDatos(partidas = null) {
+function getDatos(partidas = null,tipoDoc=null) {
     if (partida === 0)
         partidas = null;
     $.get(path + 'getDatos/',
-            {'dpto': dpto, 'plano': planoDesde, 'plano_hasta': planoHasta},
+            {'dpto': dpto, 'plano': planoDesde, 'plano_hasta': planoHasta,'tipo_doc':tipoDoc},
             function (data) {
                 if (data.existentes.length > 0) {
                     $('#gral_nro_partida').val(data.existentes[0].partida);
@@ -443,6 +450,7 @@ function getDatos(partidas = null) {
                     getDeptos(data.existentes[0].div_de);
                     getDistritos(data.existentes[0].div_de, data.existentes[0].div_di);
                     getLocalidades(data.existentes[0].div_di, data.existentes[0].div_lo);
+                    mesa[tipoDoc](data.mesa);
                    initialize();
                 } else {
                     $('form input:text').attr('placeholder',"sin datos");
@@ -916,3 +924,14 @@ $('#gral_tipo_planta').change(function(){
         $('.unidad').text('m²');
     }
 })
+
+
+function setDatosMesaFicha(datos){
+    console.log('ficha:',datos)
+}
+
+
+function setDatosMesaPlano(datos){
+    console.log('plano:',datos);
+    $('#gral_fecha_registro').val(datos.Fecha_Registro);
+}
