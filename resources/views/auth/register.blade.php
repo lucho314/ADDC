@@ -10,46 +10,25 @@
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('cuit') ? ' has-error' : '' }}">
-                            <label for="name" class="col-md-4 control-label">CUIT</label>
+                            <label for="name" class="col-md-4 control-label">Empleado</label>
 
                             <div class="col-md-6">
-                                <input id="cuit" type="text" class="form-control" name="cuit" value="{{ old('cuit') }}" required autofocus>
-
-                                @if ($errors->has('name'))
-                                <span class="help-block">
-                                    <strong>{{ $errors->first('cuit') }}</strong>
-                                </span>
-                                @endif
+                                <select name="dn" class="js-example-basic-single form-control" id="empleado">
+                                    <option value="">Seleccione Empleado</option>
+                               @foreach($usuarios as $usr)
+                               <option value="{{$usr->dn}}">{{$usr->displayname[0]}}</option>
+                               @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="name" class="col-md-4 control-label">Nombre</label>
+                            <label for="name" class="col-md-4 control-label">Usuario</label>
 
                             <div class="col-md-6">
-                                <input id="nombre" type="text" class="form-control" disabled="true">
+                                <input id="usuario" type="text" class="form-control" disabled="true">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="name" class="col-md-4 control-label">Apellido</label>
-
-                            <div class="col-md-6">
-                                <input id="apellido" type="text" class="form-control" disabled="true">
-                            </div>
-                        </div>
-                        <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-                            <label for="name" class="col-md-4 control-label">Nombre Usuario</label>
-
-                            <div class="col-md-6">
-                                <input id="name" type="text" class="form-control" name="nom_usuario" value="{{ old('nom_usuario') }}" required autofocus>
-
-                                @if ($errors->has('name'))
-                                <span class="help-block">
-                                    <strong>{{ $errors->first('nom_usuario') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
-
+                       
                         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                             <label for="email" class="col-md-4 control-label">E-Mail Address</label>
 
@@ -64,29 +43,8 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <label for="password" class="col-md-4 control-label">Password</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password" required>
-
-                                @if ($errors->has('password'))
-                                <span class="help-block">
-                                    <strong>{{ $errors->first('password') }}</strong>
-                                </span>
-                                @endif
-                            </div>
-                        </div>
-
                         <div class="form-group">
-                            <label for="password-confirm" class="col-md-4 control-label">Confirm Password</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="password-confirm" class="col-md-4 control-label">Roles</label>
+                            <label for="Roles" class="col-md-4 control-label">Roles</label>
                             <div class="checkbox col-md-6">
                                 @foreach($roles as $id=>$nombre)
                                 <label>
@@ -97,7 +55,6 @@
                                 @endforeach
                             </div>
                         </div>
-                        <input type="hidden" id="persona_id" name="persona_id">
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">
@@ -115,12 +72,12 @@
 
 @section('script')
 <script>
-    $('#cuit').change(function () {
-        $.get('/getNyA/' + $(this).val(), function (NyA) {
-            $('#nombre').val(NyA.apellido_y_nombre_padre);
-            $('#apellido').val(NyA.razon_social);
-            $('#persona_id').val(NyA.persona_id);
-        })
-    })
+    $('#empleado').change(function () {
+        var dn=$(this).val();
+        $.get('/usuario/get_usuario_correo',{'dn':dn},function(data){
+                $('#usuario').val(data.cn[0]);
+                $('#email').val(data.mail[0]);
+        });
+    });
 </script>
 @endsection

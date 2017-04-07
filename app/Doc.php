@@ -17,6 +17,10 @@ class Doc extends Eloquent {
         'nro_plano_hasta',
         'sup_mensura',
         'sup_titulo',
+        'gestor',
+        'perito',
+        'corrector',
+        'certificado',
         'exeso',
         'nro_matricula',
         'estado',
@@ -26,18 +30,22 @@ class Doc extends Eloquent {
         'usuario_actual',
         'responsable',
         'objeto_id',
+        'fecha_registro_visible'
+        ,
         //  'linderos',
         'latitud',
         'longitud'
     ];
+
 
     public function update(array $attributes = [], array $options = []) {
         $this->fill(array_filter($attributes));
         //dd($this->getDirty());
         if ($this->estado == '1') {
             foreach ($this->getAttributes() as $key => $value) {
-                if($key!='imagen'){
-                $this->$key = str_replace("*", '', $value);}
+                if ($key != 'imagen') {
+                    $this->$key = str_replace("*", '', $value);
+                }
             }
         } else {
             foreach ($this->getDirty() as $key => $value) {
@@ -64,6 +72,10 @@ class Doc extends Eloquent {
 
         $this->attributes['responsable'] = strtoupper($value);
     }
+     public function Tipo() {
+        return $this->belongsTo('App\TipoDoc', 'tipo_doc');
+    }
+    
 
 //
 //    public function setLinderosAttribute($value) {
@@ -127,7 +139,7 @@ class Doc extends Eloquent {
     }
 
     public static function getListaPendientes($mios = false) {
-        $doc = Doc::select('id', 'nro_dpto', 'nro_plano', 'nro_plano_hasta', 'created_at', 'usuario_ultima_mod', 'tipo_doc');
+        $doc = Doc::with('tipo')->select('docs.*');
 
         if (auth()->user()->isValidador() || auth()->user()->isAdmin()) {
 

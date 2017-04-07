@@ -35,6 +35,7 @@ class DocumentoController extends Controller {
     }
 
     public function store(DocumentoFormRequest $datos) {
+        //dd ($datos->all());
         $doc = Doc::create($datos->gral);
         if ($datos->estado === '6') {
             $this->cambiarEstado(6, $doc->id, null, 'Carga del documento en falta');
@@ -285,8 +286,7 @@ class DocumentoController extends Controller {
                 ->whereRaw("cast(plano as integer) between " . $datos->get('plano') . " and " . $datos->get('plano_hasta'))
                 ->get();
         $ubicacionFisica = \App\Contenido::buscar($datos->dpto, $datos->get('plano'));
-        $mesa = '\App\Mesa_' . $datos->tipo_doc;
-        $datos_mesa = $mesa::get($datos->dpto, $datos->get('plano'));
+        $datos_mesa = ($datos->tipo_doc=='plano')? \App\Mesa_plano::get($datos->dpto, $datos->get('plano')):[];
         $totalPlano = array_flip(range($datos->plano, $datos->plano_hasta));
         foreach ($planos as $plano) {
             unset($totalPlano[$plano->plano]);
@@ -331,12 +331,15 @@ class DocumentoController extends Controller {
     public function buscarPlano(Request $buscar) {
         $nroPlano = $buscar->get('nroPlano');
         $nroDpto = $buscar->get('nroDpto');
-        $documentos = Doc::with(['temporal', 'estado'])->where('nro_dpto', '=', $nroDpto)
-                ->where('nro_plano', '<=', $nroPlano)
-                ->where('nro_plano_hasta', '>=', $nroPlano)
-                ->with(['temporal' => function($query)use($nroPlano) {
-                $query->where('nro_plano', '=', $nroPlano);
-            }]);
+        $documentos = Doc::with(['temporal', 'estado','tipo']);
+             if ($nroDpto!==''){
+                $documentos->where('nro_dpto', '=', $nroDpto);
+             }
+                $documentos->where('nro_plano', '<=', $nroPlano)
+                            ->where('nro_plano_hasta', '>=', $nroPlano)
+                            ->with(['temporal' => function($query)use($nroPlano) {
+                                    $query->where('nro_plano', '=', $nroPlano);
+                                }]);
 
         return $this->creaDatatableEloquentBusqueda($documentos, $nroPlano);
     }
@@ -344,19 +347,22 @@ class DocumentoController extends Controller {
     public function buscarPartida(Request $buscar) {
         $nroPartida = $buscar->get('nroPartida');
         $nroDpto = $buscar->get('nroDpto');
-        $documentos = \App\TemporalCatastroSat::with('documento', 'documento.estado')
-                ->select(['temporal_catastro_sats.*', 'docs.tipo_doc', 'docs.fecha_registro'])
-                ->where('temporal_catastro_sats.nro_dpto', "=", $nroDpto)
-                ->where('temporal_catastro_sats.nro_partida', "=", $nroPartida)
-                ->where('temporal_catastro_sats.estado', '=', 1);
+        $documentos = \App\TemporalCatastroSat::with('documento.estado','documento.tipo');
+//                ->select(['temporal_catastro_sats.*', 'docs.tipo_doc', 'docs.fecha_registro'])
+                if ($nroDpto!==''){
+                    $documentos->where('temporal_catastro_sats.nro_dpto', "=", $nroDpto);
+                }
+                    $documentos->where('temporal_catastro_sats.nro_partida', "=", $nroPartida)
+                            ->where('temporal_catastro_sats.estado', '=', 1);
+       // dd($documentos);
         return $this->creaDatatableEloquentBusqueda($documentos);
     }
 
     public function buscarMatricula(Request $buscar) {
         $nroMatricula = $buscar->get('nroMatricula');
         $nroDpto = $buscar->get('nroDpto');
-        $documentos = \App\TemporalCatastroSat::with('documento', 'documento.estado')
-                ->select(['temporal_catastro_sats.*', 'docs.tipo_doc', 'docs.fecha_registro'])
+        $documentos = \App\TemporalCatastroSat::with(['documento.estado','documento.tipo'])
+               ->select(['temporal_catastro_sats.*'])
                 ->where('temporal_catastro_sats.nro_dpto', "=", $nroDpto)
                 ->where('temporal_catastro_sats.nro_matricula', "=", $nroMatricula)
                 ->where('temporal_catastro_sats.estado', '=', 1);
@@ -364,11 +370,21 @@ class DocumentoController extends Controller {
         return $this->creaDatatableEloquentBusqueda($documentos);
     }
 
+    public function buscarCertificado(Request $buscar) {
+
+        $nroCert = $buscar->get('nroCertificado');
+
+        $documentos = Doc::with('temporal','estado','tipo')
+                    ->where('certificado','=', $nroCert);
+
+        return $this->creaDatatableEloquentBusqueda($documentos);
+    }
+    
     public function buscarUbicacion(Request $buscar) {
-        $todos = array_filter(array_slice($buscar->all(), 0, 7));
+         $todos = array_filter(array_slice($buscar->all(), 0, 7));
 //unset($todos['departamento'], $todos['start'], $todos['columns'], $todos['search'], $todos['length'], $todos['order'], $todos['_'], $todos['draw']);
-        $documentos = \App\TemporalCatastroSat::with('documento', 'documento.estado')
-                ->select(['temporal_catastro_sats.*', 'docs.tipo_doc', 'docs.fecha_registro']);
+        $documentos = \App\TemporalCatastroSat::with('documento.estado','documento.tipo')
+                ->select('temporal_catastro_sats.*');
         /* $documentos = DB::table('tbl_catastros')
           ->join('documento', 'documento.catastro_id', '=', 'tbl_catastros.catastro_id')
           ->select(['documento.id', 'documento.tipo_doc', 'documento.nro_dpto', 'documento.nro_plano', 'documento.nro_partida', 'documento.fecha_registro']);
@@ -379,25 +395,18 @@ class DocumentoController extends Controller {
         return $this->creaDatatableEloquentBusqueda($documentos);
     }
 
-    public function buscarResponsable(Request $buscar) {
-        $todos = array_filter(array_slice($buscar->all(), 0, 4));
-//dd($todos);
-//unset($todos['start'], $todos['columns'], $todos['search'], $todos['length'], $todos['order'], $todos['_'], $todos['draw']);
-        $documentos = DB::table('temporal_catastro_sats')
-                ->leftJoin('tbl_ocupantes', 'tbl_ocupantes.clave_imponible', '=', 'temporal_catastro_sats.imponible_id')
-                ->leftJoin('tbl_personas p2', 'p2.persona_id', '=', 'tbl_ocupantes.persona_id')
-                ->leftJoin('docs d', 'd.id', '=', 'temporal_catastro_sats.doc_id')
-                ->distinct()
-                ->select(['temporal_catastro_sats.id', 'd.tipo_doc', 'temporal_catastro_sats.nro_dpto', 'temporal_catastro_sats.nro_plano', 'temporal_catastro_sats.nro_partida', 'd.fecha_registro'])
-                ->whereNull('tbl_ocupantes.fecha_desocupacion');
+    public function buscarFecha(Request $buscar) {
+        $todos = array_filter(array_slice($buscar->all(), 0,2));
+        $documentos = Doc::with('temporal','estado','tipo');
         foreach ($todos as $key => $value) {
-            $documentos->where('p2.' . $key, 'LIKE', "%$value%");
+            $documentos->where("$key", '=', "$value");
         }
-        return $this->creaDatatableQueryBuilderBusqueda($documentos);
-    }
+        return $this->creaDatatableEloquentBusqueda($documentos);
+     }
 
     private function creaDatatableEloquentBusqueda($documentos, $plano = false) {
-        $datatable = Datatables::eloquent($documentos)
+        $datatable = Datatables::eloquent($documentos)  
+                
                 ->addColumn('accion', function ($documentos)use($plano) {
                     if (!isset($documentos->documento)) {
                         if ($documentos->estado == '6')
@@ -407,13 +416,19 @@ class DocumentoController extends Controller {
                     return '<a href="/documento/view/' . $documentos->documento->id . '" target="_blank" class="btn btn-xs btn-info"> Ver imagen</a>';
                 })
                 ->editColumn('fecha_registro', function ($documentos) {
-            return $documentos->fecha_registro ? with(new Carbon($documentos->fecha_registro))->format('d/m/Y') : '';
-        });
+                    return $documentos->fecha_registro ? with(new Carbon($documentos->fecha_registro))->format('d/m/Y') : '';
+                });
         if ($plano) {
             $datatable->editColumn('nro_plano', function ($documentos)use($plano) {
                 return $documentos->nro_plano = $plano;
             });
-        };
+        }
+        $datatable ->filterColumn('fecha_registro', function($query, $keyword) {
+                            
+                             $query->whereRaw("TO_CHAR(fecha_registro, 'DD/MM/YYYY')  like ?", ["%$keyword%"]);
+
+                        });
+        
         return $datatable->make(true);
     }
 
@@ -435,6 +450,7 @@ class DocumentoController extends Controller {
                             $a = strtoupper($keyword);
                             $query->whereRaw("UPPER(documento.tipo_doc) like ?", ["%{$a}%"]);
                         })
+                        
                         ->make(true);
     }
 
@@ -469,11 +485,30 @@ class DocumentoController extends Controller {
         return \App\Titulares::with('personas')->get();
     }
 
-    public function Prueba() {
-        /* $username='CB25907280';
-          $password='cb25907280';
-          Adldap::auth()->attempt($username, $password); */
-        return \App\Mesa_plano::get(1, 55395);
+    public function Prueba(Request $busqueda) {
+         $username='CG35442103';
+          $password='CG35442103';
+         dd(Adldap::auth()->attempt($username, $password)); 
+        //return \App\Mesa_plano::get(1, 55395);
+         $a=  Adldap::search()->Where('description','contains','catastro')/*
+                            ->orWhere('description','=','Catastro')*/
+//                 ->orWhere('givenname', '=', "$busqueda->q")
+//                              ->orWhere('cn','=',"$busqueda->q")
+                               ->get();
+    // dd($a);
+    foreach($a as $usr){
+        echo "------------------------------------------------------------";
+        
+        foreach ($usr->getAttributes() as $atr=>$value){
+           
+                   echo  $atr.":".$value[0]."<br>";
+        }
+        echo "------------------------------------------------------------";
+    }
+   
+   
+      // phpinfo();
+        
     }
 
     public function eliminarRegistro(Request $dato) {
@@ -508,4 +543,8 @@ class DocumentoController extends Controller {
         }
     }
 
+    
+    public function getDatosCertificado(Request $dato){
+        return \App\Mesa_ficha::get($dato->dpto, $dato->plano,$dato->certificado,$dato->fecha_registro);
+    }
 }

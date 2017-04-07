@@ -14,8 +14,7 @@
         <link rel="stylesheet" href="{{asset('css/font-awesome.css')}}">
         <!-- Theme style -->
         <link rel="stylesheet" href="{{asset('css/AdminLTE.min.css')}}">
-        <link rel="stylesheet" href="{{asset('css/documento.css')}}">
-        <!-- AdminLTE Skins. Choose a skin from the css/skins
+                <!-- AdminLTE Skins. Choose a skin from the css/skins
              folder instead of downloading all of them to reduce the load. -->    
 
 
@@ -29,6 +28,8 @@
         <link rel="stylesheet" href="{{asset('css/buttons.dataTables.min.css')}}">
         <link rel="stylesheet" href="{{asset('css/sweetalert.css')}}">
 
+        <link href="/css/select2.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="{{asset('css/documento.css')}}">
 
     </head>
     <body class="hold-transition skin-blue sidebar-mini {{$min or ''}}">                
@@ -37,7 +38,7 @@
             <header class="main-header">                    
 
                 <!-- Logo -->
-                <a h                        ref="index2.html" class="logo">
+                <a href="index2.html" class="logo">
                     <!-- mini logo fo                        r sidebar mini 50x50 pixels -->
                     <span class="logo-mini"><b>AD</b>DC</span>
                     <!-- logo for regular state and mobile devices -->
@@ -106,7 +107,7 @@
                                     </a>
                                 </li>
                                 @endif
-                                  @if(auth()->user()->hasRoles(['carga']))
+                                @if(auth()->user()->hasRoles(['carga']))
                                 <li>
                                     <a href="{{URL::action('DocumentoController@viewListaDocumentosCargados')}}">
                                         <i class="fa fa-circle-o"></i> Documentos cargados
@@ -260,6 +261,12 @@
     <script src="{{asset('js/checks.js')}}"></script>
     <script src="{{asset('js/documento.js')}}"></script>
     <script src="{{asset('js/caja.js')}}"></script>
+    <!-- Select2---->
+    <script src="/js/select2.min.js"></script>
+    <script type="text/javascript">
+       $(document).ready(function () {
+            $(".js-example-basic-single").select2(); });
+    </script>
 
     @yield('script')
 </body>

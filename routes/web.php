@@ -21,6 +21,8 @@ Route::get('/', function () {
 });
 
 
+Route::get('usuario/get_usuario_correo', 'UsuarioController@getUsuarioCorreo');
+Route::get('documento/datos_certificado', 'DocumentoController@getDatosCertificado');
 Route::get('documento/eliminar', 'DocumentoController@eliminar');
 Route::get('documento/carga/lista/', 'DocumentoController@viewListaDocumentosCargados');
 Route::get('caja/eliminar', 'CajaController@eliminar');
@@ -44,11 +46,12 @@ Route::get('documento/checkDatosInex/{nro}/{i}/{f}', 'DocumentoController@checkD
 Route::get('documento/getDatos/', 'DocumentoController@getDatos');
 Route::get('documento/checkPartida/', 'DocumentoController@checkPartida');
 Route::get('documento/checkDuplicados/{dto}/{desde}/{hasta}', 'DocumentoController@checkDuplicados');
-Route::get('documento/buscarResponsable/', 'DocumentoController@buscarResponsable');
+Route::get('documento/buscarFecha/', 'DocumentoController@buscarFecha');
 Route::get('documento/buscarUbicacion/', 'DocumentoController@buscarUbicacion');
 Route::get('documento/buscarMatricula/', 'DocumentoController@buscarMatricula');
 Route::get('documento/buscarPlano/', 'DocumentoController@buscarPlano');
 Route::get('documento/buscarPartida/', 'DocumentoController@buscarPartida');
+Route::get('documento/buscarCertificado/', 'DocumentoController@buscarCertificado');
 Route::resource('documento', 'DocumentoController');
 Route::resource('caja', 'CajaController');
 Route::get('usuario/micuenta/{id}', 'UsuarioController@micuenta');
@@ -67,7 +70,7 @@ Route::get('documento/cargarPlanosPartidas/{dpto}/{planoDesde}/{planohasta}', 'D
 Route::get('documento/getLocalidades/{dto}', 'DocumentoController@getLocalidades');
 Route::get('documento/getDtos/{dpto}', 'DocumentoController@getDtos');
 
-Route::get('getNyA/{cuit}', 'Auth\RegisterController@getNyA');
+
 Auth::routes();
 
 

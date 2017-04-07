@@ -33,7 +33,7 @@
             "serverSide": true,
             "ajax": "{{URL::action('DocumentoController@getListaDocumentos',['mio'=>$mio])}}",
             "columns": [
-                {data: 'tipo_doc', name: 'docs.tipo_doc'},
+                {data: 'tipo.descripcion', name: 'tipo.descripcion'},
                 {data: 'nro_dpto', name: 'docs.nro_dpto', "searchable": false},
                 {data: 'nro_plano', name: 'docs.nro_plano'},
                 {data: 'nro_plano_hasta', name: 'docs.nro_plano_hasta'},

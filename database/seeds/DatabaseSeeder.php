@@ -13,6 +13,8 @@ class DatabaseSeeder extends Seeder {
         $this->call(carga_objeto_doc::class);
         $this->call(carga_estados_doc::class);
         $this->call(carga_sectores::class);
+        $this->call(carga_tipo_documento::class);
+        
     }
 
 }

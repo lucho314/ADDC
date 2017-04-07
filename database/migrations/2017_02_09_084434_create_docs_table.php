@@ -14,12 +14,13 @@ class CreateDocsTable extends Migration {
     public function up() {
         Schema::create('docs', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('tipo_doc');
+            $table->integer('tipo_doc');
             $table->string('nro_dpto');
             $table->integer('nro_plano');
             $table->integer('nro_plano_hasta')->nullable();
             $table->integer('nro_matricula')->nullable();
             $table->date('fecha_registro')->nullable();
+            $table->boolean('fecha_registro_visible')->default('0');
             $table->string('sup_mensura')->nullable();
             $table->string('sup_titulo')->nullable();
             $table->string('exeso')->nullable();
@@ -27,7 +28,11 @@ class CreateDocsTable extends Migration {
             $table->string('longitud')->nullable();
             $table->string('responsable')->nullable();
             $table->integer('objeto_id')->nullable();
-          //  $table->longText('linderos')->nullable();
+            $table->integer('certificado')->nullable();
+            $table->string('perito')->nullable();
+            $table->string('gestor')->nullable();
+            $table->string('corrector')->nullable();
+            //  $table->longText('linderos')->nullable();
             $table->boolean('bis')->default('0');
             $table->string('usuario_alta');
             $table->string('usuario_ultima_mod');
@@ -51,6 +56,5 @@ class CreateDocsTable extends Migration {
     public function down() {
         Schema::dropIfExists('docs');
     }
-
 
 }

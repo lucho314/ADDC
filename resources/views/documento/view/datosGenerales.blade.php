@@ -4,86 +4,112 @@
             <div class="col-md-8 col-md-offset-1">
 
                 <div  id="datosGenerales">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro Departamento:</label>
                             <input class="form-control" type="text"name="nro_dpto" disabled required="required" value="{{$documento->nro_dpto or old('nidombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano desde:</label>
                             <input class="form-control" type="text"  name="nro_plano" disabled required="required" value="{{$documento->nro_plano or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano hasta:</label>
                             <input class="form-control" type="text"  name="nro_plano_hasta" disabled required="required" value="{{$documento->nro_plano_hasta or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Tipo de documento:</label>
                             <select class="form-control" name="tipo_doc" disabled>
                                 @if(isset($documento->fecha_registro))
-                                <option <?= ($documento->tipo_doc === 'Plano de mensura') ? 'selected' : ''; ?> >Plano de mensura</option>
-                                <option <?= ($documento->tipo_doc === 'Ficha de transferencia') ? 'selected' : ''; ?> >Ficha de transferencia</option>
+                                <option <?= ($documento->tipo_doc === '1') ? 'selected' : ''; ?> >Plano de mensura</option>
+                                <option <?= ($documento->tipo_doc === '2') ? 'selected' : ''; ?> >Ficha de transferencia</option>
                                 @else
-                                <option>Plano de mensura</option>
-                                <option>Ficha de transferencia</option>
+                                <option value="1">Plano de mensura</option>
+                                <option value="2">Ficha de transferencia</option>
                                 @endif
                             </select>
 
                         </div> 
                     </div>
-                    <div class="col-md-4">
+                    @if($documento->tipo_doc == 'Ficha de transferencia')
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Certificado</label>
+                            <input class="form-control modificar" type="text"  name="gral['certificado]" disabled value="{{$documento->certificado or old('certificado')}}" placeholder="Certificado.."> </input>
+                        </div>
+                    </div>
+                    @endif
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Fecha de registro:</label>
                             @if(isset($documento->fecha_registro))
-                            <input class="form-control" type="date" name="fecha_registro"  disabled value="{{$documento->fecha_registro->toDateString()}}" placeholder="Codigo de producto.."> </input>
+                            <div class="col-md-11 row"><input class="form-control" disabled type="date"  name="gral[fecha_registro]"  value="{{$documento->fecha_registro->toDateString()}}"  id="gral_fecha_registro"></div>
+                            <div class="col-md-1" style="margin-top: 3%"><input  disabled type="checkbox" <?= ($documento->fecha_registro_visible==='1')? 'checked':'' ?> title="Fecha visible" name="gral[fecha_registro_visible]"   id="gral_fecha_registro_visible"></div>
                             @else
-                            <input class="form-control" type="date" name="fecha_registro"   disabled>
+                            <div class="col-md-11 row"><input class="form-control" type="date" disabled  name="gral[fecha_registro]"   id="gral_fecha_registro"></div>
+                            <div class="col-md-1" style="margin-top: 3%"><input type="checkbox" disabled value='1' title="Fecha visible" name="gral[fecha_registro_visible]"   id="gral_fecha_registro_visible"></div>
                             @endif
+                            
 
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Año de inscripción</label>
                             <input class="form-control modificar" type="text"  name="inscripcion" disabled value="{{$documento->temporal[0]->inscripcion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Matrícula</label>
                             <input class="form-control modificar" type="text"  name="nro_matricula"  disabled  value="{{$documento->temporal[0]->nro_matricula or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Responsable</label>
                             <input class="form-control" type="text"  disabled   id="responsable" value="{{$documento->responsable or ''}}"> </input>
                         </div>
                     </div>
-
-                    <div class="col-md-4" id="grupo-objeto">
+                    @if($documento->tipo_doc == 'Plano de mensura')
+                    <div class="col-md-3" id="grupo-objeto">
                         <div class="form-group">
                             <label>Objeto</label>
                             <select class="form-control"  name="gral[objeto_id]" disabled>
                                 @foreach($objetos as $obj)
                                 <option value="{{$obj->id}}" <?= ($documento->objeto_id == $obj->id) ? 'selected' : '' ?>>{{$obj->descripcion}}</option>
                                 @endforeach
-
-
                             </select>
                         </div>
                     </div>
+                    @endif
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Perito</label>
+                            <input class="form-control" type="text" disabled name="gral[perito]" value="{{$documento->perito or old('perito')}}" placeholder="Perito..."> </input>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Gestor</label>
+                            <input class="form-control" type="text" disabled name="gral[gestor]" value="{{$documento->gestor or old('gestor')}}" placeholder="Gestor.."> </input>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Corrector</label>
+                            <input class="form-control" type="text" disabled name="gral[corrector]" value="{{$documento->corrector or old('corrector')}}" placeholder="Corrector.."> </input>
+                        </div>
+                    </div>  
                 </div>
-
-
             </div>
             <div class="col-md-2">
                 <div class="form-group">

@@ -3,7 +3,7 @@ var dpto = 0;
 var planoDesde = 0;
 var planoHasta = 0;
 var partida = 0;
-var tipo_doc=null;
+var tipo_doc = null;
 var partidasFallidas = null;
 var listaTotalPlanos = null;
 var datosModificados = [];
@@ -110,7 +110,7 @@ var nomeclatura = {
 };
 
 var mesa = {
-    'ficha': setDatosMesaFicha,
+    'ficha': 0,
     'plano': setDatosMesaPlano
 };
 
@@ -120,8 +120,8 @@ var mesa = {
 
 $('#imagen').change(function (event) {
     $('.ocultar').hide();
-    var nombre = $(this).val();           
-    var arrayNombre = nombre.split('-');//10-456pl-4564p
+    var nombre = $(this).val();
+    var arrayNombre = nombre.split('-');//10-456pl-4564p.pdf
     var longitud = arrayNombre.length; //3 si es plano y 4 si es ficha de lo contrario nomeclatura error.
     $('#biss').val(0);
     if (longitud > 4 || longitud < 3) {
@@ -135,6 +135,11 @@ $('#imagen').change(function (event) {
         arrayNombre[2] += '.pdf';
         longitud = 3;
         $('#biss').val(1);
+    }
+    if (longitud === 3 && arrayNombre[2].substr(-6, 2) !== 'P.')
+    {
+        console.log(arrayNombre[2].substr(-6, 2));
+        longitud = 4;
     }
     if (!nomeclatura[longitud](arrayNombre))
     {
@@ -189,11 +194,18 @@ function comprobarNomeclaturaFicha(nomenclatura) {
     dpto = nomenclatura[0].substring(nomenclatura[0].length - 2);
     var plano = nomenclatura[1];
     var part = nomenclatura[2];
-    var fecha = nomenclatura[3];
-    var validaFecha = ValidaFecha(fecha);
+    if (typeof nomenclatura[3] !== "undefined") {
+        var fecha = nomenclatura[3];
+        var validaFecha = ValidaFecha(fecha);
+    } else {
+        validaFecha = true;
+    }
+
+
     var validaDpto = comprobarDpto(dpto);
     var validaPlano = comprobarPlano(plano, true);
     var validapartida = comprobarPartida(part);
+    console.log('plano:', validaPlano, 'dpto:', validaDpto, 'partida:', validapartida, 'fecha:', validaFecha);
     if (validaFecha && validaDpto && validaPlano && validapartida)
     {
         //nomenclatura=[dpto,plano,partida,fecha];
@@ -219,13 +231,24 @@ function comprobarDpto(dpto) {
 
 
 function comprobarPartida(part) {
-    var tamPartida = part.length;
-    partida = part.substring(0, tamPartida - 1);
-    if (!isNaN(partida) && partida !== "") {
-        var p = part.substring(tamPartida - 1);
-        if (p === 'P')
-            return true;
+    
+    var tam=part.length;
+    if (part.substr(-1) === 'P') {
+        
+        partida=part.substring(0,tam-1);
+        if (!isNaN(partida) && partida !== "") {
+
+            return true
+        }
     }
+    if (part.substr(-5) === 'P.pdf') {
+        partida=part.substring(0,tam-5);
+        if (!isNaN(partida) && partida !== "") {
+
+            return true
+        }
+    }
+
     return false;
 }
 
@@ -289,11 +312,13 @@ function setPlano(array) {
     var nroPlanoDesde = planoDesde;
     var nroPlanoHasta = planoHasta;
     console.log(planoDesde, planoHasta);
-    getDatos(null,'plano');
+    getDatos(null, 'plano');
     $('#gral_nro_plano').val(nroPlanoDesde);
     $('#gral_nro_plano_hasta').val(nroPlanoHasta);
     $('#gral_nro_dpto').val(dpto);
-    $('#gral_tipo_doc').val('Plano de mensura');
+    $('#gral_tipo_doc').val('1');
+    $('#grupo_certificado').hide();
+    $('#grupo_objeto').show();
     $('.partida').hide();
 
     //checkDatosInex();
@@ -304,19 +329,25 @@ function setFicha(array) {
     dpto = extraeDpto(array[0]);
     var nroPlano = array[1];
     var nroPartida = array[2];
+    observarFicha();
+    if (typeof array[3] !== "undefined") {
     var fechaRegistro = formatearFecha(array[3]);
+        $('#gral_fecha_registro').val(fechaRegistro).change();
+}
     nroPlano = nroPlano.substring(nroPlano.length - 2, 0); //le restamos al tamaño total 2 para obtener el num de plano eje: 14574pl->14574
     partida = nroPartida.substring(nroPartida.length - 1, 0);
+   
     $('.partida').show();
     $('#gral_nro_plano').val(planoDesde);
     $('#gral_nro_plano_hasta').val(planoHasta);
     $('#gral_nro_dpto').val(dpto);
-    $('#gral_tipo_doc').val('Ficha de transferencia');
-    $('#gral_fecha_registro').val(fechaRegistro);
+    $('#gral_tipo_doc').val('2');
+
     $('#gral_nro_partida').val(partida);
-    $('#gral_grupo-objeto').hide();
-    getDatos(null,'ficha');
-    
+    $('#grupo_certificado').show();
+    $('#grupo_objeto').hide();
+    getDatos(null, 'ficha');
+
 
 }
 
@@ -425,12 +456,13 @@ $('#cancelar_partida').click(function () {
 
 
 
-function getDatos(partidas = null,tipoDoc=null) {
+function getDatos(partidas = null, tipoDoc = null) {
     if (partida === 0)
         partidas = null;
     $.get(path + 'getDatos/',
-            {'dpto': dpto, 'plano': planoDesde, 'plano_hasta': planoHasta,'tipo_doc':tipoDoc},
+            {'dpto': dpto, 'plano': planoDesde, 'plano_hasta': planoHasta, 'tipo_doc': tipoDoc},
             function (data) {
+                console.log(data);
                 if (data.existentes.length > 0) {
                     $('#gral_nro_partida').val(data.existentes[0].partida);
                     $('#gral_inscripcion').val(data.existentes[0].inscripcion);
@@ -438,7 +470,7 @@ function getDatos(partidas = null,tipoDoc=null) {
                     $('#gral_titular').val(data.existentes[0].responsable);
                     $('#tipo_planta').val(data.existentes[0].tipo_planta);
                     $('#tipo_planta_input').val(data.existentes[0].tipo_planta);
-                     $('#gral_tipo_planta').val(data.existentes[0].tipo_planta);
+                    $('#gral_tipo_planta').val(data.existentes[0].tipo_planta);
                     if (data.existentes[0].tipo_planta > '0003') {
                         unidadMedida = 'Has';
                     } else {
@@ -450,10 +482,13 @@ function getDatos(partidas = null,tipoDoc=null) {
                     getDeptos(data.existentes[0].div_de);
                     getDistritos(data.existentes[0].div_de, data.existentes[0].div_di);
                     getLocalidades(data.existentes[0].div_di, data.existentes[0].div_lo);
-                    mesa[tipoDoc](data.mesa);
-                   initialize();
+
+                    if(tipoDoc !== null && tipoDoc==='plano'){ 
+                        mesa[tipoDoc](data.mesa);
+                    }
+                    initialize();
                 } else {
-                    $('form input:text').attr('placeholder',"sin datos");
+                    $('form input:text').attr('placeholder', "sin datos");
                     $('#gral_nro_plano').val(planoDesde);
                     $('#gral_nro_plano_hasta').val(planoHasta);
                     $('#gral_nro_dpto').val(dpto);
@@ -626,12 +661,12 @@ function getDistritos(numDpto, dato = '') {
 
 function getLocalidades(dto, dato = '') {
     $.get(path + 'getLocalidades/' + dto, function (datos) {
-        
+
         $('#localidad').html('<option value="">Seleccione localidad..</option>');
         $.each(datos, function (i, value) {
             console.log(value);
             $('#localidad').append('<option value="' + value.div_lo + '">' + value.localidad + '</option>');
-           });
+        });
         $('#localidad').val(dato);
         $('#gral_localidad').val(dato);
         $('#localidad_input').val(dato);
@@ -661,7 +696,13 @@ $('#bucarMatricula').submit(function (event) {
     url = 'buscarMatricula';
     armarDatatable(url, datos);
 });
-
+$('#bucarCertificado').submit(function (event) {
+    event.preventDefault();
+    console.log($(this).serialize());
+    datos = $(this).serialize();
+    url = 'buscarCertificado';
+    armarDatatablePlano(url, datos);
+});
 $('#buscarUbicacion').submit(function (event) {
     event.preventDefault();
     console.log($(this).serialize());
@@ -669,12 +710,12 @@ $('#buscarUbicacion').submit(function (event) {
     url = 'buscarUbicacion';
     armarDatatable(url, datos);
 });
-$('#buscarResponsable').submit(function (event) {
+$('#buscarFecha').submit(function (event) {
     event.preventDefault();
     console.log($(this).serialize());
     datos = $(this).serialize();
-    url = 'buscarResponsable';
-    armarDatatable(url, datos);
+    url = 'buscarFecha';
+    armarDatatablePlano(url, datos);
 });
 
 
@@ -688,12 +729,12 @@ function armarDatatablePlano(url, datos) {
         "serverSide": true,
         "ajax": path + url + '?' + datos,
         "columns": [
-            {data: 'tipo_doc', name: 'tipo_doc', searchable: false},
-            {data: 'nro_dpto', name: 'nro_dpto', "searchable": false},
-            {data: 'nro_plano', name: 'nro_plano'},
+            {data: 'tipo.descripcion', name: 'tipo.descripcion'},
+            {data: 'nro_dpto', name: 'nro_dpto'},
+            {data: 'temporal[0].nro_plano', name: 'temporal.nro_plano'},
             {data: 'temporal[0].nro_partida', name: 'temporal.nro_partida'},
-            {data: 'fecha_registro', name: 'fecha_registro', "searchable": false},
-            {data: 'estado.descripcion', name: 'estado.descripcion'},
+            {data: 'fecha_registro', name: 'fecha_registro'},
+            {data: 'estado.descripcion', name: 'estado.descripcion', orderable: false, searchable: false},
             {data: 'accion', name: 'accion', orderable: false, searchable: false}
         ],
 
@@ -714,12 +755,12 @@ function armarDatatable(url, datos) {
         "serverSide": true,
         "ajax": path + url + '?' + datos,
         "columns": [
-            {data: 'documento.tipo_doc', name: 'documento.tipo_doc', searchable: false},
-            {data: 'nro_dpto', name: 'nro_dpto', "searchable": false},
-            {data: 'nro_plano', name: 'nro_plano', searchable: false},
-            {data: 'nro_partida', name: 'nro_partida', searchable: false},
-            {data: 'documento.fecha_registro', name: 'documento.fecha_registro', "searchable": false},
-            {data: 'documento.estado.descripcion', name: 'documento.estado.descripcion'},
+            {data: 'documento.tipo.descripcion', name: 'documento.tipo.descripcion'},
+            {data: 'nro_dpto', name: 'nro_dpto'},
+            {data: 'nro_plano', name: 'nro_plano'},
+            {data: 'nro_partida', name: 'nro_partida'},
+            {data: 'documento.fecha_registro', name: 'documento.fecha_registro'},
+            {data: 'documento.estado.descripcion', name: 'documento.estado.descripcion',orderable: false, searchable: false},
             {data: 'accion', name: 'accion', orderable: false, searchable: false}
         ],
 
@@ -916,22 +957,54 @@ $(document).on('change', '.anexado', function () {
     validate();
 })
 
-$('#gral_tipo_planta').change(function(){
-    if($(this).val()>3){
+$('#gral_tipo_planta').change(function () {
+    if ($(this).val() > 3) {
         $('.unidad').text('Has');
-    }
-    else{
+    } else {
         $('.unidad').text('m²');
     }
 })
 
 
-function setDatosMesaFicha(datos){
-    console.log('ficha:',datos)
+function observarFicha() {
+    $('#form_carga').find('#gral_fecha_registro').change(function () {
+        fechaArr = $(this).val().split('-');
+        fecha = fechaArr[2] + '/' + fechaArr[1] + '/' + fechaArr[0].substr(-2);
+        //console.log(fecha);
+        setDatosMesaFicha(fecha);
+    })
+    $('#form_carga').find('#gral_certificado').change(function () {
+        setDatosMesaFicha(null, $(this).val());
+    })
+
+}
+var bancert = 0;
+function setDatosMesaFicha(fecha = null, certificado = null) {
+    if (!bancert) {
+        $.get(path + 'datos_certificado', {'plano': planoDesde, 'dpto': dpto, 'fecha_registro': fecha, 'certificado': certificado}, function (datos) {
+            if (datos) {
+                bancert = 1;
+                $('#gral_fecha_registro').val(datos.fecha_registro);
+                $('#gral_responsable').val(datos.Propietario);
+                $('#gral_perito').val(datos.Perito);
+                $('#gral_gestor').val(datos.Gestor);
+                $('#gral_corrector').val(datos.Corrector);
+                $('#gral_certificado').val(datos.Certificado);
+            }
+        }, 'JSON');
+}
+
 }
 
 
-function setDatosMesaPlano(datos){
-    console.log('plano:',datos);
-    $('#gral_fecha_registro').val(datos.Fecha_Registro);
+function setDatosMesaPlano(datos) {
+    console.log('plano:', datos);
+    if(datos!==null){
+        $('#gral_fecha_registro').val(datos.fecha_registro);
+        $('#gral_responsable').val(datos.propietario);
+        $('#gral_perito').val(datos.perito);
+        $('#gral_gestor').val(datos.gestor);
+        $('#gral_corrector').val(datos.corrector);
+    }
 }
+

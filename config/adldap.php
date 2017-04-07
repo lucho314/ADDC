@@ -158,7 +158,7 @@ return [
                 |
                 */
 
-                'base_dn' => '',
+                'base_dn' => 'dc=dgr-er,dc=gov,dc=ar',
 
                 /*
                 |--------------------------------------------------------------------------
@@ -187,8 +187,8 @@ return [
                 |
                 */
 
-                'admin_username' => env('ADLDAP_ADMIN_USERNAME', 'CB25907280'),
-                'admin_password' => env('ADLDAP_ADMIN_PASSWORD', 'cb25907280'),
+                'admin_username' => env('ADLDAP_ADMIN_USERNAME', 'UsuarioPrueba'),
+                'admin_password' => env('ADLDAP_ADMIN_PASSWORD', 'usuariodeprueba'),
 
                 /*
                 |--------------------------------------------------------------------------

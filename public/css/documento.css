@@ -149,3 +149,7 @@ ul.tab li a:focus, .active {
 select[readonly] option{
     display:none;
 }
+
+.select2-container .select2-selection--single{
+    height: 36px;
+}
