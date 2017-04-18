@@ -158,7 +158,7 @@
                                 <i class="fa fa-angle-left pull-right"></i>
                             </a>
                             <ul class="treeview-menu">
-                                <li><a href="{{URL::action('Auth\RegisterController@showRegistrationForm')}}"><i class="fa fa-circle-o"></i> Nuevo usuario</a></li>
+                                <li><a href="{{URL::action('UsuarioController@create')}}"><i class="fa fa-circle-o"></i> Nuevo usuario</a></li>
                                 <li><a href="{{URL::action('UsuarioController@index')}}"><i class="fa fa-circle-o"></i> Lista</a></li>
                             </ul>
                         </li>

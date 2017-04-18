@@ -2,12 +2,15 @@
 
 namespace App;
 
+use Adldap\Laravel\Traits\HasLdapUser;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+
 
 class User extends Authenticatable {
 
     use Notifiable;
+  
 
     /**
      * The attributes that are mass assignable.
@@ -15,7 +18,7 @@ class User extends Authenticatable {
      * @var array
      */
     protected $fillable = [
-        'nom_usuario', 'email', 'password', 'cuit', 'persona_id'
+        'nom_usuario', 'email'
     ];
 
     /**
@@ -24,7 +27,7 @@ class User extends Authenticatable {
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'remember_token',
     ];
 
     //protected $attributes = array('rol'=>'admin');

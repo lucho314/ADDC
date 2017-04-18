@@ -42,7 +42,7 @@ class CreateTemporalCatastroSatsTable extends Migration {
             $table->string('catastro_id')->nullable();
             $table->string('doc_id');
             $table->string('estado');
-              $table->string('nro_dpto');
+            $table->string('nro_dpto');
             $table->timestamps();
             $table->index(['nro_plano','nro_partida','imponible_id','catastro_id']);
         });

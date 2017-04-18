@@ -32,9 +32,9 @@ class UsuarioController extends Controller {
      */
     public function create() {
         $roles = Role::pluck('nombre', 'id');
-        $usuarios = Adldap::search()->select('displayname', 'cn')//findByDnOrFail("CN=CA12134597,CN=Users,DC=dgr-er,DC=gov,DC=ar");
+         $usuarios = Adldap::search()->select('displayname', 'cn')//findByDnOrFail("CN=CA12134597,CN=Users,DC=dgr-er,DC=gov,DC=ar");
                         ->Where('description','contains','catastro')->get();
-                       
+         
         return view('auth/register', compact('usuarios','roles'));
     }
 
@@ -107,7 +107,7 @@ class UsuarioController extends Controller {
     }
     
     public function getUsuarioCorreo(Request $dato){
-        return  Adldap::search()->select('cn','mail')->findByDnOrFail($dato->dn);
+        return  Adldap::search()->select('mail')->findByOrFail('cn',$dato->cn);
         
     }
 }

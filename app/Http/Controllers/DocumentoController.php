@@ -286,7 +286,7 @@ class DocumentoController extends Controller {
                 ->whereRaw("cast(plano as integer) between " . $datos->get('plano') . " and " . $datos->get('plano_hasta'))
                 ->get();
         $ubicacionFisica = \App\Contenido::buscar($datos->dpto, $datos->get('plano'));
-        $datos_mesa = ($datos->tipo_doc=='plano')? \App\Mesa_plano::get($datos->dpto, $datos->get('plano')):[];
+        $datos_mesa = [];//($datos->tipo_doc=='plano')? \App\Mesa_plano::get($datos->dpto, $datos->get('plano')):[];
         $totalPlano = array_flip(range($datos->plano, $datos->plano_hasta));
         foreach ($planos as $plano) {
             unset($totalPlano[$plano->plano]);
@@ -486,28 +486,32 @@ class DocumentoController extends Controller {
     }
 
     public function Prueba(Request $busqueda) {
-         $username='CG35442103';
-          $password='CG35442103';
-         dd(Adldap::auth()->attempt($username, $password)); 
-        //return \App\Mesa_plano::get(1, 55395);
-         $a=  Adldap::search()->Where('description','contains','catastro')/*
-                            ->orWhere('description','=','Catastro')*/
-//                 ->orWhere('givenname', '=', "$busqueda->q")
-//                              ->orWhere('cn','=',"$busqueda->q")
-                               ->get();
-    // dd($a);
-    foreach($a as $usr){
-        echo "------------------------------------------------------------";
-        
-        foreach ($usr->getAttributes() as $atr=>$value){
-           
-                   echo  $atr.":".$value[0]."<br>";
+//         $username='IC21512680';
+//          $password='ic21512680';
+//         dd(Adldap::auth()->attempt($username, $password)); 
+        if ($busqueda->q === 'p') {
+           return DB::conetion('theclip')->table('acajas')->all();
+        } else {
+            phpinfo();
         }
-        echo "------------------------------------------------------------";
-    }
+//         $a=  Adldap::search()->Where('sn','=','carrero')/*
+//                            ->orWhere('description','=','Catastro')*/
+////                 ->orWhere('givenname', '=', "$busqueda->q")
+////                              ->orWhere('cn','=',"$busqueda->q")
+//                               ->get();
+    // dd($a);
+//    foreach($a as $usr){
+//        echo "------------------------------------------------------------";
+//        
+//        foreach ($usr->getAttributes() as $atr=>$value){
+//           
+//                   echo  $atr.":".$value[0]."<br>";
+//        }
+//        echo "------------------------------------------------------------";
+//    }
    
    
-      // phpinfo();
+      phpinfo();
         
     }
 

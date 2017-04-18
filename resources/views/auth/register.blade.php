@@ -13,10 +13,10 @@
                             <label for="name" class="col-md-4 control-label">Empleado</label>
 
                             <div class="col-md-6">
-                                <select name="dn" class="js-example-basic-single form-control" id="empleado">
+                                <select name="nom_usuario" class="js-example-basic-single form-control" id="empleado">
                                     <option value="">Seleccione Empleado</option>
                                @foreach($usuarios as $usr)
-                               <option value="{{$usr->dn}}">{{$usr->displayname[0]}}</option>
+                               <option value="{{$usr->cn[0]}}">{{$usr->displayname[0]}}</option>
                                @endforeach
                                 </select>
                             </div>
@@ -73,9 +73,9 @@
 @section('script')
 <script>
     $('#empleado').change(function () {
-        var dn=$(this).val();
-        $.get('/usuario/get_usuario_correo',{'dn':dn},function(data){
-                $('#usuario').val(data.cn[0]);
+        var cn=$(this).val();
+        $.get('/usuario/get_usuario_correo',{'cn':cn},function(data){
+                $('#usuario').val(cn);
                 $('#email').val(data.mail[0]);
         });
     });

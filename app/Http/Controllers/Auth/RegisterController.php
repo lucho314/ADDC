@@ -63,11 +63,8 @@ use RegistersUsers;
     protected function create(array $data) {
         $usuario = User::create([
                     'nom_usuario' => $data['nom_usuario'],
-                    'cuit' => $data['cuit'],
-                    'persona_id' => $data['persona_id'],
                     'email' => $data['email'],
-                    'password' => bcrypt($data['password']),
-        ]);
+                    ]);
 
         $usuario->roles()->attach($data['roles']);
         return $usuario;

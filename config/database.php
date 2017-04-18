@@ -84,12 +84,12 @@ return [
         ],
         'plano' => [
             'driver' => 'sqlsrv',
-            'odbc' => true,
-            'dsn' => 'odbc:DRIVER={SQL Server};SERVER=SERVER20031;DATABASE=planos;UID=lalaura;PWD=febrero2017_',
-            'host' => env('DB_HOST', 'SERVER20031'),
-            'database' => env('DB_DATABASE', 'planos'),
-            'username' => env('DB_USERNAME', 'lalaura'),
-            'password' => env('DB_PASSWORD', 'febrero2017_'),
+            
+           // 'dsn' => 'odbc:DRIVER={SQL Server};SERVER=SERVER20031;DATABASE=planos;UID=lalaura;PWD=febrero2017_',
+            'host' =>  '10.105.118.14',
+            'database' => 'planos',
+            'username' => 'lalaura',
+            'password' =>'febrero2017_',
             'charset' => 'utf8',
         ],
         'certificado' => [

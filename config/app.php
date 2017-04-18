@@ -159,8 +159,8 @@ return [
         Yajra\Datatables\DatatablesServiceProvider::class,
         Elibyy\TCPDF\ServiceProvider::class,
         'Lrgt\LaravelFormAjaxValidation\LaravelFormAjaxValidationServiceProvider',
-        Adldap\Laravel\AdldapServiceProvider::class
-        
+        Adldap\Laravel\AdldapServiceProvider::class,
+        Adldap\Laravel\AdldapAuthServiceProvider::class
     ],
     /*
       |--------------------------------------------------------------------------
