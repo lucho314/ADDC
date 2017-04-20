@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTableTipoDocumento extends Migration
+class CreateEstadosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class CreateTableTipoDocumento extends Migration
      */
     public function up()
     {
-        Schema::create('tipo_docs', function (Blueprint $table) {
+        Schema::create('estados', function (Blueprint $table) {
             $table->increments('id');
             $table->string('descripcion');
-            
         });
     }
 
@@ -27,8 +26,6 @@ class CreateTableTipoDocumento extends Migration
      */
     public function down()
     {
-
-             Schema::dropIfExists('tipo_docs');
-      
+        Schema::dropIfExists('estados');
     }
 }

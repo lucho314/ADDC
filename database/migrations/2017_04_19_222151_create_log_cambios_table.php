@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreaTablaPendienteImprimir extends Migration
+class CreateLogCambiosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,13 @@ class CreaTablaPendienteImprimir extends Migration
      */
     public function up()
     {
-        Schema::create('pendiente_imprimir', function (Blueprint $table) {
-            $table->integer('caja_id');
+        Schema::create('log_cambios', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('nombre');
+            $table->string('campo');
+            $table->string('val_original');
+            $table->string('val_cambio');
+            
         });
     }
 
@@ -25,6 +30,6 @@ class CreaTablaPendienteImprimir extends Migration
      */
     public function down()
     {
-         Schema::dropIfExists('pendiente_imprimir');
+        Schema::dropIfExists('log_cambios');
     }
 }

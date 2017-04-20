@@ -16,9 +16,9 @@ use Adldap\Laravel\Facades\Adldap;
 class DocumentoController extends Controller {
 
     public function __construct() {
-        $this->middleware('auth');
-        $this->middleware('roles:validador,corrector,admin', ['only' => ['viewListaDocumentosPendientes', 'validarDocumento', 'aceptarValidacion']]
-        );
+//        $this->middleware('auth');
+//        $this->middleware('roles:validador,corrector,admin', ['only' => ['viewListaDocumentosPendientes', 'validarDocumento', 'aceptarValidacion']]
+  //      );
     }
 
     public function index() {
@@ -29,21 +29,21 @@ class DocumentoController extends Controller {
 
     public function create() {
         $plantas = DB::table('tbl_valores_set_validaciones')->where('set_validacion', '=', '0054')->get();
-        $objetos = \App\Doc_objeto::all();
+        $objetos = \App\Objeto::all();
         $dptos = $this->getDeptos();
         return view('documento.carga', ['min' => 'sidebar-collapse', 'plantas' => $plantas, 'objetos' => $objetos, 'dptos' => $dptos, 'documento' => []]);
     }
 
-    public function store(DocumentoFormRequest $datos) {
+    public function store(Request $datos) {
         //dd ($datos->all());
-        $doc = Doc::create($datos->gral);
+        $doc = \App\Documento::create($datos->gral);
         if ($datos->estado === '6') {
             $this->cambiarEstado(6, $doc->id, null, 'Carga del documento en falta');
             return redirect('documento/create');
-        }
-        \App\Antecedente::guardar($datos->plano_ant, $doc);
-        $this->cambiarEstado(2, $doc->id, null, 'Carga del documento');
-        \App\TemporalCatastroSat::insertar($datos->all(), $doc->id);
+       }
+//       // \App\Antecedente::guardar($datos->plano_ant, $doc);
+//      //  $this->cambiarEstado(2, $doc->id, null, 'Carga del documento');
+       \App\DocumentoSat::insertar($datos->all(), $doc->id);
 
         return redirect('documento/create');
     }
@@ -57,7 +57,7 @@ class DocumentoController extends Controller {
     }
 
     public function getListaDocumentos(Request $mio) {
-        $documentos = Doc::getListaPendientes($mio->mio);
+        $documentos = \App\Documento::getListaPendientes($mio->mio);
         return Datatables::eloquent($documentos)
                         ->addColumn('accion', function ($documentos) {
                             return (auth()->user()->hasRoles(['carga'])) ? '<a href="/documento/view/' . $documentos->id . '" class="btn btn-xs btn-info"> Ver documento</a>'
@@ -71,18 +71,19 @@ class DocumentoController extends Controller {
 
     public function validarDocumento($id) {
         $plantas = DB::table('tbl_valores_set_validaciones')->where('set_validacion', '=', '0054')->get();
-        $objetos = \App\Doc_objeto::all();
-        $documento = Doc::getDocumentForValidation($id)->findOrFail($id);
-        if (auth()->user()->isCorrector() || auth()->user()->isAdmin()) {
+        $objetos = \App\Objeto::all();
+        $documento = \App\Documento::getDocumentForValidation($id)->findOrFail($id);
+       /* if (auth()->user()->isCorrector() || auth()->user()->isAdmin()) {
             $documento->usuario_actual = auth()->user()->getAuthIdentifier();
             $documento->save();
-        }
-        $incidencias = \App\documentoCambiosEstados::where('doc_id', '=', $id)->orderBy('fecha_cambio', 'desc')->get();
-        $dtos = $this->getDtos(str_replace('*', '', $documento->temporal[0]->departamento));
-        $localidades = $this->getLocalidades(str_replace('*', '', $documento->temporal[0]->distrito));
+        }*/
+        $incidencias =[];// \App\documentoCambiosEstados::where('doc_id', '=', $id)->orderBy('fecha_cambio', 'desc')->get();
+        //dd($documento->documentoSat[0]->datosSat);
+        $dtos = $this->getDtos($documento->documentoSat[0]->datosSat->div_de);
+        $localidades = $this->getLocalidades($documento->documentoSat[0]->datosSat->div_di);
         $dptos = $this->getDeptos();
         $min = 'sidebar-collapse';
-        if ($documento->temporal[0]->tipo_planta > '0003') {
+        if ($documento->documentoSat[0]->datosSat->tipo_planta > '0003') {
             $unidadMedida = 'Has';
         } else {
             $unidadMedida = 'm2';
@@ -226,13 +227,12 @@ class DocumentoController extends Controller {
 //    }
 
     public function show($idImage) {
-        $file = Doc::select('imagen', 'checksum')->findOrFail($idImage);
+        $file = \App\Documento::select('imagen', 'checksum','nombre')->findOrFail($idImage);
         if (md5($file->imagen) == $file->checksum) {
             $imagen = base64_decode($file->imagen);
-            $nombre = "plano.pdf";
             return Response::make($imagen, 200, [
                         'Content-Type' => 'application/pdf',
-                        'Content-Disposition' => "inline;name='$nombre';filename='$nombre'"
+                        'Content-Disposition' => "inline;name='$file->nombre';filename='$file->nombre'"
             ]);
         } else {
             echo "error";
@@ -282,16 +282,19 @@ class DocumentoController extends Controller {
     }
 
     public function getDatos(Request $datos) {
-        $planos = Vw_Partidas_Archivo::where('dpto', '=', "$datos->dpto")
-                ->whereRaw("cast(plano as integer) between " . $datos->get('plano') . " and " . $datos->get('plano_hasta'))
-                ->get();
-        $ubicacionFisica = \App\Contenido::buscar($datos->dpto, $datos->get('plano'));
+       $imponible_historico='';
+        $planos = \App\VistaSat::where('dpto', '=', "$datos->dpto")
+                ->whereRaw("cast(plano as integer) between " . $datos->get('plano') . " and " . $datos->get('plano_hasta'));
+     if($planos->count()=='0'){
+         $imponible_historico=\App\AvaluoHistorico::getImponibleHistoricoPlano($datos->plano, $datos->dpto);
+      }     
+        $ubicacionFisica =[];// \App\Contenido::buscar($datos->dpto, $datos->get('plano'));
         $datos_mesa = [];//($datos->tipo_doc=='plano')? \App\Mesa_plano::get($datos->dpto, $datos->get('plano')):[];
         $totalPlano = array_flip(range($datos->plano, $datos->plano_hasta));
         foreach ($planos as $plano) {
             unset($totalPlano[$plano->plano]);
         }
-        return ['existentes' => $planos, 'inexistentes' => array_flip($totalPlano), 'ubicacionFisica' => $ubicacionFisica,'mesa'=>$datos_mesa];
+        return ['existentes' => $planos ->get(), 'inexistentes' => array_flip($totalPlano), 'ubicacionFisica' => $ubicacionFisica,'mesa'=>$datos_mesa,'imponible_historico'=>$imponible_historico];
     }
 
 //Select Departamento,codigo_de From Vw_Localidades where Codigo_Pr ='08'  Group by Departamento,codigo_de order by Codigo_De
@@ -550,5 +553,9 @@ class DocumentoController extends Controller {
     
     public function getDatosCertificado(Request $dato){
         return \App\Mesa_ficha::get($dato->dpto, $dato->plano,$dato->certificado,$dato->fecha_registro);
+    }
+    
+    public function insertarCambios(Request $datos){
+        \App\LogCambio::insertarCambios($datos);
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreaTablaSector extends Migration
+class CreateDocumentoAntecedenteTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreaTablaSector extends Migration
      */
     public function up()
     {
-        Schema::create('sectores', function (Blueprint $table) {
-           $table->increments('id');
-           $table->integer('nro_sector');
+        Schema::create('antecedente_documento', function (Blueprint $table) {
+           $table->string('documento_id');
+           $table->string('antecedente_id');
         });
     }
 
@@ -26,6 +26,6 @@ class CreaTablaSector extends Migration
      */
     public function down()
     {
-         Schema::dropIfExists('sectores');
+        Schema::dropIfExists('antecedente_documento');
     }
 }

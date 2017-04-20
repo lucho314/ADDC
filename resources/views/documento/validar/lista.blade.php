@@ -9,9 +9,7 @@
             <thead>
                 <tr>
                     <th>Tipo de documento</th>
-                    <th>Nro departamento</th>
-                    <th>Nro plano desde</th>
-                    <th>Nro plano hasta</th>
+                    <th>Nombre del documento</th>
                     <th>Fecha de alta</th>
                     <th>Usuario ultima modificacion</th>
                    <th>Accion</th>
@@ -34,11 +32,9 @@
             "ajax": "{{URL::action('DocumentoController@getListaDocumentos',['mio'=>$mio])}}",
             "columns": [
                 {data: 'tipo.descripcion', name: 'tipo.descripcion'},
-                {data: 'nro_dpto', name: 'docs.nro_dpto', "searchable": false},
-                {data: 'nro_plano', name: 'docs.nro_plano'},
-                {data: 'nro_plano_hasta', name: 'docs.nro_plano_hasta'},
-                {data: 'created_at', name: 'docs.created_at', "searchable": false},
-                {data: 'usuario_ultima_mod', name: 'docs.usuario_ultima_mod'},
+                {data: 'nombre', name: 'nombre'},
+                {data: 'created_at', name: 'created_at',orderable: false},
+                {data: 'usuario_ultima_mod', name: 'usuario_ultima_mod'},
                 {data: 'accion', name: 'accion', orderable: false, searchable: false}
             ],
 

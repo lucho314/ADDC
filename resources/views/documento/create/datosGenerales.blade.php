@@ -7,26 +7,26 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro Departamento:</label>
-                            <input class="form-control" type="text"  name="gral[nro_dpto]" id="gral_nro_dpto" required="required" value="{{$documento->nro_dpto or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"  name="gral[nro_dpto]" id="gral_nro_dpto"  value="{{$documento->nro_dpto or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano desde:</label>
-                            <input class="form-control" type="text"   name="gral[nro_plano]" id="gral_nro_plano" required="required" value="{{$documento->nro_plano or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"   name="gral[nro_plano]" id="gral_nro_plano"  value="{{$documento->nro_plano or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano hasta:</label>
-                            <input class="form-control" type="text"   name="gral[nro_plano_hasta]" id="gral_nro_plano_hasta" required="required" value="{{$documento->nro_plano_hasta or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"   name="gral[nro_plano_hasta]" id="gral_nro_plano_hasta"  value="{{$documento->nro_plano_hasta or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Tipo de documento:</label>
-                            <select class="form-control"  name="gral[tipo_doc]" id="gral_tipo_doc">
+                            <select class="form-control"  name="gral[tipo_doc_id]" id="gral_tipo_doc">
                                 <option value="1">Plano de mensura</option>
                                 <option value="2">Ficha de transferencia</option>
                             </select>
@@ -61,7 +61,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Responsable</label>
-                            <input class="form-control" type="text"  required  name="gral[responsable]" id="gral_responsable" value="{{$documento->responsable or old('responsable')}}" placeholder="Responsable.."> </input>
+                            <input class="form-control" type="text"   name="gral[responsable]" id="gral_responsable" value="{{$documento->responsable or old('responsable')}}" placeholder="Responsable.."> </input>
                         </div>
                     </div>
 

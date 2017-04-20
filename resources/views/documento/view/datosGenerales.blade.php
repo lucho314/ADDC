@@ -7,20 +7,20 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro Departamento:</label>
-                            <input class="form-control" type="text"name="nro_dpto" disabled required="required" value="{{$documento->nro_dpto or old('nidombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"name="nro_dpto" disabled  value="{{$documento->nro_dpto or old('nidombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano desde:</label>
-                            <input class="form-control" type="text"  name="nro_plano" disabled required="required" value="{{$documento->nro_plano or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"  name="nro_plano" disabled  value="{{$documento->nro_plano or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano hasta:</label>
-                            <input class="form-control" type="text"  name="nro_plano_hasta" disabled required="required" value="{{$documento->nro_plano_hasta or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"  name="nro_plano_hasta" disabled  value="{{$documento->nro_plano_hasta or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
                     <div class="col-md-3">

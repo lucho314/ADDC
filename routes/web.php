@@ -69,7 +69,7 @@ Route::get('documento/view/{imponibleId}', 'DocumentoController@view');
 Route::get('documento/cargarPlanosPartidas/{dpto}/{planoDesde}/{planohasta}', 'DocumentoController@cargarPlanosPartidas');
 Route::get('documento/getLocalidades/{dto}', 'DocumentoController@getLocalidades');
 Route::get('documento/getDtos/{dpto}', 'DocumentoController@getDtos');
-
+Route::get('/gurdar_log', 'DocumentoController@insertarCambios');
 
 Auth::routes();
 

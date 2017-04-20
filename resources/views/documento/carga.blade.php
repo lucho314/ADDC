@@ -24,17 +24,18 @@
                 <!--                <label>Imagen:</label>-->
                 <input class="form-control" type="file" name="gral[imagen]" id="imagen"> </input>
             </div>
+            <div class="col-md-12 container-fluid">
+                <output id="list"></output>
+            </div>
             <div class="col-md-12"  id="formularioDocumento" style="display: none">
-                <div class="col-md-12 container-fluid">
-                    <output id="list"></output>
-                </div>
+
                 <ul class="tab">
                     <li class="clik generales"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(0, 'generales')">Datos Generales</a></li>
                     <li class="clik partidas"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(1, 'partidas')">Partidas y Superficies</a></li>
                     <li class="clik ubicacion"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(2, 'ubicacion')">Ubicación Geográfica</a></li>
                     <button style="float: right;margin-right: 6px; margin-top: 9px;" class="btn btn-success" id="submit">Aceptar</button>
                     <button style="float: right;margin-right: 10px; margin-top: 9px;" type="reset" id="cancelar" class="btn btn-danger">Cancelar</button>
-                    
+
 
                 </ul>
                 <div id="generales" class="tabcontent  datos_tabcontent" style="display: block">
@@ -47,17 +48,29 @@
                     @include('documento.create.datosUbicacion')
                 </div>
                 <input type="hidden"  value="0" id="biss" name="gral[bis]">
-                <input type="hidden" value="2" name="gral[estado]">
+                <input type="hidden" value="2" name="gral[estado_id]">
                 <input type="submit" id="enviar" style="display: none">
-                {{Form::close()}}
+
 
                 <div id="cargando" class="col-md-12 text-center">
                     <img src="{{asset('img/cargando.gif')}}" >
                     <div class="text-center">CARGANDO...</div>
                 </div>
-              
+
             </div>
 
+            <div id="cargaAntecedente" style="display: none">
+                 <ul class="tab">
+                    <li><a href="#" class="tablinks">Datos Generales</a></li>
+                    <button style="float: right;margin-right: 6px; margin-top: 9px;" class="btn btn-success" type="submit">Aceptar</button>
+                    <button style="float: right;margin-right: 10px; margin-top: 9px;" type="reset" id="cancelar" class="btn btn-danger">Cancelar</button>
+                 </ul>
+                <div class="tabcontent  datos_tabcontent" style="display: block">
+                    @include('documento.create.cargaAntecedente')
+                </div>
+                
+            </div>
+            {{Form::close()}}
         </div>
     </div>
 </div>

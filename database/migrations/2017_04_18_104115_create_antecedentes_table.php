@@ -15,9 +15,10 @@ class CreateAntecedentesTable extends Migration
     {
         Schema::create('antecedentes', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('nro_plano');
             $table->integer('nro_dpto');
-            });
+            $table->integer('nro_plano');
+            $table->timestamps();
+        });
     }
 
     /**

@@ -9,7 +9,7 @@ class carga_objeto_doc extends Seeder {
      * @return void
      */
     public function run() {
-        DB::table('doc_objetos')->insert([
+        DB::table('objetos')->insert([
             ['descripcion'=>'Mensura'],
             ['descripcion'=>'Prescripción'],
             ['descripcion'=>'Subdivisión Parcelaria'],

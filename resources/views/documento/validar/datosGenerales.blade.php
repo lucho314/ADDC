@@ -61,13 +61,13 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Año de inscripción</label>
-                            <input class="form-control modificar sistema" type="text"  readonly  name="gral[inscripcion]" id="gral_inscripcion" value="{{$documento->temporal[0]->inscripcion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control modificar sistema" type="text"  readonly  name="gral[inscripcion]" id="gral_inscripcion" value="{{$documento->documentoSat[0]->datosSat->inscripcion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Matrícula</label>
-                            <input class="form-control modificar sistema" type="text"   name="gral[nro_matricula]" readonly id="gral_matricula" value="{{$documento->temporal[0]->nro_matricula or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control modificar sistema" type="text"   name="gral[nro_matricula]" readonly id="gral_matricula" value="{{$documento->documentoSat[0]->datosSat->matricula or old('nombre')}}" placeholder="Codigo de producto.."> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
