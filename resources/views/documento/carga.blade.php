@@ -84,7 +84,7 @@
             {{Form::token()}}
             <div class="form-group col-md-2">
                 <label>Departamento:</label>
-                <select name="nro_dpto" class="form-control">
+                <select name="gral[nro_dpto]" class="form-control">
                     @foreach($dptos as $dpto)
                     <option value="{{$dpto->codigo_de}}">{{$dpto->departamento}}</option>
                     @endforeach
@@ -92,23 +92,23 @@
             </div>
             <div class="form-group col-md-2">
                 <label>Tipo documento:</label>
-                <select name="tipo_doc" class="form-control">
-                    <option>Plano de mensura</option>
-                    <option>Ficha de transferencia</option>
+                <select name="gral[tipo_doc_id]" class="form-control">
+                    <option value="1">Plano de mensura</option>
+                    <option value="2">Ficha de transferencia</option>
                 </select>
             </div>
             <div class="form-group col-md-2">
                 <label>Plano desde:</label>
-                <input type="number" class="form-control" name="nro_plano">
+                <input type="number" class="form-control" name="gral[nro_plano]">
             </div>
             <div class="form-group col-md-2">
                 <label>Plano hasta:</label>
-                <input type="number" class="form-control" name="nro_plano_hasta">
+                <input type="number" class="form-control" name="gral[nro_plano_hasta]">
             </div>
             <div class="col-md-2">
                 <input type="submit" class="btn btn-success" style="margin-top: 25px;" value="Aceptar">
             </div>
-            <input type="hidden" name="gral[estado]" value="6">
+            <input type="hidden" name="gral[estado_id]" value="6">
             <input type="hidden" name="gral[imagen]" value="">
             {{Form::close()}}
         </div>

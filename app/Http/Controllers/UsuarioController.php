@@ -32,10 +32,13 @@ class UsuarioController extends Controller {
      */
     public function create() {
         $roles = Role::pluck('nombre', 'id');
+        
+        $areas= \App\Area::all();
+        
          $usuarios = Adldap::search()->select('displayname', 'cn')//findByDnOrFail("CN=CA12134597,CN=Users,DC=dgr-er,DC=gov,DC=ar");
                         ->Where('description','contains','catastro')->get();
          
-        return view('auth/register', compact('usuarios','roles'));
+        return view('auth/register', compact('usuarios','roles','areas'));
     }
 
     /**

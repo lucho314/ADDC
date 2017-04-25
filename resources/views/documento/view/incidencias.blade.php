@@ -12,10 +12,10 @@
                         </tr>
                     </thead>
                     <tbody id="tabla_ubicacion">
-                      @foreach($incidencias as $inc)
+                      @foreach($documento->incidencias as $inc)
                       <tr>
-                       <td>{{$inc->fecha_cambio}}</td>
-                       <td>{{$inc->user1_id}}</td>
+                       <td>{{$inc->fecha}}</td>
+                       <td>{{$inc->nom_usuario}}</td>
                        <td>{{$inc->descripcion}}</td>
                       </tr>
                        @endforeach

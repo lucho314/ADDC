@@ -42,6 +42,18 @@
                                 @endif
                             </div>
                         </div>
+                           <div class="form-group{{ $errors->has('area_id') ? ' has-error' : '' }}">
+                            <label for="email" class="col-md-4 control-label">Área</label>
+
+                            <div class="col-md-6">
+                                <select name="area_id" class="form-control" required>
+                                    <option value="">Seleccione area</option>
+                                    @foreach($areas as $area)
+                                    <option value="{{$area->id}}">{{$area->descripcion}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label for="Roles" class="col-md-4 control-label">Roles</label>

@@ -8,35 +8,28 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Departamento</label>
-                            <select  id="departamento" class="form-control select-modificar">
-
+                            <select  id="departamento" class="form-control select-modificar" name="departamento_id">
                             </select> 
-                            <input type="hidden"  name="gral[departamento]" id="departamento_input">
-                        </div>
+                           </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Distrito</label>
-                            <select id="distrito" class="form-control select-modificar">
-
+                            <select id="distrito" class="form-control select-modificar" name="distrito_id">
                             </select> 
-
-                            <input type="hidden"  name="gral[distrito]" id="distrito_input" >
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Localidad</label>
-                            <select id="localidad" class="form-control select-modificar">
-
+                            <select id="localidad" class="form-control select-modificar" name="localidad_id">
                             </select>
-                            <input type="hidden"  name="gral[localidad]" id="localidad_input" >
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Sección</label>
-                            <input class="form-control modificar" type="text" readonly  name="gral[seccion]" id="gral_seccion" value="{{$documento->temporal[0]->seccion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control modificar" type="text" readonly  name="gral[seccion]" id="gral_seccion" value="{{$documento->temporal[0]->seccion or old('nombre')}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-6">

@@ -190,7 +190,7 @@ return [
     |
     */
 
-    'password_sync' => env('ADLDAP_PASSWORD_SYNC', false),
+    'password_sync' => env('ADLDAP_PASSWORD_SYNC', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -236,11 +236,12 @@ return [
     | to the DatabaseUserProvider.
     |
     */
-
+//
     'sync_attributes' => [
-
+//
+         'email' => 'mail',
         'nom_usuario' => 'cn',
-
-    ],
+//
+   ],
 
 ];

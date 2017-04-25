@@ -14,15 +14,12 @@ class CreateMensuraEspecialsTable extends Migration {
     public function up() {
         Schema::create('mensura_especials', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('nro_dpto');
-            $table->integer('nro_partida');
-            $table->integer('nro_plano');
-            $table->integer('inscripcion');
-            $table->integer('tipo_planta_id');
+            $table->integer('inscripcion')->nullable();
+            $table->integer('tipo_planta_id')->nullable();
             $table->string('sup_mensura')->nullable();
             $table->string('sup_titulo')->nullable();
-            $table->string('exeso')->nullable();
-            $table->string('sup_edificada');
+            $table->string('exceso')->nullable();
+            $table->string('sup_edificada')->nullable();
             $table->integer('localidad_id');
             $table->integer('distrito_id');
             $table->integer('departamento_id');
@@ -35,9 +32,7 @@ class CreateMensuraEspecialsTable extends Migration {
             $table->string('sublamina')->nullable();
             $table->string('chacra')->nullable();
             $table->string('quinta')->nullable();
-            $table->string('doc_id');
-            $table->index(['nro_plano', 'nro_partida','nro_dpto']);
-        });
+           });
     }
 
     /**

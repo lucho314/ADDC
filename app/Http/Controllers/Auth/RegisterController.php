@@ -64,6 +64,7 @@ use RegistersUsers;
         $usuario = User::create([
                     'nom_usuario' => $data['nom_usuario'],
                     'email' => $data['email'],
+                    'area_id'=>$data['area_id']
                     ]);
 
         $usuario->roles()->attach($data['roles']);

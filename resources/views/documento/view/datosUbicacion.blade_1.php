@@ -54,7 +54,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Seccion</label>
-                                <input class="form-control" type="text" readonly name="seccion" id="seccion" value="{{$documento->temporal[0]->seccion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                                <input class="form-control" type="text" readonly name="seccion" id="seccion" value="{{$documento->temporal[0]->seccion or old('nombre')}}"> </input>
                         </div>
                     </div>
                 </div>

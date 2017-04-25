@@ -15,7 +15,7 @@ class CreateLogCambiosTable extends Migration
     {
         Schema::create('log_cambios', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre');
+            $table->string('documento_id');
             $table->string('campo');
             $table->string('val_original');
             $table->string('val_cambio');

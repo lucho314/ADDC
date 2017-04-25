@@ -32,6 +32,7 @@ class CreateDocumentosTable extends Migration {
             $table->string('latitud')->nullable();
             $table->string('longitud')->nullable();
             $table->string('observaciones')->nullable();
+            $table->boolean('bis')->default('0');
             $table->timestamps();
         });
     }

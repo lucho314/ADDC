@@ -33,7 +33,7 @@
                 <div class="form-inline row" style="margin-top: 2%">
                     <label style="padding-right: 2%">ESTADO</label>
 
-                    <select class="form-control" name="gral[estado]" id="estado">
+                    <select class="form-control" name="gral[estado_id]" id="estado">
                         @if(auth()->user()->isValidador())
                         <option value="1">Activo</option>
                         <option value="3">Derivar</option>
@@ -68,7 +68,7 @@
             @include('documento.validar.incidencias')
         </div>
         <input type="hidden"  value="0" id="biss" name="gral[bis]">
-        <input type="hidden" name="gral[id]" value="{{$documento->id}}">
+        <input type="hidden" name="gral[id]" id="documento_id" value="{{$documento->id}}">
         <input type="submit" id="enviar" style="display: none">
         @include('documento.validar.derivar')
         {{Form::close()}}

@@ -21,6 +21,8 @@ class CreateDocumentoSatsTable extends Migration
             $table->integer('nro_dpto');
             $table->integer('nro_plano');
             $table->integer('nro_partida');
+            $table->string('sup_titulo')->nullable();
+            $table->string('exceso')->nullable();
             $table->boolean('vigente')->default('1');
         });
     }

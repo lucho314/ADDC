@@ -49,7 +49,7 @@
                                 <form id="bucarMatricula" action="#">
                                     <div class="form-inline">
                                         <label>Departamento:</label>
-                                        <input class="form-control" type="text" name="nroDpto" required> </input>
+                                        <input class="form-control" type="text" name="nroDpto"> </input>
                                         <label style="margin-left:1%;">Matrícula:</label>
                                         <input class="form-control" type="text" name="nroMatricula" required> </input>
                                         <button style="margin-left:1%;" class="btn btn-success" type="submit">Buscar</button>
@@ -70,7 +70,7 @@
                                             <div class="col-md-4  col-lg-4  col-sm-4 row">
                                                 <div class="form-group campos form-inline">
                                                     <label class="col-md-4">Departamento:</label>
-                                                    <select name="departamento" id="departamento" class="form-control col-md-6" required>
+                                                    <select name="div_de" id="departamento" class="form-control col-md-6" required>
                                                         <option value="">Seleccione Departamento</option>
                                                         @foreach($dptos as $dpto) 
                                                         <option value="{{$dpto->div_de}}">{{$dpto->departamento}}</option>
@@ -82,7 +82,7 @@
                                             <div class="col-md-4 row">
                                                 <div class="form-group campos form-inline">
                                                     <label class="col-md-4">Distrito:</label>
-                                                    <select name="distrito" id="distrito" class="form-control col-md-6" required>
+                                                    <select name="div_di" id="distrito" class="form-control col-md-6" required>
                                                         <option>Seleccione Distrito.. &nbsp; &nbsp;</option>
                                                     </select>
                                                 </div>
@@ -90,7 +90,7 @@
                                             <div class="col-md-4 row">
                                                 <div class="form-group campos form-inline">
                                                     <label class="col-md-4">Localidad:</label>
-                                                    <select name="localidad" id="localidad" class="form-control col-md-6" required>
+                                                    <select name="div_lo" id="localidad" class="form-control col-md-6" required>
                                                         <option>Seleccione Localidad..</option>
                                                     </select>
                                                 </div>

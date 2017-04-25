@@ -35,15 +35,6 @@ use AuthenticatesUsers;
         $this->middleware('guest', ['except' => 'logout']);
     }
 
-    protected function redirectTo() {
-        if(auth()->user()->hasRoles(['carga'])){
-            return '/documento/create';
-        }
-        else {
-            return '/documento/validar/lista/0';
-        }
-       
-        
-    }
+  
 
 }

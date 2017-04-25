@@ -11,10 +11,11 @@ class LogCambio extends Model
 
     public static function insertarCambios($datos){
     	LogCambio::updateOrCreate(
-    		['nombre'=>$datos->nombre,'campo'=>$datos->campo],
-    		['nombre'=>$datos->nombre,
+    		['documento_id'=>$datos->documento_id,'campo'=>$datos->campo],
+    		['documento_id'=>$datos->documento_id,
     		'campo'=>$datos->campo,
     		'val_original'=>$datos->val_original,
     		'val_cambio'=>$datos->val_cambio]);
     }
+   
 }

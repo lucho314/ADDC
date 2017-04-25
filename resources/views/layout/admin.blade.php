@@ -38,7 +38,7 @@
             <header class="main-header">                    
 
                 <!-- Logo -->
-                <a href="index2.html" class="logo">
+                <a href="/documento" class="logo">
                     <!-- mini logo fo                        r sidebar mini 50x50 pixels -->
                     <span class="logo-mini"><b>AD</b>DC</span>
                     <!-- logo for regular state and mobile devices -->
@@ -59,7 +59,7 @@
                             <!-- User Account: style can be found in dropdown.less -->
                             <li class="dropdown user user-menu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <span class="hidden-xs">{{ auth::user()->nom_usuario}}</span>
+                                    <span class="hidden-xs"><!--{ auth::user()->nom_usuario}}--> Nombre de usuario</span>
                                 </a>
 
                             </li>

@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Adldap\Laravel\Traits\HasLdapUser;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -18,7 +17,7 @@ class User extends Authenticatable {
      * @var array
      */
     protected $fillable = [
-        'nom_usuario', 'email'
+        'nom_usuario', 'email','area_id'
     ];
 
     /**

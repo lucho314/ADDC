@@ -1,4 +1,4 @@
-<div class="container-fluid" >
+<div class="container-fluid">
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="col-md-8 col-md-offset-1">
@@ -7,20 +7,20 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro Departamento:</label>
-                            <input class="form-control" type="text"name="nro_dpto" disabled  value="{{$documento->nro_dpto or old('nidombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"name="nro_dpto" disabled  value="{{$documento->nro_dpto or old('nidombre')}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano desde:</label>
-                            <input class="form-control" type="text"  name="nro_plano" disabled  value="{{$documento->nro_plano or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"  name="nro_plano" disabled  value="{{$documento->nro_plano or old('nombre')}}"> </input>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano hasta:</label>
-                            <input class="form-control" type="text"  name="nro_plano_hasta" disabled  value="{{$documento->nro_plano_hasta or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"  name="nro_plano_hasta" disabled  value="{{$documento->nro_plano_hasta or old('nombre')}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -28,8 +28,8 @@
                             <label>Tipo de documento:</label>
                             <select class="form-control" name="tipo_doc" disabled>
                                 @if(isset($documento->fecha_registro))
-                                <option <?= ($documento->tipo_doc === '1') ? 'selected' : ''; ?> >Plano de mensura</option>
-                                <option <?= ($documento->tipo_doc === '2') ? 'selected' : ''; ?> >Ficha de transferencia</option>
+                                <option <?= ($documento->tipo_doc === '1') ? 'selected' : ''; ?>>Plano de mensura</option>
+                                <option <?= ($documento->tipo_doc === '2') ? 'selected' : ''; ?>>Ficha de transferencia</option>
                                 @else
                                 <option value="1">Plano de mensura</option>
                                 <option value="2">Ficha de transferencia</option>
@@ -38,7 +38,7 @@
 
                         </div> 
                     </div>
-                    @if($documento->tipo_doc == 'Ficha de transferencia')
+                    @if($documento->tipo_doc_id == '2')
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Certificado</label>
@@ -63,23 +63,16 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Año de inscripción</label>
-                            <input class="form-control modificar" type="text"  name="inscripcion" disabled value="{{$documento->temporal[0]->inscripcion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control modificar" type="text"  name="inscripcion" disabled value="{{$documento->documentoSat[0]->datosSat->inscripcion or old('nombre')}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Matrícula</label>
-                            <input class="form-control modificar" type="text"  name="nro_matricula"  disabled  value="{{$documento->temporal[0]->nro_matricula or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control modificar" type="text"  name="nro_matricula"  disabled  value="{{$documento->nro_matricula or old('nombre')}}"> </input>
                         </div>
                     </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Responsable</label>
-                            <input class="form-control" type="text"  disabled   id="responsable" value="{{$documento->responsable or ''}}"> </input>
-                        </div>
-                    </div>
-                    @if($documento->tipo_doc == 'Plano de mensura')
+                      @if($documento->tipo_doc_id == 1)
                     <div class="col-md-3" id="grupo-objeto">
                         <div class="form-group">
                             <label>Objeto</label>
@@ -91,25 +84,7 @@
                         </div>
                     </div>
                     @endif
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Perito</label>
-                            <input class="form-control" type="text" disabled name="gral[perito]" value="{{$documento->perito or old('perito')}}" placeholder="Perito..."> </input>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Gestor</label>
-                            <input class="form-control" type="text" disabled name="gral[gestor]" value="{{$documento->gestor or old('gestor')}}" placeholder="Gestor.."> </input>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Corrector</label>
-                            <input class="form-control" type="text" disabled name="gral[corrector]" value="{{$documento->corrector or old('corrector')}}" placeholder="Corrector.."> </input>
-                        </div>
-                    </div>  
-                </div>
+                 </div>
             </div>
             <div class="col-md-2">
                 <div class="form-group">

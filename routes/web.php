@@ -70,6 +70,9 @@ Route::get('documento/cargarPlanosPartidas/{dpto}/{planoDesde}/{planohasta}', 'D
 Route::get('documento/getLocalidades/{dto}', 'DocumentoController@getLocalidades');
 Route::get('documento/getDtos/{dpto}', 'DocumentoController@getDtos');
 Route::get('/gurdar_log', 'DocumentoController@insertarCambios');
+Route::get('/get_documentos_cambio', 'DocumentoController@getCambios');
+
+Route::get('/verificar_falta', 'DocumentoController@verificarFalta');
 
 Auth::routes();
 

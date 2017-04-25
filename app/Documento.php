@@ -12,29 +12,31 @@ class Documento extends Eloquent {
     protected $fillable = [
         'tipo_doc_id',
         'fecha_registro',
-        //'bis',
+        'bis',
         'checksum',
         'imagen',
         'objeto_id',
-        //'fecha_registro_visible'
-        //  'linderos',
+       'observaciones',
         'estado_id',
         'nombre',
         'nro_dpto',
         'nro_plano',
         'nro_plano_hasta',
-        'fecha_registro_visible'
+        'fecha_registro_visible',
+        'nro_matricula',
+        'certificado'
     ];
     protected $binaries = ['imagen'];
 
-    
-  
+    public function getDates() {
+        return array('created_at', 'updated_at', 'fecha_registro');
+    }
+
     public function setImagenAttribute($value) {
-    
         $img = base64_encode(file_get_contents(($value != '') ? $value->getPathname() : '../public/falta.pdf'));
         $this->attributes['checksum'] = md5($img);
         $this->attributes['imagen'] = $img;
-         $this->attributes['nombre']=$value->getClientOriginalName();
+        $this->attributes['nombre'] = ($value != '') ? $value->getClientOriginalName():'falta';
     }
 
     public static function boot() {
@@ -54,57 +56,75 @@ class Documento extends Eloquent {
         });
     }
 
-    
-    
-
-  public function Antecedentes() {
+    public function Antecedentes() {
         return $this->belongsToMany(Antecedente::class);
     }
 
-    public function Estado() {
-        return $this->hasOne(Estado::class);
+    public function cambios() {
+        return $this->hasMany(LogCambio::class);
     }
 
-    public function DocumentoSat() {
-        return $this->hasMany(DocumentoSat::class);
+    public function Estado() {
+        return $this->belongsTo(Estado::class);
     }
 
     public function Tipo() {
-        return $this->hasOne(TipoDoc::class,'id','tipo_doc_id');
+        return $this->belongsTo(TipoDoc::class, 'tipo_doc_id');
+    }
+
+    public function DocumentoSat() {
+        return $this->hasMany(DocumentoSat::class, 'documento_id')->orderBy('nro_plano');
+    }
+
+    public function ultimoCambio() {
+        return $this->belongsTo(DocumentoEstado::class, 'id', 'documento_id')->orderBy('id', 'asc');
+    }
+
+    public function incidencias() {
+        return $this->hasMany(DocumentoEstado::class, 'documento_id', 'id')->orderBy('id', 'asc');
     }
     
-    
-    
-     public static function getListaPendientes($mios = false) {
-        $doc = Documento::with('tipo')->select('tipo_docs.descripcion','tipo_doc_id','nombre','usuario_ultima_mod','created_at','documentos.id');
+    public function getNroDptoAttribute($value){
+        return str_pad($value, 2, "0", STR_PAD_LEFT); 
+    }
 
-        if (auth()->user()->isValidador() || auth()->user()->isAdmin()) {
+    public static function getListaPendientes($mios = false) {
+        $doc = Documento::with(['tipo', 'ultimoCambio'])
+                ->select('tipo_doc_id', 'nombre', 'usuario_ultima_mod', 'created_at', 'documentos.id')
+                ->where('estado_id', '<>', '1')
+                ->where('estado_id', '<>', '6')
+                ;
 
-            $doc->where('estado_id', '=', '2');
-        } else if (auth()->user()->hasRoles(['carga'])) {
-            $doc->where('estado_id', '<>', '1');
-            $doc->where('usuario_alta', '=', auth()->user()->nom_usuario);
-        } else {
-            $doc->where('estado_id', '=', '3');
-            if ($mios) {
-                $doc->where('usuario_actual', '=', auth()->user()->getAuthIdentifier());
-            } else {
-                $doc->whereNull('usuario_actual');
-            }
+
+        if (auth()->user()->isValidador()) {
+            $doc->where('estado_id', '=', 2);
+        } else if (auth()->user()->isCorrector()) {
+            $doc->where('documentos.estado_id', '=', 3)
+                    ->whereHas('ultimoCambio', function($query) {
+                        $query->where('area_id', auth()->user()->area_id);
+                    });
         }
-      
+
+
         return $doc;
     }
-    
-    
-    
-     public static function getDocumentForValidation($id) {
-        $query = Documento::with(['documentoSat', 'antecedentes']);
-        $doc=$query->findOrFail($id);
-        if( $doc->documentoSat[0]->vigente)
-        {
+
+    public static function getDocumentForValidation($id) {
+        $query = Documento::with(['documentoSat', 'antecedentes', 'cambios', 'ultimoCambio', 'incidencias']);
+        $doc = $query->findOrFail($id);
+        if ($doc->documentoSat[0]->vigente) {
             $query->with('documentoSat.datosSat');
         }
+
+        if (auth()->user()->isValidador()) {
+            $doc->where('estado', '=', 2);
+        } else if (auth()->user()->isCorrector()) {
+            $doc->where('estado', '=', 3)
+                    ->whereHas('ultimoCambio', function($query) {
+                        $query->where('area_id', auth()->user()->area_id);
+                    });
+        }
+
 //        if (auth()->user()->isAdmin()) {
 //            $doc->Where(function ($query) {
 //                $query->where('estado', '<>', 3)
@@ -123,10 +143,9 @@ class Documento extends Eloquent {
 //                        ->orWhere('usuario_actual', '=', auth()->user()->getAuthIdentifier());
 //                    });
 //        }
-        
-        
+
+
         return $query;
     }
-
 
 }

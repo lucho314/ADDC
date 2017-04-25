@@ -28,10 +28,8 @@
 
         </style>
 </head>
-<body  style="    background: #ecf0f5;">
-    <div id="app" style="    background: #ecf0f5;
-    margin-top: 10%;">
- 
+<body  style="background-image: url('/img/fondo1.jpg')">
+    <div id="app" style="margin-top:12%">
         @yield('content')
     </div>
 

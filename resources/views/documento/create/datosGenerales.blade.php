@@ -3,24 +3,25 @@
         <div class="panel-body">
             <div class="col-md-12">
             <div class="col-md-8 col-md-offset-1">
-                <div  id="datosGenerales">
+                <div  id="datosGenerales" class="col-md-12">
+                  
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro Departamento:</label>
-                            <input class="form-control" type="text"  name="gral[nro_dpto]" id="gral_nro_dpto"  value="{{$documento->nro_dpto or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"  name="gral[nro_dpto]" id="gral_nro_dpto"  value="{{$documento->nro_dpto or old('nombre')}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano desde:</label>
-                            <input class="form-control" type="text"   name="gral[nro_plano]" id="gral_nro_plano"  value="{{$documento->nro_plano or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"   name="gral[nro_plano]" id="gral_nro_plano"  value="{{$documento->nro_plano or old('nombre')}}"> </input>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano hasta:</label>
-                            <input class="form-control" type="text"   name="gral[nro_plano_hasta]" id="gral_nro_plano_hasta"  value="{{$documento->nro_plano_hasta or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control" type="text"   name="gral[nro_plano_hasta]" id="gral_nro_plano_hasta"  value="{{$documento->nro_plano_hasta or old('nombre')}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -42,29 +43,22 @@
                         <div class="form-group">
                             <label>Fecha de registro:</label>
                             <div class="col-md-11 row"><input class="form-control" type="date"  name="gral[fecha_registro]"   id="gral_fecha_registro"></div>
-                            <div class="col-md-1" style="margin-top: 3%"><input type="checkbox" value='1' title="Fecha visible" name="gral[fecha_registro_visible]"   id="gral_fecha_registro_visible"></div>
+                            <div class="col-md-1" style="margin-top: 3%"><input type="checkbox" value='1' title="Fecha visible" name="gral[fecha_registro_visible]" checked="true"  id="gral_fecha_registro_visible"></div>
                             
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Año de inscripción</label>
-                            <input class="form-control modificar" type="text" readonly  name="gral[inscripcion]" id="gral_inscripcion" value="{{$documento->temporal[0]->inscripcion or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control modificar" type="text" readonly  name="gral[inscripcion]" id="gral_inscripcion" value="{{$documento->temporal[0]->inscripcion or old('nombre')}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Matrícula</label>
-                            <input class="form-control modificar" type="text"   name="gral[nro_matricula]" readonly id="gral_nro_matricula" value="{{$documento->temporal[0]->nro_matricula or old('nombre')}}" placeholder="Codigo de producto.."> </input>
+                            <input class="form-control modificar" type="text"   name="gral[nro_matricula]" readonly id="gral_nro_matricula" value="{{$documento->temporal[0]->nro_matricula or old('nombre')}}"> </input>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Responsable</label>
-                            <input class="form-control" type="text"   name="gral[responsable]" id="gral_responsable" value="{{$documento->responsable or old('responsable')}}" placeholder="Responsable.."> </input>
-                        </div>
-                    </div>
-
                     <div class="col-md-3" id="grupo_objeto">
                         <div class="form-group">
                             <label>Objeto</label>
@@ -76,23 +70,11 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Perito</label>
-                            <input class="form-control" type="text" name="gral[perito]" id="gral_perito"  placeholder="Perito..."> </input>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Gestor</label>
-                            <input class="form-control" type="text" name="gral[gestor]" id="gral_gestor"  placeholder="Gestor.."> </input>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label>Corrector</label>
-                            <input class="form-control" type="text" name="gral[corrector]" id="gral_corrector" placeholder="Corrector.."> </input>
-                        </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Observaciones</label>
+                        <textarea class="form-control" placeholder="Observaciones sobre el documento" name="gral[observaciones]"></textarea>
                     </div>
                 </div>
             </div>
@@ -102,9 +84,7 @@
                     <div id="grupo_antecedente">
                         <input type="number" placeholder="Nro plano antecedente"  name="plano_ant[]" id="plano_ant_0" class="form-control" style="margin-bottom: 6%">
                     </div>
-
                 </div>    
-
             </div>
         </div>
             <div class="col-md-8 col-md-offset-1 errores"></div>
