@@ -11,7 +11,7 @@
             <div class="modal-body">
                 @if(!auth()->user()->isCorrector())
                     <div class="form-group">
-                        <label>Area</label>
+                        <label>&Aacute;rea</label>
                         <select name="area_id" class="form-control">
                             @foreach($areas as $a)
                             <option value="{{$a->id}}">{{$a->descripcion}}</option>

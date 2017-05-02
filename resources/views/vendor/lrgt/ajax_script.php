@@ -34,17 +34,16 @@ if (!isset($auto_focus)) {
 
             my_form.find("input[type=submit]").on('click', function (e) {
                 e.preventDefault();
-                buton_submit = true;
-                validate();
+               
             });
 
             my_form.find('.form-group').append('<div class="help-block with-errors"></div>');
-
-            my_form.find(':input').each(function () {
-                $(this).on('change', function () {
-                    validate($(this).attr('id'));
-                });
-            });
+//
+//            my_form.find(':input').each(function () {
+//                $(this).on('change', function () {
+//                    validate($(this).attr('id'));
+//                });
+//            });
 
 //        if (on_start == '1') {
 //            validate();
@@ -90,9 +89,9 @@ if (!isset($auto_focus)) {
                         });
 
                         validated = true;
-                        if (buton_submit == true) {
+                        //if (buton_submit == true) {
                             my_form.submit();
-                        }
+                       // }
                     } else {
                         var campos_error = [];
                         $.each(data.errors, function (key, data) {
@@ -103,7 +102,8 @@ if (!isset($auto_focus)) {
                             console.log(data[0]);
                             $('#'+id+'_error').remove();
                             father.find('.errores').append("<li id="+id+"_error>" + data[0] + "</li>");
-                            campo.css("border", "solid 1px red");
+                            clase = campo.css("border", "solid 1px red").parents('.tabcontent').attr('id');
+                             $('.' + clase).css('background', '#e66e6e');;
                            };
                             campos_error.push(id);
                         });

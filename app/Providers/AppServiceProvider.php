@@ -15,14 +15,22 @@ class AppServiceProvider extends ServiceProvider {
      */
     public function boot() {
         Validator::extend('doc_unico', function ($attribute, $value, $parameters, $validator) {
-            if ($parameters[4] === 'Ficha de transferencia') {
-                return true;
-            } $row = DB::table('docs')->where('nro_dpto', '=', $parameters[0])
+
+            //dd($parameters)
+            $row = DB::table('documentos')->where('nro_dpto', '=', $parameters[0])
                     ->where('nro_plano', '<=', $parameters[2])
                     ->where('nro_plano_hasta', '>=', $parameters[1]);
             if (isset($parameters[3])) {
-                $row->where('id', '<>', $parameters[3]);
+                $row->where('id', '<>', $parameters[3])
+                        ->where('tipo_doc_id', '=', $parameters[4]);
+            } 
+            if ($parameters[4] === '2') {
+                if (isset($parameters[5])) {
+                    $row->where('fecha_registro', '=', $parameters[5]);
+                    $row->where('tipo_doc_id', '=', $parameters[4]);
+                }
             }
+            //dd($row->get());
             return $row->count() == 0;
         });
     }

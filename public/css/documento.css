@@ -109,7 +109,7 @@ ul.tab li a:hover {
 }
 
 .datos_tabcontent{
-    background: rgba(120, 173, 204, 0.68);
+    background: rgb(199, 234, 216);
 }
 
 .checkbox label, .radio label {
@@ -200,4 +200,20 @@ select[readonly] option{
 .with-nav-tabs.panel-default .nav-tabs > li.dropdown .dropdown-menu > .active > a:focus {
     color: #fff;
     background-color: #555;
+}
+
+
+.skin-blue .main-header .navbar {
+    background-color: #268a72;
+}
+
+.skin-blue .main-header .logo {
+    background-color: #268a72;
+}
+
+.skin-blue .main-header .logo:hover {
+    background-color: #33b383;}
+
+.skin-blue .main-header .navbar:hover {
+    background-color: #33b383;
 }

@@ -22,7 +22,12 @@ class UsuarioController extends Controller {
 
     public function index() {
         $usuarios = User::all();
-        return view('usuario/index', compact('usuarios'));
+
+        $roles = Role::pluck('nombre', 'id');
+
+        $areas = \App\Area::all();
+
+        return view('usuario/index', compact('usuarios', 'roles', 'areas'));
     }
 
     /**
@@ -32,13 +37,13 @@ class UsuarioController extends Controller {
      */
     public function create() {
         $roles = Role::pluck('nombre', 'id');
-        
-        $areas= \App\Area::all();
-        
-         $usuarios = Adldap::search()->select('displayname', 'cn')//findByDnOrFail("CN=CA12134597,CN=Users,DC=dgr-er,DC=gov,DC=ar");
-                        ->Where('description','contains','catastro')->get();
-         
-        return view('auth/register', compact('usuarios','roles','areas'));
+
+        $areas = \App\Area::all();
+
+        $usuarios = Adldap::search()->select('displayname', 'cn')//findByDnOrFail("CN=CA12134597,CN=Users,DC=dgr-er,DC=gov,DC=ar");
+                        ->Where('description', 'contains', 'catastro')->get();
+
+        return view('auth/register', compact('usuarios', 'roles', 'areas'));
     }
 
     /**
@@ -74,6 +79,7 @@ class UsuarioController extends Controller {
         $this->authorize('editUpdate', $usuario);
 
         $roles = \App\Role::pluck('nombre', 'id');
+
         return view('usuario.edit', compact('usuario', 'roles'));
     }
 
@@ -84,14 +90,16 @@ class UsuarioController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(usuarioFormRequest $request, $id) {
+    public function update(Request $request, $id) {
         $usuario = User::findOrFail($id);
+        
+        $usuario->area_id=$request->area_id;
+        
+        $usuario->save();
+        
         $this->authorize('editUpdate', $usuario);
-        $usuario->update($request->all());
-        if (auth()->user()->isAdmin()) {
-            $usuario->roles()->sync($request->roles);
-        }
-        return redirect('usuario');
+        
+        return $usuario->roles()->sync((array) $request->roles);
     }
 
     public function micuenta($id) {
@@ -108,9 +116,15 @@ class UsuarioController extends Controller {
     public function destroy($id) {
         //
     }
-    
-    public function getUsuarioCorreo(Request $dato){
-        return  Adldap::search()->select('mail')->findByOrFail('cn',$dato->cn);
-        
+
+    public function getUsuarioCorreo(Request $dato) {
+        return Adldap::search()->select('mail')->findByOrFail('cn', $dato->cn);
     }
+
+    public function usuarioRoles(Request $request) {
+        $usuarios = User::with('roles')->findOrFail($request->id);
+        $roles = $usuarios->roles->pluck('nombre', 'id');
+        return ['usuario'=>$usuarios,'roles'=>$roles];
+    }
+
 }

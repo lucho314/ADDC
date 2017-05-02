@@ -49,7 +49,7 @@
                     </tbody>
 
                 </table>
-                <a class="btn btn-default btn-xs glyphicon glyphicon-plus" href="javascript:agregar_ubicacion()" style="float: right;margin-right: 1%;" id="agregar_partida"></a>
+                <a class="btn btn-default btn-xs glyphicon glyphicon-plus agregar_" style="display: none" href="javascript:agregar_ubicacion()" style="float: right;margin-right: 1%;" id="agregar_partida"></a>
                 <div class="col-md-12  errores"></div>
             </div>
         </div>

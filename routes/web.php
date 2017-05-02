@@ -74,6 +74,8 @@ Route::get('/get_documentos_cambio', 'DocumentoController@getCambios');
 
 Route::get('/verificar_falta', 'DocumentoController@verificarFalta');
 
+Route::get('/usuario_roles', 'UsuarioController@usuarioRoles');
+
 Auth::routes();
 
 

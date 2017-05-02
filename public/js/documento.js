@@ -40,7 +40,7 @@ $(function () {
     });
 
     if ($("#form_validar").length > 0) {
-        // initialize();
+        initialize();
         getCambios();
     }
 
@@ -48,59 +48,24 @@ $(function () {
 
 $('#submit').click(function () {
 
-    $('#observacion').attr('required', false);
-    $('#user2').attr('required', false);
-    if (($('#estado').val() === '3' || $('#estado').val() === '4') && $('#observacion').val() === '') {
-        $('#derivar_doc_modal').modal('toggle');
-        $('#observacion').attr('required', true);
-        $('#user2').attr('required', true);
-        return false;
-    } else if ($('#estado').val() === '2' && $('#observacion').val() === '')
-    {
-        $('#derivar_doc_modal').modal('toggle');
-        $('#observacion').attr('required', true);
-        $('#grupo_usuario').hide();
-        return false;
-    }
-    flag = 0;
-    flag2 = 0;
-    $('input').each(function (i, e) {
-        id = $(this).parents('.panel-body').prop('id');
-        if (!$('input')[i].validity.valid || $(this).hasClass('repetido')) {
-            clase = $(this).css('border', '0.75px solid red')
-                    .addClass('mi_placeholder')
-                    .attr('placeholder', 'CAMPO REQUERIDO')
-                    .parents('.tabcontent').attr('id');
-            $('.' + clase).css('background', '#e66e6e');
+//    $('#observacion').attr('required', false);
+//    $('#user2').attr('required', false);
+//    if (($('#estado').val() === '3' || $('#estado').val() === '4') && $('#observacion').val() === '') {
+//        $('#derivar_doc_modal').modal('toggle');
+//        $('#observacion').attr('required', true);
+//        $('#user2').attr('required', true);
+//        return false;
+//    } else if ($('#estado').val() === '2' && $('#observacion').val() === '')
+//    {
+//        $('#derivar_doc_modal').modal('toggle');
+//        $('#observacion').attr('required', true);
+//        $('#grupo_usuario').hide();
+//        return false;
+//    }
+//   
 
-            flag++;
-            flag2++;
-        } else {
-            $(this).css('border', '');
-        }
-        if (typeof id !== 'undefined' && id !== $('input').eq(i + 1).parents('.panel-body').prop('id')) {
-            console.log(flag);
-            if (flag === 0) {
-                $(this).parents('.panel')
-                        .children('.panel-heading')
-                        .css('background', '')
-                        .css('border', '')
-                        .children('a').css('color', '');
-            }
-            flag = 0;
-        }
-        ;
-    })
+    //}
 
-    if (flag2 === 0) {
-        $.each(datosModificados, function (i, v) {
-            modificado = $('#' + v).val();
-            if (modificado.indexOf('*') === -1) {
-                $('#' + v).val(modificado + '*');
-            }
-        });
-        $('#enviar').click();
-    }
 
 
 });
@@ -323,9 +288,6 @@ function setPlano(array) {
     $('#grupo_certificado').hide();
     $('#grupo_objeto').show();
     $('.partida').hide();
-
-    //checkDatosInex();
-
 }
 
 function setFicha(array) {
@@ -491,7 +453,7 @@ function getDatos(partidas = null, tipoDoc = null) {
                     if (tipoDoc !== null && tipoDoc === 'plano') {
                         mesa[tipoDoc](data.mesa);
                     }
-                    //initialize();
+
 
                 } else {
                     auxFormulario = $('#formularioDocumento');
@@ -509,6 +471,7 @@ function getDatos(partidas = null, tipoDoc = null) {
                         observarCambioObjeto();
                     }
                 }
+                initialize();
             });
 }
 //                    $('form input:text').attr('placeholder', "sin datos");
@@ -542,6 +505,7 @@ function getDatos(partidas = null, tipoDoc = null) {
 function observarCambioObjeto() {
     $('#form_carga').find('#gral_objeto_id').change(function () {
         objetoId = $(this).val();
+
         if (objetosMensurasEspecialesId.indexOf(objetoId) != -1) {
             getDeptos();
             $('#form_carga').append(auxFormulario);
@@ -553,7 +517,9 @@ function observarCambioObjeto() {
             $('#tipo_doc').val(tipo_doc);
             $('#cargando').hide();
             $('#formularioDocumento').css('opacity', '1');
-
+            $('.agregar_').show();
+            $('#form_carga').append('<input type="hidden" name="gral[objeto_id]" value="' + objetoId + '">');
+            $('#grupo_objeto').remove();
         }
     });
 }
@@ -594,7 +560,7 @@ function agregar_ubicacion() {
         i = parseInt(id.match(/\d+$/)) + 1;
     }
     $('#tabla_ubicacion').append('<tr id="ubicacion_' + i + '">\n\
-                                                    \n\<td class="col-xs-3"><input type="text"  class="modificar form-control anexado" readonly/></td>\n\
+                                                    \n\<td class="col-xs-3"><input type="text"  class="modificar form-control anexado" id="lote_' + i + '" readonly/></td>\n\
                                                      <td class="col-xs-1"><input type="text"   id="especial_' + i + '_grupo" name="especial[' + i + '][grupo]" class="form-control anexado modificar" placeholder="Grupo" readonly></td>\n\
                                                   \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text"   id="especial_' + i + '_manzana" name="especial[' + i + '][manzana]"  placeholder="manzana" readonly></td>\n\
                                                   \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text"   id="especial_' + i + '_parcela" name="especial[' + i + '][parcela]" placeholder="parcela" readonly></td>\n\
@@ -607,7 +573,7 @@ function agregar_ubicacion() {
             );
 
     $('#tbody-seleccion-partidas').append('<tr id="' + i + '">\n\
-                                                 \n\<td class="col-xs-2"><input type="text"   required  id="lote_' + i + '_nro_plano" class="modificar form-control anexado" readonly/></td>\n\
+                                                 \n\<td class="col-xs-2"><input type="text"   required  id="lote_' + i + '_nro_plano" class="modificar form-control anexado" onChange="getplanoubicacion()" readonly/></td>\n\
                                                     <td class="col-xs-2"> <input type="text" name="especial[' + i + '][nro_partida]"  id="lote_' + i + '_nro_partida" required class="modificar form-control anexado" readonly /></td>\n\
                                                             \n\<td class="col-xs-2"><div class="row col-xs-11"><input type="text"  name="especial[' + i + '][sup_mensura]"  id="lote_' + i + '_sup_terreno" required class="modificar form-control" readonly /></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
 \n\                                                         \n\<td class="col-xs-2"><div class="row col-xs-11"><input type="number" step="any" name="especial[' + i + '][sup_titulo]" value="" id="lote_' + i + '_sup_titulo"  class="form-control"  onchange="calcularExeso(this.value,' + i + ')"/></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
@@ -618,7 +584,10 @@ function agregar_ubicacion() {
 
 }
 
-
+function getplanoubicacion() {
+    id = $('#tbody-seleccion-partidas tr').last().attr('id');
+    $('#lote_' + id).val($('#lote_' + i + '_nro_plano').val());
+}
 
 
 
@@ -761,7 +730,7 @@ $('#buscarUbicacion').submit(function (event) {
     console.log($(this).serialize());
     datos = $(this).serialize();
     url = 'buscarUbicacion';
-    armarDatatablePlano(url, datos);
+    armarDatatable(url, datos);
 });
 $('#buscarFecha').submit(function (event) {
     event.preventDefault();
@@ -773,67 +742,105 @@ $('#buscarFecha').submit(function (event) {
 
 
 
-function armarDatatablePlano(url, datos,plano=false) {
-    console.log(datos);
-    $tabla=$('#tabla-documentos').DataTable({
-        "dom": 'frtip',
-        "bDestroy": true,
-        "processing": true,
-        "serverSide": true,
-        "ajax": path + url + '?' + datos,
-        "columns": [
-            {data: 'documento.tipo.descripcion', orderable: false},
-            {data: 'nro_dpto', name: 'nro_dpto'},
-            {data: 'nro_plano', name: 'nro_plano'},
-            {data: 'nro_partida', name: 'nro_partida'},
-            {data: 'documento.fecha_registro', name: 'documento.fecha_registro'},
-            {data: 'documento.estado.descripcion', name: 'documento.estado.descripcion', orderable: false},
-            {data: 'accion', name: 'accion', orderable: false, searchable: false}
-        ],
-        drawCallback: function (settings) {
-          json=$tabla.ajax.json();
-          if(json.recordsTotal===0 && plano){
-             $.get('/verificar_falta',datos,function(data){
-                 console.log(data.falta);
-                 if(data.falta){
-                      swal("El documento solicitado se encuentra en falta!", data.mensaje, "error");
-                 }
-             })
-          }
-        },
-        "language":
-                {
-                    "url": "/js/Spanish.json"
-                }
-
-    });
-}
-
-//
-//function armarDatatable(datos) {
-//    console.log(datos,);
-//    $('#tabla-documentos').DataTable({
+//function armarDatatablePlano(url, datos, plano = false) {
+//    console.log(datos);
+//    $tabla = $('#tabla-documentos').DataTable({
 //        "dom": 'frtip',
 //        "bDestroy": true,
 //        "processing": true,
 //        "serverSide": true,
 //        "ajax": path + url + '?' + datos,
 //        "columns": [
-//            {data: 'documento.tipo.descripcion', name: 'documento.tipo.descripcion'},
+//            {data: 'documento.tipo.descripcion', orderable: false},
 //            {data: 'nro_dpto', name: 'nro_dpto'},
 //            {data: 'nro_plano', name: 'nro_plano'},
 //            {data: 'nro_partida', name: 'nro_partida'},
 //            {data: 'documento.fecha_registro', name: 'documento.fecha_registro'},
-//            {data: 'documento.estado.descripcion', name: 'documento.estado.descripcion', orderable: false, searchable: false},
+//            {data: 'documento.estado.descripcion', name: 'documento.estado.descripcion', orderable: false},
 //            {data: 'accion', name: 'accion', orderable: false, searchable: false}
 //        ],
-//
-//        "language": {
-//            "url": "/js/Spanish.json"
-//        }
+//        drawCallback: function (settings) {
+//            json = $tabla.ajax.json();
+//            if (json.recordsTotal === 0 && plano) {
+//                $.get('/verificar_falta', datos, function (data) {
+//                    console.log(data.falta);
+//                    if (data.falta) {
+//                        swal("El documento solicitado se encuentra en falta!", data.mensaje, "error");
+//                    }
+//                })
+//            }
+//        },
+//        "language":
+//                {
+//                    "url": "/js/Spanish.json"
+//                }
 //
 //    });
 //}
+//
+//
+function armarDatatablePlano(url,datos,plano=false) {
+    $tabla=$('#tabla-documentos').DataTable({
+        "dom": 'frtip',
+        "bDestroy": true,
+        "processing": true,
+        "serverSide": true,
+        "ajax": path + url + '?' + datos,
+        
+        "columns": [
+            {data: 'documento.tipo.descripcion', name: 'documento.tipo.descripcion',orderable: false,searchable: false},
+            {data: 'nro_dpto',name:'nro_dpto'},
+            {data: 'nro_plano', name: 'nro_plano'},
+            {data: 'nro_partida', name: 'nro_partida'},
+            {data: 'documento.fecha_registro', name: 'documento.fecha_registro'},
+            {data: 'documento.estado.descripcion', name: 'documento.estado.descripcion'},
+            {data: 'accion', name: 'accion', orderable: false, searchable: false}
+        ],
+        drawCallback: function (settings) {
+            json = $tabla.ajax.json();
+            if (json.recordsTotal === 0 && plano) {
+                $.get('/verificar_falta', datos, function (data) {
+                    console.log(data.falta);
+                    if (data.falta) {
+                        swal("El documento solicitado se encuentra en falta!", data.mensaje, "error");
+                    }
+                })
+            }
+        },
+        
+        "language": {
+            "url": "/js/Spanish.json"
+        }
+
+    });
+}
+
+
+
+
+function armarDatatable(url,datos) {
+    $tabla=$('#tabla-documentos').DataTable({
+        "dom": 'frtip',
+        "bDestroy": true,
+        "processing": true,
+        "serverSide": true,
+        "ajax": path + url + '?' + datos,
+        
+        "columns": [
+            {data: 'tipo.descripcion', name: 'tipo.descripcion'},
+            {data: 'documento_sat[0].nro_dpto',name:'documentoSat.nro_dpto'},
+            {data: 'documento_sat[0].nro_plano', name: 'documentoSat.nro_plano'},
+            {data: 'documento_sat[0].nro_partida', name: 'documentoSat.nro_partida'},
+            {data: 'fecha_registro', name: 'fecha_registro'},
+            {data: 'estado.descripcion', name: 'estado.descripcion'},
+            {data: 'accion', name: 'accion', orderable: false, searchable: false}
+        ],
+        "language": {
+            "url": "/js/Spanish.json"
+        }
+
+    });
+}
 
 
 
@@ -1017,9 +1024,7 @@ function eliminar_carga(id) {
 }
 
 
-$(document).on('change', '.anexado', function () {
-    validate();
-})
+
 
 $('#tipo_planta').change(function () {
     if ($(this).val() > 3) {
@@ -1103,3 +1108,4 @@ function getCambios() {
 
     })
 }
+

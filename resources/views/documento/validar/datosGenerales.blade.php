@@ -26,10 +26,10 @@
                         <div class="form-group">
                             <label>Tipo de documento:</label>
 
-                            <select class="form-control ingresado"  name="gral[tipo_doc]" id="gral_tipo_doc" readonly>
-                                @if($documento->tipo_doc!='')
-                                <option value="1" <?= ($documento->tipo_doc === '1') ? 'selected' : ''; ?>>Plano de mensura</option>
-                                <option value="2" <?= ($documento->tipo_doc === '2') ? 'selected' : ''; ?> >Ficha de transferencia</option>
+                            <select class="form-control ingresado"  name="gral[tipo_doc_id]" id="gral_tipo_doc" readonly>
+                                @if($documento->tipo_doc_id!='')
+                                <option value="1" <?= ($documento->tipo_doc_id === '1') ? 'selected' : ''; ?>>Plano de mensura</option>
+                                <option value="2" <?= ($documento->tipo_doc_id === '2') ? 'selected' : ''; ?> >Ficha de transferencia</option>
                                 @else
                                 <option value="1">Plano de mensura</option>
                                 <option value="2">Ficha de transferencia</option>

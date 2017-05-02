@@ -17,7 +17,7 @@ class User extends Authenticatable {
      * @var array
      */
     protected $fillable = [
-        'nom_usuario', 'email','area_id'
+        'nom_usuario', 'email','area_id','nombre'
     ];
 
     /**
@@ -51,7 +51,12 @@ class User extends Authenticatable {
      public function isCorrector() {
         return $this->hasRoles(['corrector']);
     }
-   
+    
+    public function area(){
+        return $this->belongsTo(Area::class);
+    }
+
+
 
 //    public static function listaUsuarios($rol) {
 //        $users = User::where('id', '<>', auth()->user()->getAuthIdentifier());

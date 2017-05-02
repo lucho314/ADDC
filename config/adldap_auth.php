@@ -241,6 +241,7 @@ return [
 //
          'email' => 'mail',
         'nom_usuario' => 'cn',
+        'nombre'=> 'displayname'
 //
    ],
 

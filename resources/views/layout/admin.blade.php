@@ -59,7 +59,7 @@
                             <!-- User Account: style can be found in dropdown.less -->
                             <li class="dropdown user user-menu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <span class="hidden-xs"><!--{ auth::user()->nom_usuario}}--> Nombre de usuario</span>
+                                    <span class="hidden-xs">{{ auth::user()->nombre}}</span>
                                 </a>
 
                             </li>
@@ -200,7 +200,7 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="box" style="background: rgba(120, 173, 204, 0.68);">
+                            <div class="box" style="background: rgba(182, 232, 203, 0.68);">
                                 <!--<div class="box-header with-border">
                                 <h3 class="box-title">Sistema de Ventas</h3>
                                 <div class="box-tools pull-right">

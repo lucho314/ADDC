@@ -42,7 +42,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Certificado</label>
-                            <input class="form-control modificar" type="text"  name="gral['certificado]" disabled value="{{$documento->certificado or old('certificado')}}" placeholder="Certificado.."> </input>
+                            <input class="form-control" type="text"  name="gral['certificado]" disabled value="{{$documento->certificado or old('certificado')}}" placeholder="Certificado.."> </input>
                         </div>
                     </div>
                     @endif
@@ -63,13 +63,13 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Año de inscripción</label>
-                            <input class="form-control modificar" type="text"  name="inscripcion" disabled value="{{$documento->documentoSat[0]->datosSat->inscripcion or old('nombre')}}"> </input>
+                            <input class="form-control" type="text"  name="inscripcion" disabled value="{{$documento->documentoSat[0]->datosSat->inscripcion or old('nombre')}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Matrícula</label>
-                            <input class="form-control modificar" type="text"  name="nro_matricula"  disabled  value="{{$documento->nro_matricula or old('nombre')}}"> </input>
+                            <input class="form-control" type="text"  name="nro_matricula"  disabled  value="{{$documento->nro_matricula or old('nombre')}}"> </input>
                         </div>
                     </div>
                       @if($documento->tipo_doc_id == 1)

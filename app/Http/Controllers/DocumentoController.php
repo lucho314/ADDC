@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Response;
 use App\Vw_Partidas_Archivo;
 use DB;
 use App\Contenido;
+use App\Http\Requests\DocumentoFormRequest;
 
 class DocumentoController extends Controller {
 
@@ -32,8 +33,8 @@ class DocumentoController extends Controller {
         return view('documento.carga', ['min' => 'sidebar-collapse', 'plantas' => $plantas, 'objetos' => $objetos, 'dptos' => $dptos, 'documento' => []]);
     }
 
-    public function store(Request $datos) {
-        //dd ($datos->all());
+    public function store(DocumentoFormRequest $datos) {
+        // dd ($datos->all());
         $doc = \App\Documento::create($datos->gral);
         \App\LogCambio::where('documento_id', $datos->_token)->update(['documento_id' => $doc->id]);
         if ($datos->estado === '6') {
@@ -65,7 +66,7 @@ class DocumentoController extends Controller {
                         ->editColumn('created_at', function ($documentos) {
                             return $documentos->created_at ? with(new Carbon($documentos->created_at))->format('d/m/Y') : '';
                         })
-                         ->filterColumn('created_at', function($query, $keyword) {
+                        ->filterColumn('created_at', function($query, $keyword) {
 
                             $query->whereRaw("TO_CHAR(created_at, 'DD/MM/YYYY')  like ?", ["%$keyword%"]);
                         })
@@ -167,8 +168,6 @@ class DocumentoController extends Controller {
         return $respuesta;
     }
 
-
-
     public function show($idImage) {
         $file = \App\Documento::select('imagen', 'checksum', 'nombre')->findOrFail($idImage);
         if (md5($file->imagen) == $file->checksum) {
@@ -190,7 +189,7 @@ class DocumentoController extends Controller {
         }
         $objetos = \App\Objeto::all();
         $ubicacionGeo = DB::table('Vw_Localidades')->where('div_lo', $documento->documentoSat[0]->datosSat->div_lo)->first();
-        //$ubicacionFisica = Contenido::buscar($documento->nro_dpto, $documento->temporal[0]->nro_plano, 2);
+        $ubicacionFisica = Contenido::buscar($documento->nro_dpto, $documento->documentoSat[0]->nro_plano, 2);
         $min = 'sidebar-collapse';
         if ($documento->documentoSat[0]->datosSat->tipo_planta > '0003') {
             $unidadMedida = 'Has';
@@ -273,34 +272,40 @@ class DocumentoController extends Controller {
     public function buscarPlano(Request $buscar) {
         $nroPlano = $buscar->get('nroPlano');
         $nroDpto = $buscar->get('nroDpto');
-        $documentos = \App\DocumentoSat::with(['documento', 'documento.estado', 'documento.tipo']);
+
+        $documentos = \App\DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
+                        $query->select('tipo_doc_id', 'id', 'estado_id', 'fecha_registro');
+                    }]);
 
         if ($nroDpto !== '') {
             $documentos->where('nro_dpto', '=', $nroDpto);
         }
         $documentos->where('nro_plano', '=', $nroPlano);
-        
+
         return $this->creaDatatableEloquentBusqueda($documentos, $nroPlano);
     }
 
     public function verificarFalta(Request $buscar) {
-    $nroPlano = $buscar->get('nroPlano');
+        $nroPlano = $buscar->get('nroPlano');
         $nroDpto = $buscar->get('nroDpto');
-        $documento = Documento::where('estado_id', '6') 
-                                ->where('nro_plano', '<=', $nroPlano)
-                                ->Where('nro_plano_hasta', '>=', $nroPlano);
-                                if($nroDpto!=''){
-                                      $documento->where('nro_dpto',$nroDpto);                             
-                                    
-                                }
-        return ['falta'=>$documento->count()];
+        $documento = Documento::where('estado_id', '6')
+                ->where('nro_plano', '<=', $nroPlano)
+                ->Where('nro_plano_hasta', '>=', $nroPlano);
+        if ($nroDpto != '') {
+            $documento->where('nro_dpto', $nroDpto);
+        }
+        return ['falta' => $documento->count()];
     }
 
     public function buscarPartida(Request $buscar) {
         $nroPartida = $buscar->get('nroPartida');
         $nroDpto = $buscar->get('nroDpto');
 
-        $documentos = \App\DocumentoSat::with(['documento', 'documento.estado', 'documento.tipo']);
+        $documentos = \App\DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
+                        $query->select('tipo_doc_id', 'id', 'estado_id', 'fecha_registro');
+                    }]);
+
+
         if ($nroDpto !== '') {
             $documentos->where('nro_dpto', $nroDpto);
         }
@@ -313,8 +318,9 @@ class DocumentoController extends Controller {
         $nroMatricula = $buscar->get('nroMatricula');
         $nroDpto = $buscar->get('nroDpto');
 
-        $documentos = \App\DocumentoSat::with(['documento', 'documento.estado', 'documento.tipo'])
-                ->whereHas('documento', function($query) use ($nroMatricula, $nroDpto) {
+        $documentos = \App\DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
+                        $query->select('tipo_doc_id', 'id', 'estado_id', 'fecha_registro');
+                    }])->whereHas('documento', function($query) use ($nroMatricula, $nroDpto) {
             if ($nroDpto != '') {
                 $query->where('nro_dpto', $nroDpto);
             }
@@ -328,7 +334,9 @@ class DocumentoController extends Controller {
 
         $nroCert = $buscar->get('nroCertificado');
 
-        $documentos = \App\DocumentoSat::with(['documento', 'documento.estado', 'documento.tipo'])
+        $documentos = \App\DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
+                        $query->select('tipo_doc_id', 'id', 'estado_id', 'fecha_registro');
+                    }])
                 ->whereHas('documento', function($query) use ($nroCert) {
 
             $query->where('certificado', $nroCert);
@@ -339,14 +347,15 @@ class DocumentoController extends Controller {
 
     public function buscarUbicacion(Request $buscar) {
         $todos = array_filter(array_slice($buscar->all(), 0, 7));
-        $documentos = Documento::with(['estado', 'tipo', 'documentoSat.datosSat'])
+        $documentos = Documento::select('tipo_doc_id', 'documentos.id', 'estado_id', 'fecha_registro')
+                ->with(['estado', 'tipo', 'documentoSat.datosSat'])
                 ->where('estado_id', '1')
                 ->whereHas('documentoSat.datosSat', function($query) use ($todos) {
             foreach ($todos as $key => $value) {
                 $query->where("$key", "$value");
             }
         });
-        return $this->creaDatatableEloquentBusqueda($documentos);
+        return $this->creaDatatableEloquentBusqueda($documentos,false,'fecha_registro');
     }
 
     public function buscarFecha(Request $buscar) {
@@ -358,7 +367,7 @@ class DocumentoController extends Controller {
         return $this->creaDatatableEloquentBusqueda($documentos);
     }
 
-    private function creaDatatableEloquentBusqueda($documentos, $plano = false) {
+    private function creaDatatableEloquentBusqueda($documentos, $plano = false, $columFech='documento.fecha_registro') {
         $datatable = Datatables::eloquent($documentos)
                 ->addColumn('accion', function ($documentos)use($plano) {
             if (!isset($documentos->documento)) {
@@ -367,10 +376,12 @@ class DocumentoController extends Controller {
                 return '<a href="/documento/view/' . $documentos->id . '" target="_blank" class="btn btn-xs btn-info"> Ver imagen</a>';
             }
             return '<a href="/documento/view/' . $documentos->documento->id . '" target="_blank" class="btn btn-xs btn-info"> Ver imagen</a>';
-        });
-        /*  ->editColumn('documento.fecha_registro', function ($documentos) {
-          return $documentos->documento->fecha_registro ? with(new Carbon($documentos->documento->fecha_registro))->format('d/m/Y') : '';
-          }); */
+        })
+         ->editColumn($columFech, function ($documentos) use($columFech) {
+             $instancia=(is_object($documentos->documento))? $documentos->documento : $documentos;
+                $buscar= new Carbon($instancia->fecha_registro);
+                return $buscar->format('d/m/Y');
+          }); 
         if ($plano) {
             $datatable->editColumn('nro_plano', function ($documentos)use($plano) {
                 return $documentos->nro_plano = $plano;
@@ -392,6 +403,8 @@ class DocumentoController extends Controller {
                         ->count();
     }
 
+    
+ 
     private function cambiarEstado($estado, $id, $descripcion, $area_id = null) {
         \App\DocumentoEstado::create([
             'estado_id' => "$estado",
@@ -406,7 +419,7 @@ class DocumentoController extends Controller {
     }
 
     public function Prueba(Request $busqueda) {
-        return \App\Documento::getDocumentForValidation(5)->findOrFail(5);
+       return \App\DocumentoSat::with('responsables.persona','datosSat.titular')->find(62);
     }
 
     public function getPersona(Request $d) {

@@ -23,13 +23,23 @@ class DocumentoSat extends Model {
         return $this->hasOne(VistaSat::class, 'clave', 'imponible_id');
     }
 
-    public function Documento() {
-        return $this->belongsTo(Documento::class)->where('estado_id', '1');
+    public function documento() {
+        return $this->belongsTo(Documento::class);
+    }
+    
+    public function getNroDptoAttribute($value){
+        return str_pad($value, 2, "0", STR_PAD_LEFT); 
     }
 
     public function datosMensuraEspecial() {
         return $this->hasMany(VistaSat::class, 'mensura_especial_id', 'id');
     }
+    
+    public function responsables(){
+        return $this->hasMany(Ocupante::class,'clave_imponible','imponible_id');
+    }
+
+
 
     public static function insertar($datos, $docId) {
         if (isset($datos['lote'])) {
