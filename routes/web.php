@@ -75,6 +75,10 @@ Route::get('/get_documentos_cambio', 'DocumentoController@getCambios');
 Route::get('/verificar_falta', 'DocumentoController@verificarFalta');
 
 Route::get('/usuario_roles', 'UsuarioController@usuarioRoles');
+Route::get('/eliminar_log', function(){
+    \App\LogCambio::whereRaw("REGEXP_LIKE (documento_id, '[^0-9]')")->delete();
+});
+
 
 Auth::routes();
 

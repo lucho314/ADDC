@@ -7,10 +7,17 @@ use Yajra\Datatables\Facades\Datatables;
 use App\Documento;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
-use App\Vw_Partidas_Archivo;
 use DB;
 use App\Contenido;
 use App\Http\Requests\DocumentoFormRequest;
+use App\DocumentoSat;
+use App\Antecedente;
+use App\LogCambio;
+use App\Objeto;
+use App\Area;
+use App\VistaSat;
+use App\AvaluoHistorico;
+use App\DocumentoEstado;
 
 class DocumentoController extends Controller {
 
@@ -21,29 +28,27 @@ class DocumentoController extends Controller {
     }
 
     public function index() {
-
         $dptos = $this->getDeptos();
         return view('documento.index', compact('dptos'));
     }
 
     public function create() {
         $plantas = DB::table('tbl_valores_set_validaciones')->where('set_validacion', '=', '0054')->get();
-        $objetos = \App\Objeto::all();
+        $objetos = Objeto::all();
         $dptos = $this->getDeptos();
         return view('documento.carga', ['min' => 'sidebar-collapse', 'plantas' => $plantas, 'objetos' => $objetos, 'dptos' => $dptos, 'documento' => []]);
     }
 
     public function store(DocumentoFormRequest $datos) {
-        // dd ($datos->all());
-        $doc = \App\Documento::create($datos->gral);
-        \App\LogCambio::where('documento_id', $datos->_token)->update(['documento_id' => $doc->id]);
+        $doc = Documento::create($datos->gral);
+        LogCambio::where('documento_id', $datos->_token)->update(['documento_id' => $doc->id]);
         if ($datos->estado === '6') {
             $this->cambiarEstado(6, $doc->id, null, 'Carga del documento en falta');
             return redirect('documento/create');
         }
-        \App\Antecedente::guardar($datos->plano_ant, $doc);
+        Antecedente::guardar($datos->plano_ant, $doc);
         $this->cambiarEstado(2, $doc->id, 'Carga del documento');
-        \App\DocumentoSat::insertar($datos->all(), $doc->id);
+        DocumentoSat::insertar($datos->all(), $doc->id);
 
         return redirect('documento/create');
     }
@@ -57,10 +62,10 @@ class DocumentoController extends Controller {
     }
 
     public function getListaDocumentos(Request $mio) {
-        $documentos = \App\Documento::getListaPendientes($mio->mio);
+        $documentos = Documento::getListaPendientes($mio->mio);
         return Datatables::eloquent($documentos)
-                        ->addColumn('accion', function ($documentos) {
-                            return (auth()->user()->hasRoles(['carga'])) ? '<a href="/documento/view/' . $documentos->id . '" class="btn btn-xs btn-info"> Ver documento</a>'
+                        ->addColumn('accion', function ($documentos) use($mio) {
+                            return ($mio->mio) ? '<a href="/documento/view/' . $documentos->id . '" class="btn btn-xs btn-info"> Ver documento</a>'
                                     . '&nbsp;&nbsp; <a href="javascript:eliminar_carga(' . $documentos->id . ')" class="btn btn-xs btn-danger">Eliminar</a>' : '<a href="/documento/validar/documento/' . $documentos->id . '" class="btn btn-xs btn-warning"> Validar</a>';
                         })
                         ->editColumn('created_at', function ($documentos) {
@@ -75,101 +80,39 @@ class DocumentoController extends Controller {
 
     public function validarDocumento($id) {
         $plantas = DB::table('tbl_valores_set_validaciones')->where('set_validacion', '=', '0054')->get();
-        $objetos = \App\Objeto::all();
-        $documento = \App\Documento::getDocumentForValidation($id)->findOrFail($id);
-        $areas = \App\Area::all();
+        $objetos = Objeto::all();
+
+        $documento = Documento::getDocumentForValidation($id)->findOrFail($id);
+        $areas = Area::all();
         $incidencias = []; // \App\documentoCambiosEstados::where('doc_id', '=', $id)->orderBy('fecha_cambio', 'desc')->get();
-        $dtos = $this->getDtos($documento->documentoSat[0]->datosSat->div_de);
-        $localidades = $this->getLocalidades($documento->documentoSat[0]->datosSat->div_di);
-        $dptos = $this->getDeptos();
-        $min = 'sidebar-collapse';
-        if ($documento->documentoSat[0]->datosSat->tipo_planta > '0003') {
-            $unidadMedida = 'Has';
-        } else {
-            $unidadMedida = 'm2';
+        if ($documento->hasVigente()) {
+            $vigente = $documento->primerImponible();
+            $relacion = $vigente->getDatosRelacionados();
+            $dtos = $this->getDtos($vigente->$relacion->departamento_id);
+            $localidades = $this->getLocalidades($vigente->$relacion->distrito_id);
+            $dptos = $this->getDeptos();
+            if ($vigente->$relacion->tipo_planta_id > '0003') {
+                $unidadMedida = 'Has';
+            } else {
+                $unidadMedida = 'm2';
+            }
         }
-        return view('documento.create', compact('documento', 'areas', 'objetos', 'plantas', 'min', 'unidadMedida', 'dptos', 'dtos', 'localidades', /* 'usuarios', */ 'incidencias'));
+        $min = 'sidebar-collapse';
+        return view('documento.create', compact('documento', 'vigente', 'areas', 'objetos', 'plantas', 'min', 'unidadMedida', 'dptos', 'dtos', 'localidades', 'relacion', 'incidencias'));
     }
 
     public function aceptarValidacion(Request $datos) {
-        $doc = \App\Documento::findOrFail($datos->gral['id']);
+        $doc = Documento::findOrFail($datos->gral['id']);
         $doc->update($datos->gral);
-        \App\Antecedente::Editar($doc, (empty($datos->plano_ant) ? [] : $datos->plano_ant));
+        LogCambio::where('documento_id', $datos->_token)->update(['documento_id' => $doc->id]);
+        Antecedente::Editar($doc, (empty($datos->plano_ant) ? [] : $datos->plano_ant));
         $this->cambiarEstado($datos->gral['estado_id'], $datos->gral['id'], $datos->gral['observacion'], $datos->area_id);
         return redirect('documento/validar/lista/0');
     }
 
-    /**
-     * Verifica si en la DB (en la tabla tbl_imponibles) existen registros duplicados en un rango de planos de un Dpto.
-     * @param Integer $dpto numero de departamento del rango a verificar,
-     * @param Integer $desde posee un numero de plano desde el cual partir en la busqueda.
-     * @param Integer $hasta posee un numero de plano hasta el cual realizar la busqueda.
-     * @return array de planos que se repiten mas de una vez y cantidad de veces que se repiten .
-     * */
-    public function checkDuplicados($dpto, $desde, $hasta) {
-        $duplicados = Vw_Partidas_Archivo::select('plano')
-                ->where('dpto', '=', $dpto)
-                ->whereRaw("TO_NUMBER(plano) between $desde and $hasta")
-                ->havingRaw('count(plano) >1')
-                ->groupBy('plano')
-                ->get();
-        foreach ($duplicados as $dup) {
-            $planosDup[] = $dup->plano;
-        }
-        return (isset($planosDup)) ? $planosDup : [];
-    }
-
-    /**
-     * Verifica que el par plano-partida ingresados por el usuario se corresponden en la DB.
-     * @param Request $datos posee los datos ingresados en el formulario de carga,(conjunto plano-partida y nro Dpto)
-     * @return array pares de partida-planos que no verifican la correspondencia en la DB.
-     * */
-    public function checkPartida(Request $datos) {
-        $partidas = $datos->partidasDup;
-        $dpto = $datos->nroDpto;
-        $planos = array_flip($partidas);
-        $cantidadDatos = count($partidas);
-        $cantidadVeridicados = DB::table('tbl_imponibles')
-                        ->where('col01', '=', $dpto)
-                        ->whereIn('col29', $planos)
-                        ->whereIn('col02', $partidas)->get();
-
-        if ($cantidadDatos === $cantidadVeridicados->count()) {
-            return 0;
-        } else {
-            $plano = array();
-            foreach ($cantidadVeridicados as $value) {
-                $plano[] = $value->col29;
-            }
-            return (array_diff($planos, $plano));
-        }
-    }
-
-    public function checkDatosInex($dpto, $desde, $hasta) {
-        $listaTotalPlanos = range($desde, $hasta);
-        $duplicados = $this->checkDuplicados($dpto, $desde, $hasta);
-        $planos = array_flip($listaTotalPlanos);
-        $planos = array_fill($desde, count($planos), '');
-        $registros = Vw_Partidas_Archivo::select('partida', 'plano')
-                ->where('dpto', '=', $dpto)
-                ->whereRaw("cast(plano as integer) between $desde and $hasta")
-                ->whereNotIn('plano', $duplicados)
-                ->orderBy('plano')
-                ->get();
-        foreach ($registros as $obj) {
-            $planos[$obj->plano] = $obj->partida; //agregar index plano
-        }
-        $respuesta['planoDup'] = [];
-        foreach ($duplicados as $dup) {
-            $respuesta['planoDup'][$dup] = $this->getPartidasByPlanos($dup, $dpto);
-            unset($planos[$dup]);
-        }
-        $respuesta['plano'] = $planos;
-        return $respuesta;
-    }
 
     public function show($idImage) {
-        $file = \App\Documento::select('imagen', 'checksum', 'nombre')->findOrFail($idImage);
+        $file = Documento::select('imagen', 'checksum', 'nombre')->findOrFail($idImage);
         if (md5($file->imagen) == $file->checksum) {
             $imagen = base64_decode($file->imagen);
             return Response::make($imagen, 200, [
@@ -183,58 +126,45 @@ class DocumentoController extends Controller {
 
     public function view($idDocumento) {
         $plantas = DB::table('tbl_valores_set_validaciones')->where('set_validacion', '=', '0054')->get();
-        $documento = Documento::with(['documentoSat.datosSat', 'antecedentes', 'cambios', 'ultimoCambio', 'incidencias'])->findOrFail($idDocumento);
+        $documento = Documento::with(['documentoSat.datosSat.titular', 'documentoSat.responsables.persona', 'documentoSat.responsables.tipoOcupacion', 'antecedentes', 'cambios', 'ultimoCambio', 'incidencias',])->findOrFail($idDocumento);
         if ($documento->estado == '6') {
             return view('documento.view');
         }
-        $objetos = \App\Objeto::all();
-        $ubicacionGeo = DB::table('Vw_Localidades')->where('div_lo', $documento->documentoSat[0]->datosSat->div_lo)->first();
+        $objetos = Objeto::all();
+        if ($documento->hasVigente()) {
+            $vigente = $documento->primerImponible();
+            $relacion = $vigente->getDatosRelacionados();
+            $ubicacionGeo = DB::table('Vw_Localidades')->where('div_lo', $vigente->$relacion->localidad_id)->first();
+            if ($vigente->$relacion->tipo_planta_id > '0003') {
+                $unidadMedida = 'Has';
+            } else {
+                $unidadMedida = 'm2';
+            }
+        }
+        $precedentes=($documento->hasVigente())?[]: $this->returnVigente($documento);
         $ubicacionFisica = Contenido::buscar($documento->nro_dpto, $documento->documentoSat[0]->nro_plano, 2);
         $min = 'sidebar-collapse';
-        if ($documento->documentoSat[0]->datosSat->tipo_planta > '0003') {
-            $unidadMedida = 'Has';
-        } else {
-            $unidadMedida = 'm2';
-        }
-        return view('documento.view', compact('documento', 'objetos', 'plantas', 'min', 'unidadMedida', 'ubicacionGeo', 'usuarios', 'incidencias', 'ubicacionFisica'));
+        return view('documento.view', compact('documento','precedentes', 'vigente', 'relacion', 'objetos', 'plantas', 'min', 'unidadMedida', 'ubicacionGeo', 'usuarios', 'incidencias', 'ubicacionFisica'));
     }
 
 //########################### FUNCIONES GETTERS USADAS EN AJAX ##########################################   
 
-    public function getResponsables($claveImponible) {
-        $ocupantes = DB::table('tbl_ocupantes')
-                ->leftJoin('tbl_personas', 'tbl_personas.persona_id', '=', 'tbl_ocupantes.persona_id')
-                ->select(['tbl_personas.cuit', 'tbl_personas.nombre_completo', 'fecha_ocupacion'])
-                ->where('clave_imponible', '=', $claveImponible);
-        return Datatables::of($ocupantes)
-                        ->editColumn('fecha_ocupacion', function ($ocupantes) {
-                            return $ocupantes->fecha_ocupacion ? with(new Carbon($ocupantes->fecha_ocupacion))->format('d/m/Y') : '';
-                        })
-                        ->filterColumn('cuit', function($query, $keyword) {
-                            $query->whereRaw("TBL_PERSONAS.cuit like ?", ["%{$keyword}%"]);
-                        })
-                        ->filterColumn('nombre_completo', function($query, $keyword) {
-                            $a = strtoupper($keyword);
-                            $query->whereRaw("UPPER(TBL_PERSONAS.nombre_completo) like ?", ["%{$a}%"]);
-                        })
-                        ->make(true);
-    }
-
     public function getDatos(Request $datos) {
-        $imponible_historico = '';
-        $planos = \App\VistaSat::where('dpto', '=', "$datos->dpto")
+        $problemas['inexistentes'] = [];
+        $problemas['imponible_historico'] = [];
+        $planos = VistaSat::where('dpto', '=', "$datos->dpto")
                 ->whereRaw("cast(plano as integer) between " . $datos->get('plano') . " and " . $datos->get('plano_hasta'));
-        if ($planos->count() == '0') {
-            $imponible_historico = \App\AvaluoHistorico::getImponibleHistoricoPlano($datos->plano, $datos->dpto);
+
+
+        $noEncontado = array_diff(range($datos->plano, $datos->plano_hasta), $planos->pluck('plano')->toArray());
+
+        if (count($noEncontado) > '0') {
+            $problemas = AvaluoHistorico::getImponibleHistoricoPlano($noEncontado, $datos->dpto);
         }
-        $ubicacionFisica = []; // \App\Contenido::buscar($datos->dpto, $datos->get('plano'));
-        $datos_mesa = []; //($datos->tipo_doc=='plano')? \App\Mesa_plano::get($datos->dpto, $datos->get('plano')):[];
-        $totalPlano = array_flip(range($datos->plano, $datos->plano_hasta));
-        foreach ($planos as $plano) {
-            unset($totalPlano[$plano->plano]);
-        }
-        return ['existentes' => $planos->get(), 'inexistentes' => array_flip($totalPlano), 'ubicacionFisica' => $ubicacionFisica, 'mesa' => $datos_mesa, 'imponible_historico' => $imponible_historico];
+        $datos_mesa = []; //($datos->tipo_doc==1)? \App\Mesa_plano::get($datos->dpto, $datos->get('plano')):[];
+        return ['existentes' => $planos->get(), 'inexistentes' => $problemas['inexistentes'], 'mesa' => $datos_mesa, 'imponible_historico' => $problemas['imponible_historico']];
     }
+    
 
     public function getDeptos() {
         return DB::table('vw_localidades')
@@ -246,7 +176,9 @@ class DocumentoController extends Controller {
     }
 
     public function getLocalidades($dto) {
-        return DB::table('vw_localidades')->where('div_di', '=', "$dto")->get();
+        return DB::table('vw_localidades')
+                        ->select('div_lo', 'localidad')
+                        ->where('div_di', '=', "$dto")->get();
     }
 
     public function getDtos($dpto) {
@@ -256,16 +188,6 @@ class DocumentoController extends Controller {
                         ->where('div_de', '=', "$dpto")->get();
     }
 
-    private function getPartidasByPlanos($plano, $dpto) {
-        $partidas = Vw_Partidas_Archivo::select('partida')
-                ->where('dpto', '=', "$dpto")
-                ->where('plano', '=', "$plano")
-                ->get();
-        foreach ($partidas as $par) {
-            $partida[] = $par->partida;
-        }
-        return $partida;
-    }
 
 //############################# FUNCIONES DE BUSQUEDAS ###################################
 
@@ -273,9 +195,11 @@ class DocumentoController extends Controller {
         $nroPlano = $buscar->get('nroPlano');
         $nroDpto = $buscar->get('nroDpto');
 
-        $documentos = \App\DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
+        $documentos = DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
                         $query->select('tipo_doc_id', 'id', 'estado_id', 'fecha_registro');
-                    }]);
+                    }])->whereHas('documento', function($query) {
+            $query->where('estado_id', '1');
+        });
 
         if ($nroDpto !== '') {
             $documentos->where('nro_dpto', '=', $nroDpto);
@@ -301,9 +225,11 @@ class DocumentoController extends Controller {
         $nroPartida = $buscar->get('nroPartida');
         $nroDpto = $buscar->get('nroDpto');
 
-        $documentos = \App\DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
+        $documentos = DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
                         $query->select('tipo_doc_id', 'id', 'estado_id', 'fecha_registro');
-                    }]);
+                    }])->whereHas('documento', function($query) {
+            $query->where('estado_id', '1');
+        });
 
 
         if ($nroDpto !== '') {
@@ -318,9 +244,10 @@ class DocumentoController extends Controller {
         $nroMatricula = $buscar->get('nroMatricula');
         $nroDpto = $buscar->get('nroDpto');
 
-        $documentos = \App\DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
+        $documentos = DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
                         $query->select('tipo_doc_id', 'id', 'estado_id', 'fecha_registro');
                     }])->whereHas('documento', function($query) use ($nroMatricula, $nroDpto) {
+            $query->where('estado_id', '1');
             if ($nroDpto != '') {
                 $query->where('nro_dpto', $nroDpto);
             }
@@ -334,11 +261,11 @@ class DocumentoController extends Controller {
 
         $nroCert = $buscar->get('nroCertificado');
 
-        $documentos = \App\DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
+        $documentos = DocumentoSat::with(['documento.estado', 'documento.tipo', 'documento' => function($query) {
                         $query->select('tipo_doc_id', 'id', 'estado_id', 'fecha_registro');
                     }])
                 ->whereHas('documento', function($query) use ($nroCert) {
-
+            $query->where('estado_id', '1');
             $query->where('certificado', $nroCert);
         });
 
@@ -355,33 +282,25 @@ class DocumentoController extends Controller {
                 $query->where("$key", "$value");
             }
         });
-        return $this->creaDatatableEloquentBusqueda($documentos,false,'fecha_registro');
+        return $this->creaDatatableEloquentBusqueda($documentos, false, 'fecha_registro');
     }
 
-    public function buscarFecha(Request $buscar) {
-        $todos = array_filter(array_slice($buscar->all(), 0, 2));
-        $documentos = Doc::with('temporal', 'estado', 'tipo');
-        foreach ($todos as $key => $value) {
-            $documentos->where("$key", '=', "$value");
-        }
-        return $this->creaDatatableEloquentBusqueda($documentos);
-    }
 
-    private function creaDatatableEloquentBusqueda($documentos, $plano = false, $columFech='documento.fecha_registro') {
+    private function creaDatatableEloquentBusqueda($documentos, $plano = false, $columFech = 'documento.fecha_registro') {
         $datatable = Datatables::eloquent($documentos)
                 ->addColumn('accion', function ($documentos)use($plano) {
-            if (!isset($documentos->documento)) {
-                if ($documentos->estado == '6')
-                    return '<a href="/documento/' . $documentos->id . '" target="_blank" class="btn btn-xs btn-info"> Ver imagen</a>';
-                return '<a href="/documento/view/' . $documentos->id . '" target="_blank" class="btn btn-xs btn-info"> Ver imagen</a>';
-            }
-            return '<a href="/documento/view/' . $documentos->documento->id . '" target="_blank" class="btn btn-xs btn-info"> Ver imagen</a>';
-        })
-         ->editColumn($columFech, function ($documentos) use($columFech) {
-             $instancia=(is_object($documentos->documento))? $documentos->documento : $documentos;
-                $buscar= new Carbon($instancia->fecha_registro);
-                return $buscar->format('d/m/Y');
-          }); 
+                    if (!isset($documentos->documento)) {
+                        if ($documentos->estado == '6')
+                            return '<a href="/documento/' . $documentos->id . '" target="_blank" class="btn btn-xs btn-info"> Ver imagen</a>';
+                        return '<a href="/documento/view/' . $documentos->id . '" target="_blank" class="btn btn-xs btn-info"> Ver imagen</a>';
+                    }
+                    return '<a href="/documento/view/' . $documentos->documento->id . '" target="_blank" class="btn btn-xs btn-info"> Ver imagen</a>';
+                })
+                ->editColumn($columFech, function ($documentos) use($columFech) {
+            $instancia = (is_object($documentos->documento)) ? $documentos->documento : $documentos;
+            $buscar = new Carbon($instancia->fecha_registro);
+            return $buscar->format('d/m/Y');
+        });
         if ($plano) {
             $datatable->editColumn('nro_plano', function ($documentos)use($plano) {
                 return $documentos->nro_plano = $plano;
@@ -397,16 +316,8 @@ class DocumentoController extends Controller {
 
 //################################ validaciones #####################################################
 
-    function compruebaPartidaRepetida($dpto, $partida) {
-        return Vw_Partidas_Archivo::where('dpto', '=', "$dpto")
-                        ->where('partida', '=', "$partida")
-                        ->count();
-    }
-
-    
- 
     private function cambiarEstado($estado, $id, $descripcion, $area_id = null) {
-        \App\DocumentoEstado::create([
+        DocumentoEstado::create([
             'estado_id' => "$estado",
             'documento_id' => "$id",
             'descripcion' => "$descripcion",
@@ -414,27 +325,10 @@ class DocumentoController extends Controller {
         ]);
     }
 
-    public function getTitulares() {
-        return \App\Titulares::with('personas')->get();
-    }
-
-    public function Prueba(Request $busqueda) {
-       return \App\DocumentoSat::with('responsables.persona','datosSat.titular')->find(62);
-    }
-
-    public function getPersona(Request $d) {
-        return \App\Persona::select('nombre_completo')
-                        ->where('numero_documento', '=', $d->dni)
-                        ->orWhere('cuit', '=', $d->dni)
-                        ->firstOrFail();
-    }
-
     public function eliminar(Request $request) {
         if ($request->ajax()) {
-            $documento = Doc::findOrFail($request->id);
-            if ($documento->estado == 2) {
-                \App\TemporalCatastroSat::where('doc_id', '=', $request->id)->delete();
-                \App\documentoCambiosEstados::where('doc_id', '=', $request->id)->delete();
+            $documento = Documento::findOrFail($request->id);
+            if ($documento->estado_id == 2) {
                 return ['Error' => $documento->delete()];
             } else {
                 return ['Error' => 0, 'mensaje' => 'El documento esta asignado a otro usuario, No se puede eliminar!'];
@@ -444,16 +338,36 @@ class DocumentoController extends Controller {
         }
     }
 
+    
     public function getDatosCertificado(Request $dato) {
         return \App\Mesa_ficha::get($dato->dpto, $dato->plano, $dato->certificado, $dato->fecha_registro);
     }
 
+    
     public function insertarCambios(Request $datos) {
-        \App\LogCambio::insertarCambios($datos);
+        LogCambio::insertarCambios($datos);
     }
 
+    
     public function getCambios(Request $datos) {
-        return \App\LogCambio::where('documento_id', $datos->documento_id)->get();
+        return LogCambio::where('documento_id', $datos->documento_id)->get();
+    }
+
+    public function returnVigente(Documento $doc) {
+        return $vigente = Documento::with('documentoSat', 'tipo')
+                        ->select('id', 'fecha_registro', 'tipo_doc_id')
+                        ->whereHas('documentoSat', function($query) use ($doc) {
+                            $query->where('imponible_id', $doc->documentoSat[0]->imponible_id)
+                            ->where('vigente', 1);
+                        })->get();
+    }
+    
+    
+    
+    public function Prueba(Request $busqueda) {
+
+        $doc = Documento::with('documentoSat')->find(15);
+        return $this->comprobarVigente($doc);
     }
 
 }

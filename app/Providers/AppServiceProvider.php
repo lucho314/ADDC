@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider {
             } 
             if ($parameters[4] === '2') {
                 if (isset($parameters[5])) {
-                    $row->where('fecha_registro', '=', $parameters[5]);
+                    $row->where('fecha_certificado', '=', $parameters[5]);
                     $row->where('tipo_doc_id', '=', $parameters[4]);
                 }
             }

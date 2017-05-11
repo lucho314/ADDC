@@ -4,15 +4,14 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDocumentoEstadosTable extends Migration
-{
+class CreateDocumentoEstadosTable extends Migration {
+
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create('documento_estados', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('documento_id');
@@ -21,7 +20,8 @@ class CreateDocumentoEstadosTable extends Migration
             $table->string('nom_usuario');
             $table->date('fecha');
             $table->integer('area_id')->nullable();
-            });
+            $table->foreign('documento_id')->references('id')->on('documentos')->onDelete('cascade');
+        });
     }
 
     /**
@@ -29,8 +29,8 @@ class CreateDocumentoEstadosTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('documento_estados');
     }
+
 }

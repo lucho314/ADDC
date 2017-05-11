@@ -16,7 +16,8 @@ class carga_usuarios extends Seeder
                 'nom_usuario' => 'CB25907280',
                  'password'=>'a',
                   'email'=>'a',
-                  'area_id'=>'1'
+                  'area_id'=>'1',
+                  'nombre'=>'leo'
                  ]);
     }
 }

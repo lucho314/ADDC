@@ -20,10 +20,11 @@ class CreateDocumentoSatsTable extends Migration
             $table->integer('mensura_especial_id')->nullable();
             $table->integer('nro_dpto');
             $table->integer('nro_plano');
-            $table->integer('nro_partida');
+            $table->integer('nro_partida')->nullable();
             $table->string('sup_titulo')->nullable();
             $table->string('exceso')->nullable();
             $table->boolean('vigente')->default('1');
+            $table->foreign('documento_id')->references('id')->on('documentos')->onDelete('cascade');
         });
     }
 

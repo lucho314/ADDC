@@ -12,17 +12,13 @@
                     <div class="col-md-12">
                             <div class="form-group row">   <!--    posible_valor planta, Descripcion-->
                                 <label>Tipo planta:</label>
-                                <div class="col-md-11"> <select  id="tipo_planta" name="tipo_planta_id" class="form-control select-modificar row">
+                                <div class="col-md-11"> 
+                                    <select  id="tipo_planta" name="tipo_planta_id" readonly class="form-control select-modificar row">
                                         @foreach($plantas as $pl)
-                                        @if(isset($datosSAT))
-                                        <option value="{{$pl->posible_valor}}" <?= ($documento->temporal[0]->tipo_planta === $pl->posible_valor) ? 'selected' : '' ?>> {{$pl->descripcion}}</option>
-                                        @else
-                                        <option value="{{$pl->posible_valor}}"> {{$pl->descripcion}}</option>
-                                        @endif
+                                            <option value="{{$pl->posible_valor}}"> {{$pl->descripcion}}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <input type="hidden" name="gral[tipo_planta]" id="tipo_planta_input">
                             </div>
                     </div>
                     <div class="col-md-12  errores"></div>

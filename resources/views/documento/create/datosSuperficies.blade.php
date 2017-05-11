@@ -6,7 +6,7 @@
         <div class="col-md-6">
             <div class="form-group">   <!--    posible_valor planta, Descripcion-->
                 <label>Tipo planta:</label>
-                <select  id="tipo_planta" class="form-control" name="tipo_planta_id">
+                <select  id="tipo_planta" class="form-control" readonly name="tipo_planta_id">
                     @foreach($plantas as $pl)
                     @if(isset($datosSAT))
                          <option value="{{$pl->posible_valor}}" <?= ($documento->temporal[0]->tipo_planta===$pl->posible_valor)? 'selected':'' ?>> {{$pl->descripcion}}</option>

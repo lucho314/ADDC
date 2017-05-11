@@ -31,7 +31,7 @@ class DocumentoFormRequest extends FormRequest {
         return [
             'gral.nro_dpto'=>'required|numeric|in:01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17',
             'gral.nro_plano'=>'required|numeric|min:1',
-            'gral.nro_plano_hasta'=>'required|numeric|min:'.$datos->gral['nro_plano'].'|doc_unico:'.$datos->gral['nro_dpto'].','.$datos->gral['nro_plano'].','.$datos->gral['nro_plano_hasta'].','.(isset($datos->gral['id'])?$datos->gral['id']:0).','.$datos->gral['tipo_doc_id'].','.(isset($datos->gral['fecha_registro'])?$datos->gral['fecha_registro']:null),
+            'gral.nro_plano_hasta'=>'required|numeric|min:'.$datos->gral['nro_plano'].'|doc_unico:'.$datos->gral['nro_dpto'].','.$datos->gral['nro_plano'].','.$datos->gral['nro_plano_hasta'].','.(isset($datos->gral['id'])?$datos->gral['id']:0).','.$datos->gral['tipo_doc_id'].','.(isset($datos->gral['fecha_certificado'])?$datos->gral['fecha_certificado']:null),
             'gral.tipo_doc_id'=>'required',
             'gral.fecha_registro'=>'date',
             'gral.inscripcion'=>'regex:/^[0-9]+\*?/',

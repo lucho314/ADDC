@@ -8,21 +8,21 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Departamento</label>
-                            <select  id="departamento" class="form-control select-modificar" name="departamento_id">
+                            <select  id="departamento" class="form-control select-modificar" readonly  name="departamento_id">
                             </select> 
                            </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Distrito</label>
-                            <select id="distrito" class="form-control select-modificar" name="distrito_id">
+                            <select id="distrito" class="form-control select-modificar" readonly name="distrito_id">
                             </select> 
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Localidad</label>
-                            <select id="localidad" class="form-control select-modificar" name="localidad_id">
+                            <select id="localidad" class="form-control select-modificar" readonly name="localidad_id">
                             </select>
                         </div>
                     </div>

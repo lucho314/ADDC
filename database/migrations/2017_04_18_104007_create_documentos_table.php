@@ -22,6 +22,7 @@ class CreateDocumentosTable extends Migration {
             $table->string('checksum');
             $table->integer('objeto_id')->nullable();
             $table->date('fecha_registro')->nullable();
+             $table->date('fecha_certificado')->nullable();
             $table->integer('nro_matricula')->nullable();
             $table->binary('imagen');
             $table->integer('certificado')->nullable();

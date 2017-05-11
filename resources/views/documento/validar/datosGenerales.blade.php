@@ -1,7 +1,7 @@
 <div class="container-fluid" >
     <div class="panel panel-default">
         <div class="panel-body">
-            <div class="col-md-8 col-md-offset-1">
+            <div class="col-md-10">
                 <div  id="datosGenerales" class="col-md-12">
                     <div class="col-md-3">
                         <div class="form-group">
@@ -41,7 +41,13 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Certificado</label>
-                            <input class="form-control modificar sistema" type="text" readonly  name="gral[certificado]" id='gral_certificado' value="{{$documento->certificado or old('responsable')}}" placeholder="Certificado.."> </input>
+                            <input class="form-control modificar ingresado" type="text" readonly  name="gral[certificado]" id='gral_certificado' value="{{$documento->certificado or old('responsable')}}" placeholder="Certificado.."> </input>
+                        </div>
+                    </div>
+                     <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Fecha certificado</label>
+                            <input class="form-control modificar ingresado" type="date" name="gral[fecha_certificado]"   id='gral_fecha_certificado'  readonly  value="{{($documento->fecha_certificado)?$documento->fecha_certificado->toDateString():''}}"> </input>
                         </div>
                     </div>
                     @endif
@@ -61,13 +67,13 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Año de inscripción</label>
-                            <input class="form-control modificar sistema" type="text"  readonly  name="gral[inscripcion]" id="gral_inscripcion" value="{{$documento->documentoSat[0]->datosSat->inscripcion or old('nombre')}}"> </input>
+                            <input class="form-control modificar sistema" type="text"  readonly  name="gral[inscripcion]" id="gral_inscripcion" value="{{$vigente->$relacion->inscripcion or old('nombre')}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Matrícula</label>
-                            <input class="form-control modificar sistema" type="text"   name="gral[nro_matricula]" readonly id="gral_nro_matricula" value="{{$documento->documentoSat[0]->datosSat->matricula or old('nombre')}}"> </input>
+                            <input class="form-control modificar sistema" type="text"   name="gral[nro_matricula]" readonly id="gral_nro_matricula" value="{{$vigente->$relacion->matricula or old('nombre')}}"> </input>
                         </div>
                     </div>
                     @if($documento->tipo_doc_id==='1')

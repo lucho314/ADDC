@@ -22,6 +22,9 @@
     max-height: 200px;
     overflow-y: scroll;
 }
+
+
+
 #formularioDocumento {opacity:0.3;}
 #cargando {
     position:absolute;

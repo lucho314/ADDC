@@ -24,7 +24,7 @@
                 <!--                <label>Imagen:</label>-->
                 <input class="form-control" type="file" name="gral[imagen]" id="imagen"> </input>
             </div>
-            <div class="col-md-12 container-fluid">
+            <div class="col-md-12 container-fluid" id="grupoImagen">
                 <output id="list"></output>
             </div>
             <div class="col-md-12"  id="formularioDocumento" style="display: none">
@@ -33,6 +33,8 @@
                     <li class="clik generales"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(0, 'generales')">Datos Generales</a></li>
                     <li class="clik partidas"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(1, 'partidas')">Partidas y Superficies</a></li>
                     <li class="clik ubicacion"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(2, 'ubicacion')">Ubicación Geográfica</a></li>
+                    <a href="javascript:ocultar()" id="minimizar"  style="float: left;position: relative; left:25%; color: black"><i class="glyphicon glyphicon-chevron-down" aria-hidden="true"></i></a>
+                    <a href="javascript:desocultar()" id="maximizar"  style="display: none; position: relative; float: left; left:25%; color: black"><i class="glyphicon glyphicon-chevron-up" aria-hidden="true"></i></a>
                     <button style="float: right;margin-right: 6px; margin-top: 9px;" class="btn btn-success" id="submit">Aceptar</button>
                     <button style="float: right;margin-right: 10px; margin-top: 9px;" type="reset" id="cancelar" class="btn btn-danger">Cancelar</button>
 
@@ -60,15 +62,15 @@
             </div>
 
             <div id="cargaAntecedente" style="display: none">
-                 <ul class="tab">
+                <ul class="tab">
                     <li><a href="#" class="tablinks">Datos Generales</a></li>
                     <button style="float: right;margin-right: 6px; margin-top: 9px;" class="btn btn-success" type="submit">Aceptar</button>
                     <button style="float: right;margin-right: 10px; margin-top: 9px;" type="reset" id="cancelar" class="btn btn-danger">Cancelar</button>
-                 </ul>
+                </ul>
                 <div class="tabcontent  datos_tabcontent" style="display: block">
                     @include('documento.create.cargaAntecedente')
                 </div>
-                
+
             </div>
             {{Form::close()}}
         </div>
@@ -119,20 +121,5 @@
 @section('script')
 @include('vendor.lrgt.ajax_script', ['form' => '#form_carga',
 'request'=>'App/Http/Requests/DocumentoFormRequest','on_start'=>false])
-<script>
-    $('.clik').eq(0).css('background-color', '#ccc');
-    function openSearch(index, city) {
-        $('.clik').css('background-color', '');
-        $('.clik').eq(index).css('background-color', '#ccc');
-
-        $('.tabcontent').hide();
-        $('#' + city).show();
-    }
-    ;
-    $('form').submit(function (e) {
-
-        $('#submit').click();
-    })
-
-</script>
+@include('documento.parcial.cambiar_seccion');
 @endsection

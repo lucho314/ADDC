@@ -100,13 +100,6 @@
                                     </a>
                                 </li>
                                 @endif
-                                @if(auth()->user()->hasRoles(['admin','corrector']))
-                                <li>
-                                    <a href="{{URL::action('DocumentoController@viewListaDocumentosPendientes',1)}}">
-                                        <i class="fa fa-circle-o"></i> Validaciones pendientes
-                                    </a>
-                                </li>
-                                @endif
                                 @if(auth()->user()->hasRoles(['carga']))
                                 <li>
                                     <a href="{{URL::action('DocumentoController@viewListaDocumentosCargados')}}">

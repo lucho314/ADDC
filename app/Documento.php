@@ -24,12 +24,14 @@ class Documento extends Eloquent {
         'nro_plano_hasta',
         'fecha_registro_visible',
         'nro_matricula',
-        'certificado'
+        'certificado',
+        'fecha_certificado'
     ];
+    
     protected $binaries = ['imagen'];
 
     public function getDates() {
-        return array('created_at', 'updated_at', 'fecha_registro');
+        return array('created_at', 'updated_at', 'fecha_registro','fecha_certificado');
     }
 
     public function setImagenAttribute($value) {
@@ -87,13 +89,26 @@ class Documento extends Eloquent {
     public function getNroDptoAttribute($value){
         return str_pad($value, 2, "0", STR_PAD_LEFT); 
     }
+    
+    public function hasVigente(){
+        return (bool) $this->DocumentoSat->pluck('vigente')->intersect(['1'])->count();
+    }
+    
+    public function primerImponible(){
+        $imponible=$this->DocumentoSat->where('imponible_id','<>',null)->first();
+       if(empty($imponible)){
+           return $this->DocumentoSat->where('mensura_especial_id','<>',null)->first();
+       }
+       return $imponible;
+    }
+
+
 
     public static function getListaPendientes($mios = false) {
         $doc = Documento::with(['tipo', 'ultimoCambio'])
                 ->select('tipo_doc_id', 'nombre', 'usuario_ultima_mod', 'created_at', 'documentos.id')
                 ->where('estado_id', '<>', '1')
-                ->where('estado_id', '<>', '6')
-                ;
+                ->where('estado_id', '<>', '6');
 
 
         if (auth()->user()->isValidador()) {
@@ -112,8 +127,11 @@ class Documento extends Eloquent {
     public static function getDocumentForValidation($id) {
         $query = Documento::with(['documentoSat', 'antecedentes', 'cambios', 'ultimoCambio', 'incidencias']);
         $doc = $query->findOrFail($id);
-        if ($doc->documentoSat[0]->vigente) {
+        if ($doc->documentoSat[0]->vigente && !is_null($doc->documentoSat[0]->imponible_id)) {
             $query->with('documentoSat.datosSat');
+        }
+        elseif (!is_null($doc->documentoSat[0]->mensura_especial_id)) {
+        $query->with('documentoSat.datosMensuraEspecial');
         }
 
         if (auth()->user()->isValidador()) {

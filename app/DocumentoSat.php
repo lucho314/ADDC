@@ -26,20 +26,28 @@ class DocumentoSat extends Model {
     public function documento() {
         return $this->belongsTo(Documento::class);
     }
-    
-    public function getNroDptoAttribute($value){
-        return str_pad($value, 2, "0", STR_PAD_LEFT); 
+
+    public function getNroDptoAttribute($value) {
+        return str_pad($value, 2, "0", STR_PAD_LEFT);
     }
 
     public function datosMensuraEspecial() {
-        return $this->hasMany(VistaSat::class, 'mensura_especial_id', 'id');
-    }
-    
-    public function responsables(){
-        return $this->hasMany(Ocupante::class,'clave_imponible','imponible_id');
+        return $this->belongsTo(MensuraEspecial::class, 'mensura_especial_id');
     }
 
+    public function responsables() {
+        return $this->hasMany(Ocupante::class, 'clave_imponible', 'imponible_id');
+    }
 
+    public function getDatosRelacionados() {
+        if (!is_null($this->imponible_id)) {
+            return 'datosSat';
+        } else if (!is_null($this->mensura_especial_id)) {
+            return 'datosMensuraEspecial';
+        }
+
+        return false;
+    }
 
     public static function insertar($datos, $docId) {
         if (isset($datos['lote'])) {
@@ -47,10 +55,21 @@ class DocumentoSat extends Model {
                 $datos['lote'][$key]['documento_id'] = $docId;
                 DocumentoSat::create(array_merge($datos['gral'], $datos['lote'][$key]));
             }
-        } else if (isset($datos['imponible'])) {
-            $datos['gral']['documento_id'] = $docId;
-            DocumentoSat::create(array_merge($datos['gral'], ['imponible_id' => $datos['imponible']]));
-        } else if (isset($datos['especial'])) {
+        }
+        if (isset($datos['historico'])) {
+
+            foreach ($datos['historico'] as $key => $val) {
+                $datos['historico'][$key]['documento_id'] = $docId;
+                DocumentoSat::create(array_merge($datos['gral'], $datos['historico'][$key]));
+            }
+        }
+        if (isset($datos['inexistentes'])) {
+            foreach ($datos['inexistentes'] as $key => $val) {
+                $datos['inexistentes'][$key]['documento_id'] = $docId;
+                DocumentoSat::create(array_merge($datos['gral'], $datos['inexistentes'][$key]));
+            }
+        }
+        if (isset($datos['especial'])) {
             foreach ($datos['especial'] as $key => $val) {
                 $datos['especial'][$key]['departamento_id'] = $datos['departamento_id'];
                 $datos['especial'][$key]['distrito_id'] = $datos['distrito_id'];

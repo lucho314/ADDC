@@ -13,7 +13,9 @@ var unidadMedida = 'm²';
 var list_modif = [];
 var auxFormulario;
 var objetosMensurasEspecialesId = ['4', '5', '6'];
-
+var alto = screen.height;
+var mitadAlto = alto / 2;
+var fecha_certificado=null;
 
 $(function () {
     a = $("#responsable").parents()
@@ -29,7 +31,6 @@ $(function () {
             "url": "/js/Spanish.json"
         }
     });
-
     $('#tabla-documentos').DataTable({
         "dom": 'frtip',
         "language": {
@@ -38,7 +39,6 @@ $(function () {
 
 
     });
-
     if ($("#form_validar").length > 0) {
         initialize();
         getCambios();
@@ -46,41 +46,35 @@ $(function () {
 
 })
 
+
+/*limpia el log de cambios por si queda alguno sin
+ * conexion con documento.
+ * */
+function limpiarLog() {
+    $.get('/eliminar_log');
+}
+
+
+
+
+
 $('#submit').click(function () {
-
-//    $('#observacion').attr('required', false);
-//    $('#user2').attr('required', false);
-//    if (($('#estado').val() === '3' || $('#estado').val() === '4') && $('#observacion').val() === '') {
-//        $('#derivar_doc_modal').modal('toggle');
-//        $('#observacion').attr('required', true);
-//        $('#user2').attr('required', true);
-//        return false;
-//    } else if ($('#estado').val() === '2' && $('#observacion').val() === '')
-//    {
-//        $('#derivar_doc_modal').modal('toggle');
-//        $('#observacion').attr('required', true);
-//        $('#grupo_usuario').hide();
-//        return false;
-//    }
-//   
-
-    //}
-
-
+    $('#observacion').attr('required', false);
+    $('#area_id').attr('required', false);
+    if (($('#estado').val() === '3' || $('#estado').val() === '4') && $('#observacion').val() === '') {
+        $('#derivar_doc_modal').modal('toggle');
+        $('#observacion').attr('required', true);
+        $('#area_id').attr('required', true);
+        return false;
+    } else if ($('#estado').val() === '2' && $('#observacion').val() === '')
+    {
+        $('#derivar_doc_modal').modal('toggle');
+        $('#observacion').attr('required', true);
+        $('#area_id').hide();
+        return false;
+    }
 
 });
-
-
-var nomeclatura = {
-    '3': comprobarNomeclaturaPlano,
-    '4': comprobarNomeclaturaFicha
-};
-
-var mesa = {
-    'ficha': 0,
-    'plano': setDatosMesaPlano
-};
-
 
 
 
@@ -88,38 +82,23 @@ var mesa = {
 $('#imagen').change(function (event) {
     $('.ocultar').hide();
     var nombre = $(this).val();
-    var arrayNombre = nombre.split('-');//10-456pl-4564p.pdf
-    var longitud = arrayNombre.length; //3 si es plano y 4 si es ficha de lo contrario nomeclatura error.
-    $('#biss').val(0);
-    if (longitud > 4 || longitud < 3) {
+    nombre = nombre.split('\\');
+    nomenclatura = nombre[nombre.length - 1].slice(0, -4);
+    if (comprobarNomeclaturaPlano(nomenclatura) || comprobarNomeclaturaFicha(nomenclatura)) {
+        $('#cargando').show();
+        $('#formularioDocumento').show().css('opacity', '0.3');
+        archivo(event);
+        $('#biss').val(0);
+        limpiarLog();
+        inicializarDatos(nomenclatura);
+    } else {
         alert('error de nomenclatura');
         $('.ocultar').show();
         $('#imagen').val("");
         return false;
     }
-    if (longitud === 4 && arrayNombre[3] === 'BIS.pdf') {
-        delete arrayNombre[3];
-        arrayNombre[2] += '.pdf';
-        longitud = 3;
-        $('#biss').val(1);
-    }
-    if (longitud === 3 && arrayNombre[2].substr(-6, 2) !== 'P.')
-    {
-        console.log(arrayNombre[2].substr(-6, 2));
-        longitud = 4;
-    }
-    if (!nomeclatura[longitud](arrayNombre))
-    {
-        alert('error de nomenclatura');
-        $('.ocultar').show();
-        $('#imagen').val("");
-        return false;
 
-    }
-    $('#cargando').show();
-    $('#formularioDocumento').show().css('opacity', '0.3');
-    archivo(event);
-})
+});
 
 
 
@@ -133,24 +112,18 @@ function archivo(evt) {
         reader.onload = (function (theFile) {
             return function (e) {
                 // Insertamos la imagen
-                document.getElementById("list").innerHTML = ['<object style="width:100%;height:500px;" type="application/pdf"  data="', e.target.result, '" title="', escape(theFile.name), '"></object>'].join('');
+                document.getElementById("list").innerHTML = ['<object id="objeto_imagen" style="width:100%;height:' + mitadAlto + 'px;" type="application/pdf"  data="', e.target.result, '" title="', escape(theFile.name), '"></object>'].join('');
             };
         })(f);
         reader.readAsDataURL(f);
     }
 }
 
-
 function comprobarNomeclaturaPlano(nomenclatura) {
-    dpto = nomenclatura[0].substring(nomenclatura[0].length - 2); //extraemos el numero de dpto. validar que sea un numero de 2 digitos
-    var plano = nomenclatura[1];
-    console.log(plano);
-    var validaP = (nomenclatura[2] === 'P.pdf');
-    var validaDpto = comprobarDpto(dpto);
-    var validaPlano = comprobarPlano(plano); //validar si es numerico o si tiene una 'a'
-    if (validaP && validaDpto && validaPlano)
+
+    if ((/^(0[1-9]|[1][0-7])[\-](\d+a?\d+)[\-](\P)(\-(BIS))?$/).test(nomenclatura))
     {
-        setPlano(nomenclatura);
+        tipo_doc = 1;
         return true;
     }
     return false;
@@ -158,267 +131,74 @@ function comprobarNomeclaturaPlano(nomenclatura) {
 
 // 10-564564PL-46546P-20161020.pdf
 function comprobarNomeclaturaFicha(nomenclatura) {
-    dpto = nomenclatura[0].substring(nomenclatura[0].length - 2);
-    var plano = nomenclatura[1];
-    var part = nomenclatura[2];
-    if (typeof nomenclatura[3] !== "undefined") {
-        var fecha = nomenclatura[3];
-        var validaFecha = ValidaFecha(fecha);
-    } else {
-        validaFecha = true;
+    var pattFicha = /^(0[1-9]|[1][0-7])[\-](\d+)(\PL)[\-](\d+)(\P)((\-)\d{8})?$/;
+    if (pattFicha.test(nomenclatura)) {
+        tipo_doc = 2;
+        fecha = nomenclatura.split("-");
+        return (typeof (fecha[3]) !== 'undefined') ? ValidaFecha(fecha[3]) : true;
     }
+    return false;
+}
 
 
-    var validaDpto = comprobarDpto(dpto);
-    var validaPlano = comprobarPlano(plano, true);
-    var validapartida = comprobarPartida(part);
-    console.log('plano:', validaPlano, 'dpto:', validaDpto, 'partida:', validapartida, 'fecha:', validaFecha);
-    if (validaFecha && validaDpto && validaPlano && validapartida)
+
+
+
+function inicializarDatos(nomenclatura) {
+    nomemclaturaArray = nomenclatura.split('-');
+    dpto = nomemclaturaArray[0];
+    planoArray = nomemclaturaArray[1].split('a');
+    setPlanos(nomemclaturaArray[1]);
+    partida = (nomemclaturaArray[2] !== 'P') ? parseInt(nomemclaturaArray[2]) : '';
+    inicializarHtml();
+    getDatos(null, tipo_doc);
+}
+
+function setPlanos(stringPlano) {
+    plano = stringPlano.split('a');
+    planoDesde = parseInt(plano[0]);
+    planoHasta=parseInt(plano[0]);
+    if (typeof plano[1] !== 'undefined')
     {
-        //nomenclatura=[dpto,plano,partida,fecha];
-        setFicha(nomenclatura);
-        return true;
-    }
-    return false;
-}
-
-
-
-
-function comprobarDpto(dpto) {
-    if (dpto.length === 2) {
-        if (isNaN(dpto)) {
-            return false;
-        } else if (!(dpto > 0 && dpto < 18)) {
-            return false;
-        } else
-            return true;
-    }
-}
-
-
-function comprobarPartida(part) {
-
-    var tam = part.length;
-    if (part.substr(-1) === 'P') {
-
-        partida = part.substring(0, tam - 1);
-        if (!isNaN(partida) && partida !== "") {
-
-            return true
+        cantLetras = plano[1].length;
+        planoHasta = plano[0].slice(0, -cantLetras);
+        planoHasta += plano[1];
+        if (planoHasta < planoDesde) {
+            alert('error de nomenclatura');
+            $('.ocultar').show();
+            $('#imagen').val("");
         }
     }
-    if (part.substr(-5) === 'P.pdf') {
-        partida = part.substring(0, tam - 5);
-        if (!isNaN(partida) && partida !== "") {
-
-            return true
-        }
-    }
-
-    return false;
 }
-
-function comprobarPlano(plano, ficha = false) {
-    if (ficha) {//valida plano para ficha
-        var tamPlano = plano.length;
-        planoDesde = planoHasta = plano.substring(0, tamPlano - 2);
-        if (!isNaN(planoDesde) && planoDesde !== "") {
-            var pl = plano.substring(tamPlano - 2);
-            if (pl === 'PL')
-                return true;
-        }
-        return false;
-    }
-    if (!isNaN(plano) && plano !== "") { //valida plano para plano
-        planoDesde = planoHasta = plano;
-        return true;
+function inicializarHtml() {
+    $('#gral_nro_plano').val(planoDesde);
+    $('#gral_nro_plano_hasta').val(planoHasta);
+    $('#gral_nro_dpto').val(dpto);
+    $('#gral_tipo_doc').val(tipo_doc);
+    if (tipo_doc === 1) {
+        $('#grupo_certificado').hide();
+        $('.partida').hide();
     } else {
-        var planoArray = plano.split("a"); // 454a45  454a45as54a54aads4
-        var longitud = planoArray.length;
-        if (longitud === 2)
-        {
-            if (!isNaN(planoArray[0]) && !isNaN(planoArray[1])) {  // 4564654     700 
-                var tamPlanoDesde = planoArray[0].length;
-                var tamPlanoHasta = planoArray[1].length;
-                var PartPlanoDesde = planoArray[0].substring(tamPlanoDesde - tamPlanoHasta); // sacamos del plano la cantidad de caractered del hasta
-                if (parseInt(PartPlanoDesde) < parseInt(planoArray[1])) {
-                    planoDesde = planoArray[0];
-                    planoHasta = planoArray[0].substring(0, tamPlanoDesde - tamPlanoHasta) + planoArray[1];
-                    return true;
-                }
-            }
-            return false;
-        }
-}
+        $('#gral_nro_partida').val(partida);
+        $('#grupo_objeto').hide();
+        $('#gral_fecha_certificado').val(fecha_certificado);
+    }
 }
 
-
-//formato de fecha valido aaaammdd 20170109.pdf
 function ValidaFecha(arrayFecha)
 {
-    if (arrayFecha.length !== 12)
+    console.log(arrayFecha);
+    if (arrayFecha.length !== 8)
     {
         return false;
     } else {
         var anio = arrayFecha.substring(4, 0);
         var mes = arrayFecha.substring(6, 4);
         var dia = arrayFecha.substring(8, 6);
-        var date = new Date(anio, mes, '0');
-        if ((dia - 0) > (date.getDate() - 0) || mes < 1 || mes > 12) {
-               return false;
-              }
-        return true;
+        fecha_certificado=anio+"-"+mes+"-"+dia;
+        return !isNaN(Date.parse(fecha_certificado));
     }
 }
-
-
-
-function setPlano(array) {
-    tipo_doc = 1;
-    var dpto = extraeDpto(array[0]);
-    var nroPlanoDesde = planoDesde;
-    var nroPlanoHasta = planoHasta;
-    console.log(planoDesde, planoHasta);
-    getDatos(null, 'plano');
-    $('#gral_nro_plano').val(nroPlanoDesde);
-    $('#gral_nro_plano_hasta').val(nroPlanoHasta);
-    $('#gral_nro_dpto').val(dpto);
-    $('#gral_tipo_doc').val('1');
-    $('#grupo_certificado').hide();
-    $('#grupo_objeto').show();
-    $('.partida').hide();
-}
-
-function setFicha(array) {
-    tipo_doc = 2;
-    dpto = extraeDpto(array[0]);
-    var nroPlano = array[1];
-    var nroPartida = array[2];
-    observarFicha();
-    if (typeof array[3] !== "undefined") {
-        var fechaRegistro = formatearFecha(array[3]);
-        $('#gral_fecha_registro').val(fechaRegistro).change();
-    }
-    nroPlano = nroPlano.substring(nroPlano.length - 2, 0); //le restamos al tamaño total 2 para obtener el num de plano eje: 14574pl->14574
-    partida = nroPartida.substring(nroPartida.length - 1, 0);
-
-    $('.partida').show();
-    $('#gral_nro_plano').val(planoDesde);
-    $('#gral_nro_plano_hasta').val(planoHasta);
-    $('#gral_nro_dpto').val(dpto);
-    $('#gral_tipo_doc').val('2');
-
-    $('#gral_nro_partida').val(partida);
-    $('#grupo_certificado').show();
-    $('#grupo_objeto').hide();
-    getDatos(null, 'ficha');
-
-
-}
-
-function extraeDpto(nroDpto) {
-
-    return nroDpto.substring(nroDpto.length - 2);
-}
-
-function formatearFecha(fecha) {
-    var anio = fecha.substring(4, 0);
-    var mes = fecha.substring(6, 4);
-    var dia = fecha.substring(8, 6);
-    return anio + "-" + mes + "-" + dia;
-}
-
-
-
-//function checkDuplicados() {
-//    $.get(
-//            path + 'checkDuplicados/' + dpto + "/" + planoDesde + "/" + planoHasta,
-//            function (data) {
-//                mostrarPartidas(data);
-//            }
-//    , 'json');
-//}
-//
-//
-//
-//function mostrarPartidas(data) {
-//    $.each(data, function (i, value) {
-//        $('#tbody-seleccion-partidas').append('<tr>\n\
-//                                                    <td>' + value['plano'] + '</td>\n\
-//                                                    <td> <input type="number" class="form-control required planoPartida conflicto" onchange="repetidos(this);" name="partidasDup[' + value['plano'] + ']" placeholder="Ingrese la partida"/></td>\n\
-//                                                </tr>');
-//    });
-////    if ($(".conflicto").length > 0) {
-////        $('#seleccion-partidas-modal').modal('toggle');
-////    } else {
-//    getDatos();
-//    //  }
-//}
-
-
-//$('#definirPartidas').click(function () {
-//    if (validarPartidasRequeridas()) {
-//        $("#seleccion-partidas-modal").modal('toggle');
-//        if ($('.planoPartida').length > 0) {
-//            partida = $('.planoPartida').val();
-//            var data = $('.planoPartida').serialize();
-//            data += '&nroDpto=' + dpto;
-//            console.log(data);
-//            $.get('checkPartida', data, function (fallidos) {
-//                console.log(fallidos);
-//                if (fallidos === 0) {
-//                    planoDesde = null;
-//                    getDatos(partida);
-//                } else {
-//                    partidasFallidas = fallidos;
-//                    $('#confirm-partida').modal('toggle');
-//                }
-//            }, 'json');
-//        } else {
-//            partida = $('.conflicto').val();
-//            $('#confirm-partida').modal('toggle');
-//        }
-//    }
-//
-//});
-
-
-function validarPartidasRequeridas() {
-    flag = true;
-    $('.conflicto').each(function () {
-        if ($(this).val() === '') {
-            $(this).css('background', '#f7a4a4').css('border', '0.75px solid red').parent('.padre').children('.error').text('Error: el campo no puede estar vacio').show();
-            return flag = false;
-
-        }
-    })
-    return flag;
-}
-
-
-$('#cancelar_partida').click(function () {
-    $('#seleccion-partidas-modal').modal('toggle');
-});
-//$('#aceptar_partida').click(function () {
-//    if (listaTotalPlanos['encontrados'].length > 0) {
-//        console.log('lista total tiene algo');
-//        planoDesde = listaTotalPlanos['encontrados'][0];
-//        getDatos();
-//    } else {
-//        $('form input:text').val('sin datos');
-//        $('#nro_plano').val(planoDesde);
-//        $('#nro_plano_hasta').val(planoHasta);
-//        $('#nro_dpto').val(dpto);
-//        $('#nro_partida').val(partida);
-//        $('#cargando').hide();
-//        $('#formularioDocumento').css('opacity', '1');
-//    }
-//    $('#confirm-partida').modal('toggle');
-//});
-
-
-
 
 
 
@@ -428,85 +208,116 @@ function getDatos(partidas = null, tipoDoc = null) {
     $.get(path + 'getDatos/',
             {'dpto': dpto, 'plano': planoDesde, 'plano_hasta': planoHasta, 'tipo_doc': tipoDoc},
             function (data) {
-                console.log(data);
                 if (data.existentes.length > 0) {
                     $('#cargaAntecedente').remove();
-                    $('#gral_nro_partida').val(data.existentes[0].partida);
-                    $('#gral_inscripcion').val(data.existentes[0].inscripcion);
-                    $('#gral_nro_matricula').val(data.existentes[0].matricula);
-                    $('#gral_titular').val(data.existentes[0].responsable);
-                    $('#tipo_planta').val(data.existentes[0].tipo_planta);
-                    $('#tipo_planta_input').val(data.existentes[0].tipo_planta);
-                    $('#gral_tipo_planta').val(data.existentes[0].tipo_planta);
-                    if (data.existentes[0].tipo_planta > '0003') {
-                        unidadMedida = 'Has';
-                    } else {
-                        unidadMedida = 'm²';
-                    }
-                    $('.unidad').text(unidadMedida);
                     setUbicacion(data);
                     partidas_y_superficies(data);
-                    getDeptos(data.existentes[0].div_de);
-                    getDistritos(data.existentes[0].div_de, data.existentes[0].div_di);
-                    getLocalidades(data.existentes[0].div_di, data.existentes[0].div_lo);
-
+                    getDeptos(data.existentes[0].departamento_id);
+                    getDistritos(data.existentes[0].departamento_id, data.existentes[0].distrito_id);
+                    getLocalidades(data.existentes[0].distrito_id, data.existentes[0].localidad_id);
+                    cargarExistentes(data.existentes[0]);
                     if (tipoDoc !== null && tipoDoc === 'plano') {
                         mesa[tipoDoc](data.mesa);
                     }
+                    if (data.inexistentes.length > 0) {
+                        console.log(data.inexistentes);
+                        cargaInexistente(data.inexistentes);
+                    }
+                    if (data.imponible_historico.length > 0) {
+                        console.log(data.imponible_historico);
+                        cargaHistorico(data.imponible_historico);
+                    }
 
-
-                } else {
+                } else
+                {
                     auxFormulario = $('#formularioDocumento');
                     $('#formularioDocumento').remove();
                     $('#cargaAntecedente').show();
-                    $('#nro_plano').val(planoDesde);
-                    $('#nro_plano_hasta').val(planoHasta);
-                    $('#nro_dpto').val(dpto);
-                    $('#tipo_doc').val(tipo_doc);
-                    if (data.imponible_historico !== '') {
-                        $('#imponible').val(data.imponible_historico);
-                        clave = data.imponible_historico.split('-');
-                        $('#nro_partida').val(parseInt(clave[1]));
-                    } else {
+
+                    if (data.imponible_historico.length === 0 && data.inexistentes.length > 0) {
                         observarCambioObjeto();
+                    } else {
+                        if (data.inexistentes.length > 0)
+                        {
+                            $.each(data.inexistentes, function (i, valor) {
+                                $('form').append('<input type="hidden" name="inexistentes[' + i + '][nro_plano]"  value="' + valor + '" required  class="modificar form-control anexado" readonly/>\n\                                                         <input type="hidden" name="inexistentes[' + i + '][nro_partida]" class="partidaInex">\n\
+                                                  <input type="hidden" name="inexistentes[' + i + '][vigente]" value="0">');
+
+                            });
+                        }
+                        if (data.imponible_historico.length > 0)
+                        {
+                            $.each(data.imponible_historico, function (i, valor) {
+                                clave = valor.clave_imponible.split('-');
+                                $('form').append('<input type="hidden" name="historico[' + i + '][nro_plano]"  value="' + valor + '" required  class="modificar form-control anexado" readonly/>\n\
+                                             <input type="hidden" name="historico[' + i + '][nro_partida]" value="' + parseInt(clave[1]) + '">\n\
+                                              <input type="hidden" name="historico[' + i + '][imponible_id]" value="' + valor.clave_imponible + '">\n\                                             <input type="hidden" name="historico[' + i + '][vigente]" value="0">\n\
+    ');
+                            });
+                        }
                     }
                 }
                 initialize();
             });
 }
-//                    $('form input:text').attr('placeholder', "sin datos");
-//                    $('#gral_nro_plano').val(planoDesde);
-//                    $('#gral_nro_plano_hasta').val(planoHasta);
-//                    $('#gral_nro_dpto').val(dpto);
-//                    $('#gral_nro_partida').val(partida);
-//                    $('#cargando').hide();
-//                    $('#formularioDocumento').css('opacity', '1');
-//  getDeptos();
-// initialize();
-// }
-
-//setUbicacionFisica(data.ubicacionFisica);
 
 
-//});
-//}
+function cargarExistentes(existentes) {
+    $('#gral_nro_partida').val(existentes.partida);
+    $('#gral_inscripcion').val(existentes.inscripcion);
+    $('#gral_nro_matricula').val(existentes.matricula);
+    $('#gral_titular').val(existentes.responsable);
+    $('#tipo_planta').val(existentes.tipo_planta_id);
+    $('#gral_seccion').val(existentes.seccion);
+    if (existentes.tipo_planta > '0003') {
+        unidadMedida = 'Has';
+    } else {
+        unidadMedida = 'm²';
+    }
+    $('.unidad').text(unidadMedida);
+}
 
-//function setUbicacionFisica(ubicacion) {
-//    console.log(ubicacion.caja);
-//    $('#sector').val(ubicacion.caja.sector);
-//    $('#modulo').val(ubicacion.caja.modulo);
-//    $('#estante').val(ubicacion.caja.estante);
-//    $('#posicion').val(ubicacion.caja.posicion);
-//    $('#profundidad').val(ubicacion.caja.profundidad);
-//}
-//;
+function cargaInexistente(planos) {
+    $.each(planos, function (i, valor) {
+        $('#tabla_ubicacion').append('<tr>\n\
+                        <td class="col-xs-3"><input type="text"  value="' + valor + '" required class="modificar form-control anexado" readonly/></td>\n\
+                        <td class="col-xs-9"><input type="text" colspan="9" value="DATOS INEXISTENTES"  class="form-control anexado" readonly/></td>\n\
+                   </tr>');
+        $('#tbody-seleccion-partidas').append('<tr>\n\
+                                 <input type="hidden" name="inexistentes[' + i + '][vigente]" value="0">\n\
+                                <td class="col-xs-2"><input type="text" name="inexistentes[' + i + '][nro_plano]"  value="' + valor + '" required  class="modificar form-control anexado" readonly/></td>\n\
+                                <td class="col-xs-2"> <input type="text" name="inexistentes[' + i + '][nro_partida]" value="" id="lote_' + i + '_nro_partida" required class="form-control anexado"/></td>\n\
+                                 <td class="col-xs-8"><input type="text" colspan="8" value="DATOS INEXISTENTES"  class="form-control anexado" readonly/></td>\n\
+    </tr>');
+    });
+}
+
+
+function cargaHistorico(historicos) {
+    $.each(historicos, function (i, valor) {
+        clave = valor.clave_imponible.split('-');
+        $('#tabla_ubicacion').append('<tr>\n\
+                                            <td class="col-xs-3"><input type="text"  value="' + valor.col10 + '" required class="modificar form-control anexado" readonly/></td>\n\
+                                            <td class="col-xs-9"><input type="text" colspan="9" value="PLANO NO VIGENTE"  class="form-control anexado" readonly/></td>\n\
+                                       </tr>');
+        $('#tbody-seleccion-partidas').append('<tr>\n\
+                                                    <td class="col-xs-2"><input type="text" name="historico[' + i + '][nro_plano]"  value="' + valor.col10 + '" required  class="modificar form-control anexado" readonly/></td>\n\
+                                                    <td class="col-xs-2"> <input type="text" name="historico[' + i + '][nro_partida]" value="' + parseInt(clave[1]) + '" id="lote_' + i + '_nro_partida" required class="form-control anexado"/></td>\n\
+                                                    <td class="col-xs-8"><input type="text" colspan="8" value="PLANO NO VIGENTE"  class="form-control anexado" readonly/></td>\n\
+                                                    <input type="hidden" name="historico[' + i + '][imponible_id]" value="' + valor.clave_imponible + '">\n\
+\n\                                                 <input type="hidden" name="historico[' + i + '][vigente]" value="0">\n\
+                                                </tr>');
+    });
+}
+
+
+
 
 
 function observarCambioObjeto() {
     $('#form_carga').find('#gral_objeto_id').change(function () {
         objetoId = $(this).val();
-
-        if (objetosMensurasEspecialesId.indexOf(objetoId) != -1) {
+        if (objetosMensurasEspecialesId.indexOf(objetoId) !== -1) {
             getDeptos();
             $('#form_carga').append(auxFormulario);
             $('#cargaAntecedente').remove();
@@ -524,8 +335,6 @@ function observarCambioObjeto() {
     });
 }
 ;
-
-
 function setUbicacion(datos) {
     $('#tabla_ubicacion').html('');
     j = 0;
@@ -542,7 +351,6 @@ function setUbicacion(datos) {
                                                   \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text"  id="lote_' + i + '_sublamina" value="' + value.sublamina + '" placeholder="sublamina" readonly></td>\n\
                                                     </tr>');
     });
-
     $('#departamento').val(datos.existentes[0].departamento);
     $('#distrito').val(datos.existentes[0].distrito);
     $('#localidad').val(datos.existentes[0].localidad);
@@ -551,8 +359,6 @@ function setUbicacion(datos) {
     $('#formularioDocumento').css('opacity', '1');
 }
 ;
-
-
 function agregar_ubicacion() {
     i = 0;
     if ($('#tabla_ubicacion tr').last().length) {
@@ -571,17 +377,14 @@ function agregar_ubicacion() {
                                                   \n\<td class="col-xs-1"><input class="form-control modificar anexado" type="text"  id="especial_' + i + '_sublamina" name="especial[' + i + '][sublamina]"  placeholder="sublamina" readonly></td>\n\
                                                     </tr>'
             );
-
     $('#tbody-seleccion-partidas').append('<tr id="' + i + '">\n\
                                                  \n\<td class="col-xs-2"><input type="text"   required  id="lote_' + i + '_nro_plano" class="modificar form-control anexado" onChange="getplanoubicacion()" readonly/></td>\n\
                                                     <td class="col-xs-2"> <input type="text" name="especial[' + i + '][nro_partida]"  id="lote_' + i + '_nro_partida" required class="modificar form-control anexado" readonly /></td>\n\
                                                             \n\<td class="col-xs-2"><div class="row col-xs-11"><input type="text"  name="especial[' + i + '][sup_mensura]"  id="lote_' + i + '_sup_terreno" required class="modificar form-control" readonly /></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
-\n\                                                         \n\<td class="col-xs-2"><div class="row col-xs-11"><input type="number" step="any" name="especial[' + i + '][sup_titulo]" value="" id="lote_' + i + '_sup_titulo"  class="form-control"  onchange="calcularExeso(this.value,' + i + ')"/></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
-                                                            \n\\n\<td class="col-xs-2"><div class="row col-xs-11"><input type="text" name="especial[' + i + '][exceso]" value="" id="lote_' + i + '_exceso"  class="form-control" readonly /></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
+\n\                                                         \n\<td class="col-xs-2"><div class="row col-xs-11"><input type="number" step="any" name="especial[' + i + '][sup_titulo]" value="" id="lote_' + i + '_sup_titulo"  class="form-control"/></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
+                                                            \n\\n\<td class="col-xs-2"><div class="row col-xs-11"><input type="text" name="especial[' + i + '][exceso]" value="" id="lote_' + i + '_exceso"  class="form-control" /></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
 \n\                                                         \n\ <td class="col-xs-2"><div class="row col-xs-11"><input type="text" name="especial[' + i + '][sup_edificada]" id="lote_' + i + '_sup_edificada" required class="modificar form-control anexado" readonly /></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
 \n\</tr>');
-
-
 }
 
 function getplanoubicacion() {
@@ -600,32 +403,16 @@ function partidas_y_superficies(data) {
                                                  \n\<td class="col-xs-2"><input type="text"  value="' + value.plano + '" required  id="lote_' + i + '_nro_plano" class="modificar form-control anexado" readonly/></td>\n\
                                                     <td class="col-xs-2"> <input type="text" name="lote[' + i + '][nro_partida]" value="' + value.partida + '" id="lote_' + i + '_nro_partida" required class="modificar form-control anexado" readonly /></td>\n\
                                                             \n\<td class="col-xs-2"><div class="row col-xs-11"><input type="text"  name="lote[' + i + '][sup_terreno]" value="' + value.sup_terreno + '" id="lote_' + i + '_sup_terreno" required class="modificar form-control" readonly /></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
-\n\                                                         \n\<td class="col-xs-2"><div class="row col-xs-11"><input type="number" step="any" name="lote[' + i + '][sup_titulo]" value="" id="lote_' + i + '_sup_titulo"  class="form-control"  onchange="calcularExeso(this.value,' + i + ')"/></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
-                                                            \n\\n\<td class="col-xs-2"><div class="row col-xs-11"><input type="text" name="lote[' + i + '][exceso]" value="" id="lote_' + i + '_exceso"  class="form-control" readonly /></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
+\n\                                                         \n\<td class="col-xs-2"><div class="row col-xs-11"><input type="number" step="any" name="lote[' + i + '][sup_titulo]" value="" id="lote_' + i + '_sup_titulo"  class="form-control"/></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
+                                                            \n\\n\<td class="col-xs-2"><div class="row col-xs-11"><input type="text" name="lote[' + i + '][exceso]" value="" id="lote_' + i + '_exceso"  class="form-control"/></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
 \n\                                                         \n\ <td class="col-xs-2"><div class="row col-xs-11"><input type="text" name="lote[' + i + '][sup_edificada]" value="' + value.sup_edif_total + '" id="lote_' + i + '_sup_edificada" required class="modificar form-control anexado" readonly /></div><label class="col-xs-1 unidad">' + unidadMedida + '</label></td>\n\
 \n\                                                         \n\ <input type="hidden" name="lote[' + i + '][imponible_id]" value="' + value.clave + '">\n\
                                                              \n\<input type="hidden" name="lote[' + i + '][nro_plano]" value="' + value.plano + '">\n\
                                                               \n\<input type="hidden" name="lote[' + i + '][nro_partida]" value="' + value.partida + '">\n\
 \n\</tr>');
     });
-//    $.each(data.inexistentes, function (i, value) {
-//        j++;
-//        $('#tbody-seleccion-partidas').append('<tr id="agregados_'+j+'">\n\
-//                                                    <td>' + value + '</td>\n\
-//\n\                                                 \n\<input type="hidden" name="plano[' + j + ']" value="' + value + '"/>\n\
-//                                                    <td class="padre"> <input type="text" name="partida[' + j + ']" value="" required  validate="false" class="modificar form-control conflicto" onchange="repetidos(this);" name="partidasInex[' + value + ']" placeholder="Ingrese la partida" readonly/>\n\
-//                                                    <div class="error" style="display:none; color:red"></div></td>\n\
-//\n\                                                 \n\<td><div class="row col-xs-11"><input type="text" name="sup_terreno[' + j + ']" value="" required class="modificar form-control" readonly/></div><label class="col-xs-1">' + unidadMedida + '</label></td>\n\
-//\n\                                                 \n\<td><div class="row col-xs-11"><input type="text" value="" name="sup_edificada[' + j + ']" required class="modificar form-control" readonly/></div><label class="col-xs-1">' + unidadMedida + '</label></td>\n\
-//\n\                                                 \n\ \n\<td><a href=javascript:eliminar("agregados_'+j+'")><i class="glyphicon glyphicon-remove" style="color: red"></i></td></a> \n\
-//                                                    \n\ <input type="hidden" name="imponible_id[' + j + ']" value="">\n\
-//\n\                                                 \n\ <input type="hidden" name="catastro_id[' + j + ']" value="">\n\
-//                                                </tr>');
-//
-//    });
     $('#cargando').hide();
     $('#formularioDocumento').css('opacity', '1');
-
 }
 
 
@@ -651,47 +438,37 @@ function eliminar(i) {
 $(document).on('change', '#departamento', function () {
     getDistritos($(this).val());
 });
-
 $(document).on('change', '#distrito', function () {
     getLocalidades($(this).val());
 });
-
 function getDeptos(dato = '') {
     $.get(path + 'getDptos/', function (datos) {
         $.each(datos, function (i, value) {
             $('#departamento').append('<option value="' + value.div_de + '">' + value.codigo_de + '-' + value.departamento + '</option>');
         });
         $('#departamento').val(dato);
-        $('#departamento_input').val(dato);
     });
-
 }
 
 function getDistritos(numDpto, dato = '') {
     $.get(path + 'getDtos/' + numDpto, function (datos) {
-
         $('#distrito').html('<option value="">Seleccione Distrito.. &nbsp; &nbsp;</option>');
-        $('#localidad').html('<option valie="">Seleccione localidad..</option>');
         $.each(datos, function (i, value) {
             $('#distrito').append('<option value="' + value.div_di + '">' + value.distrito + '</option>');
         });
         $('#distrito').val(dato);
         $('#gral_distrito').val(dato);
-        $('#distrito_input').val(dato);
     });
 }
 
 function getLocalidades(dto, dato = '') {
+    $('#localidad').html('<option valie="">Seleccione localidad..</option>');
     $.get(path + 'getLocalidades/' + dto, function (datos) {
-
-        $('#localidad').html('<option value="">Seleccione localidad..</option>');
+        $('#localidads').html('<option valie="">Seleccione localidad..</option>');
         $.each(datos, function (i, value) {
-            console.log(value);
             $('#localidad').append('<option value="' + value.div_lo + '">' + value.localidad + '</option>');
         });
         $('#localidad').val(dato);
-        $('#gral_localidad').val(dato);
-        $('#localidad_input').val(dato);
     });
 }
 
@@ -701,8 +478,7 @@ $('#bucarPlano').submit(function (event) {
     console.log($(this).serialize());
     datos = $(this).serialize();
     url = 'buscarPlano';
-    armarDatatablePlano(url, datos,true);
-
+    armarDatatablePlano(url, datos, true);
 });
 $('#bucarPartida').submit(function (event) {
     event.preventDefault();
@@ -741,55 +517,16 @@ $('#buscarFecha').submit(function (event) {
 });
 
 
-
-//function armarDatatablePlano(url, datos, plano = false) {
-//    console.log(datos);
-//    $tabla = $('#tabla-documentos').DataTable({
-//        "dom": 'frtip',
-//        "bDestroy": true,
-//        "processing": true,
-//        "serverSide": true,
-//        "ajax": path + url + '?' + datos,
-//        "columns": [
-//            {data: 'documento.tipo.descripcion', orderable: false},
-//            {data: 'nro_dpto', name: 'nro_dpto'},
-//            {data: 'nro_plano', name: 'nro_plano'},
-//            {data: 'nro_partida', name: 'nro_partida'},
-//            {data: 'documento.fecha_registro', name: 'documento.fecha_registro'},
-//            {data: 'documento.estado.descripcion', name: 'documento.estado.descripcion', orderable: false},
-//            {data: 'accion', name: 'accion', orderable: false, searchable: false}
-//        ],
-//        drawCallback: function (settings) {
-//            json = $tabla.ajax.json();
-//            if (json.recordsTotal === 0 && plano) {
-//                $.get('/verificar_falta', datos, function (data) {
-//                    console.log(data.falta);
-//                    if (data.falta) {
-//                        swal("El documento solicitado se encuentra en falta!", data.mensaje, "error");
-//                    }
-//                })
-//            }
-//        },
-//        "language":
-//                {
-//                    "url": "/js/Spanish.json"
-//                }
-//
-//    });
-//}
-//
-//
-function armarDatatablePlano(url,datos,plano=false) {
-    $tabla=$('#tabla-documentos').DataTable({
+function armarDatatablePlano(url, datos, plano = false) {
+    $tabla = $('#tabla-documentos').DataTable({
         "dom": 'frtip',
         "bDestroy": true,
         "processing": true,
         "serverSide": true,
         "ajax": path + url + '?' + datos,
-        
         "columns": [
-            {data: 'documento.tipo.descripcion', name: 'documento.tipo.descripcion',orderable: false,searchable: false},
-            {data: 'nro_dpto',name:'nro_dpto'},
+            {data: 'documento.tipo.descripcion', name: 'documento.tipo.descripcion', orderable: false, searchable: false},
+            {data: 'nro_dpto', name: 'nro_dpto'},
             {data: 'nro_plano', name: 'nro_plano'},
             {data: 'nro_partida', name: 'nro_partida'},
             {data: 'documento.fecha_registro', name: 'documento.fecha_registro'},
@@ -807,7 +544,6 @@ function armarDatatablePlano(url,datos,plano=false) {
                 })
             }
         },
-        
         "language": {
             "url": "/js/Spanish.json"
         }
@@ -818,17 +554,16 @@ function armarDatatablePlano(url,datos,plano=false) {
 
 
 
-function armarDatatable(url,datos) {
-    $tabla=$('#tabla-documentos').DataTable({
+function armarDatatable(url, datos) {
+    $tabla = $('#tabla-documentos').DataTable({
         "dom": 'frtip',
         "bDestroy": true,
         "processing": true,
         "serverSide": true,
         "ajax": path + url + '?' + datos,
-        
         "columns": [
             {data: 'tipo.descripcion', name: 'tipo.descripcion'},
-            {data: 'documento_sat[0].nro_dpto',name:'documentoSat.nro_dpto'},
+            {data: 'documento_sat[0].nro_dpto', name: 'documentoSat.nro_dpto'},
             {data: 'documento_sat[0].nro_plano', name: 'documentoSat.nro_plano'},
             {data: 'documento_sat[0].nro_partida', name: 'documentoSat.nro_partida'},
             {data: 'fecha_registro', name: 'fecha_registro'},
@@ -845,90 +580,6 @@ function armarDatatable(url,datos) {
 
 
 
-function buscarJson(json, valorBuscar) {
-    retornar = false;
-    $.each(json, function (i, valor) {
-        if (i === valorBuscar) {
-            retornar = true;
-            return false;
-        }
-    });
-    return retornar;
-}
-
-function checkDatosInex() {
-    $('#tbody-seleccion-partidas').html('');
-    $.get(path + 'checkDatosInex/' + dpto + "/" + planoDesde + "/" + planoHasta, function (totales) {
-        $.each(totales.plano, function (i, value) {
-            if (value === '') {
-                $('#tbody-seleccion-partidas').append('<tr>\n\
-                                                    <td>' + i + '</td>\n\
-                                                    <td class="padre"> <input type="number" value="' + value + '" required  validate="false" class="form-control conflicto" onchange="repetidos(this);" name="partidasInex[' + i + ']" placeholder="Ingrese la partida"/>\n\
-                                                    <div class="error" style="display:none; color:red"></div></td>\n\
-                                                </tr>');
-            } else {
-                $('#tbody-seleccion-partidas').append('<tr>\n\
-                                                    <td>' + i + '</td>\n\
-                                                    <td> <input type="number" value="' + value + '" required class="form-control" readonly />\n\
-                                                </tr>');
-            }
-
-        });
-        $.each(totales.planoDup, function (i, value) {
-            html = '<tr><td>' + i + '</td>\n\
-                   <td><select name="duplicados[' + i + ']" class="form-control" required><option value="">Selecione Partida</option>';
-            $.each(totales.planoDup[i], function (j, val) {
-                html += '<option>' + val + '</option>';
-            });
-            $('#tbody-seleccion-partidas').append(html + "</select></td></tr>");
-        });
-
-    }, 'json');
-
-    getDatos();
-}
-
-
-function repetidos(partida) {
-    if (partida.value == '9999') {
-        $(partida).removeClass('repetido').css('background', '#fff').css('border-color', '#d2d6de').parent('.padre').children('.error').hide();
-        return false;
-    }
-    flag = -1;
-    input = null;
-    $('.conflicto').each(function () {
-        console.log($(this).val(), partida, flag)
-        if ($(this).val() === partida.value) {
-            flag++;
-            $input = $(partida);
-        }
-    })
-    if (flag) {
-        $input.addClass('repetido').css('background', '#f7a4a4').css('border', '0.75px solid red').parent('.padre').children('.error').text('Error: Partida repetida').show();
-        $('#definirPartidas').prop('disabled', true);
-    } else {
-        repetidaPartidaDb(partida)
-    }
-}
-
-
-function repetidaPartidaDb(partida) {
-    $(partida).removeClass('repetido').css('background', '#fff').css('border-color', '#d2d6de').parent('.padre').children('.error').hide();
-    $('#definirPartidas').prop('disabled', false);
-    $.get(path + 'compruebaPartidaRepetida/' + dpto + "/" + partida.value, function (dato) {
-        if (dato > 0) {
-            $(partida).addClass('repetido').css('background', '#f7a4a4').css('border', '0.75px solid red').parent('.padre').children('.error').text('Error: La partida ya existe en la BD').show();
-            $('#definirPartidas').prop('disabled', true);
-        }
-    }, 'json')
-
-}
-
-$('#cancelar').click(function () {
-    $('#formularioDocumento').hide();
-    $('.ocultar').show();
-})
-
 $('input').dblclick(function () {
     $(this).attr('readonly', false).css('background', 'none').css('border', 'solid 1px #d2d6de')
 })
@@ -938,23 +589,6 @@ $('select').dblclick(function () {
 })
 
 
-
-//$(document).on("dblclick", '.modificar', function () {
-//    $(this).attr('readonly', false).css('background', 'none').css('border', 'solid 1px #d2d6de');
-//    if (datosModificados.indexOf($(this).attr('id')) === -1) {
-//        datosModificados.push($(this).attr('id'));
-//    }
-//    console.log(datosModificados);
-//})
-
-$('.select-modificar').change(function () {
-    $('#' + $(this).attr('id') + '_input').val($(this).val())
-    if (datosModificados.indexOf($(this).attr('id') + '_input') === -1) {
-        datosModificados.push($(this).attr('id') + '_input');
-        console.log(datosModificados);
-    }
-    ;
-});
 
 function eliminar_registro(id) {
     swal({
@@ -992,8 +626,6 @@ $('#gral_responsable').change(function () {
         }, 'json').fail(function () {});
     }
 });
-
-
 function agregar_antecedente() {
     $('#grupo_antecedente').append('<input type="number" placeholder="Nro plano antecedente" name="plano_ant[]" class="form-control" style="margin-bottom: 6%">');
 }
@@ -1015,6 +647,7 @@ function eliminar_carga(id) {
                 $.get(path + 'eliminar', {'id': id}, function (data) {
                     if (data.Error) {
                         swal("Eliminado!", "Registro eliminado correctamente!", "success");
+                        $('#pendientes').dataTable()._fnAjaxUpdate();
                     } else {
 
                         swal("No eliminado!", data.mensaje, "error");
@@ -1047,6 +680,8 @@ function observarFicha() {
     })
 
 }
+
+
 var bancert = 0;
 function setDatosMesaFicha(fecha = null, certificado = null) {
     if (!bancert) {
@@ -1066,43 +701,55 @@ function setDatosMesaFicha(fecha = null, certificado = null) {
 }
 
 
-function setDatosMesaPlano(datos) {
-    console.log('plano:', datos);
-    if (datos !== null) {
-        $('#gral_fecha_registro').val(datos.fecha_registro);
-        $('#gral_responsable').val(datos.propietario);
-        $('#gral_perito').val(datos.perito);
-        $('#gral_gestor').val(datos.gestor);
-        $('#gral_corrector').val(datos.corrector);
-    }
-}
-
-
 $(document).on("dblclick", '.modificar', function () {
-    var campo = $(this).prop('id');
-    //var campo = str.substr(str.indexOf("_") + 1);
-    var valor = $(this).val();
-    $(this).attr('readonly', false).css('background', 'none').css('border', 'soliBorradord 1px #d2d6de');
-    if (!list_modif.hasOwnProperty(campo)) {
-        list_modif[campo] = valor;
-        console.log(list_modif);
-    }
+    actualizaListaCambio(this);
 });
 
 $(document).on("change", '.modificar', function () {
-    var campo = $(this).prop('id');
-    // var campo = str.substr(str.indexOf("_") + 1);
-    var valor = $(this).val();
-    documento_id = $('input[name=_token]').val();
-    $.get('/gurdar_log', {'documento_id': documento_id, 'campo': campo, 'val_original': list_modif[campo], 'val_cambio': valor});
+    insertLogCambios(this)
+});
+
+$(document).on("change", '.select-modificar', function () {
+    insertLogCambios(this, true);
 });
 
 
+$(document).on("dblclick", '.select-modificar', function () {
+    actualizaListaCambio(this, true);
+});
+
+
+
+function actualizaListaCambio($obj, select = false) {
+    var campo = $($obj).prop('id');
+    var valor = (!select) ? $($obj).val() : $("#" + campo + " option:selected").text();
+    console.log('cambiar campo ' + campo, valor);
+    $($obj).attr('readonly', false).css('background', 'none').css('border', 'soliBorradord 1px #d2d6de');
+    if (!list_modif.hasOwnProperty(campo)) {
+        list_modif[campo] = valor;
+        console.log(list_modif);
+}
+}
+
+function insertLogCambios($obj, select = false) {
+    var campo = $($obj).prop('id');
+    var valor = (!select) ? $($obj).val() : $("#" + campo + " option:selected").text();
+    console.log('cambiado campo ' + campo, valor);
+    documento_id = $('input[name=_token]').val();
+    $.get('/gurdar_log', {'documento_id': documento_id, 'campo': campo, 'val_original': list_modif[campo], 'val_cambio': valor});
+}
+
+
+
 function getCambios() {
-    console.log('aklsdjla');
     $.get('/get_documentos_cambio', {'documento_id': $('#documento_id').val()}, function (datos) {
         $.each(datos, function (i, v) {
-            $('#' + v.campo).val(v.val_cambio).addClass('modificado');
+            $obj = $('#' + v.campo).addClass('modificado');
+            if (isNaN(v.val_cambio)) {
+                $("#" + v.campo + " option:contains('" + v.val_cambio + "')").attr("selected", true);
+            } else {
+                $obj.val(v.val_cambio);
+            }
             console.log(v.campo, v.val_original, v.val_cambio);
         })
 

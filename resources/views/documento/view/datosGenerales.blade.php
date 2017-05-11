@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="panel panel-default">
         <div class="panel-body">
-            <div class="col-md-8 col-md-offset-1">
+           <div class="col-md-10">
 
                 <div  id="datosGenerales">
                     <div class="col-md-3">
@@ -45,6 +45,12 @@
                             <input class="form-control" type="text"  name="gral['certificado]" disabled value="{{$documento->certificado or old('certificado')}}" placeholder="Certificado.."> </input>
                         </div>
                     </div>
+                     <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Fecha certificado</label>
+                            <input class="form-control" type="date"   disabled  value="{{($documento->fecha_certificado)?$documento->fecha_certificado->toDateString():''}}"> </input>
+                        </div>
+                    </div>
                     @endif
                     <div class="col-md-3">
                         <div class="form-group">
@@ -56,14 +62,12 @@
                             <div class="col-md-11 row"><input class="form-control" type="date" disabled  name="gral[fecha_registro]"   id="gral_fecha_registro"></div>
                             <div class="col-md-1" style="margin-top: 3%"><input type="checkbox" disabled value='1' title="Fecha visible" name="gral[fecha_registro_visible]"   id="gral_fecha_registro_visible"></div>
                             @endif
-                            
-
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Año de inscripción</label>
-                            <input class="form-control" type="text"  name="inscripcion" disabled value="{{$documento->documentoSat[0]->datosSat->inscripcion or old('nombre')}}"> </input>
+                            <input class="form-control" type="text"  name="inscripcion" disabled value="{{$vigente->$relacion->inscripcion or old('nombre')}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -84,19 +88,27 @@
                         </div>
                     </div>
                     @endif
+                  
                  </div>
             </div>
             <div class="col-md-2">
                 <div class="form-group">
-                    <div class="form-inline"><label>Antecedentes </label>   
-                        <div id="grupo_antecedente">
-                            @foreach($documento->antecedentes as $ant)
-                            <input type="text" value="{{$ant->nro_plano}}" placeholder="Nro plano antecedente" disabled class="form-control" style="margin-bottom: 6%">
-                            @endforeach 
-                        </div>
-                    </div>    
+                    <label>Antecedentes </label>   
+                    @foreach($documento->antecedentes as $ant)
+                    <div class="col-md-10">
+                        <input type="text" value="{{$ant->nro_plano}}" placeholder="Nro plano antecedente" disabled class="form-control" style="margin-bottom: 6%">
+                    </div>  
+                    <div class="row col-md-2" style="margin-top: 3%">
+                        <a href="javascript:verAntecedente({{$ant->nro_plano}}, '{{$documento->nro_dpto}}')" title="Ver antecedente">
+                            <i class="glyphicon glyphicon-eye-open"></i>
+                        </a>
+                    </div>
+                    @endforeach 
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+

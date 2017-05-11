@@ -20,14 +20,18 @@
 
     <div>
         <div class="col-md-12 container-fluid">
-            <object style="width:100%;height:500px;" type="application/pdf"  data="{{URL::action('DocumentoController@show',$documento->id)}}"></object>
+            <object style="width:100%;" id="objeto_imagen" type="application/pdf"  data="{{URL::action('DocumentoController@show',$documento->id)}}"></object>
         </div>
         <ul class="tab">
             <div class="col-md-7">
                 <li class="clik"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(0, 'generales')">Datos Generales</a></li>
+                @if($documento->hasVigente())
                 <li class="clik"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(1, 'partidas')">Partidas y Superficies</a></li>
                 <li class="clik"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(2, 'ubicacion')">Ubicación Geográfica</a></li>
                 <li class="clik"><a href="javascript:void(0)" class="tablinks" onclick="openSearch(4, 'incidencias')">Incidencias</a></li>
+                @endif
+                <a href="javascript:ocultar()" id="minimizar"  style="float: left;position: relative; left:25%; color: black"><i class="glyphicon glyphicon-chevron-down" aria-hidden="true"></i></a>
+                <a href="javascript:desocultar()" id="maximizar"  style="display: none; position: relative; float: left; left:25%; color: black"><i class="glyphicon glyphicon-chevron-up" aria-hidden="true"></i></a>
             </div>
             <div class="col-md-3">
                 <div class="form-inline row" style="margin-top: 2%">
@@ -54,6 +58,7 @@
             </div>
 
         </ul>
+        @if($documento->hasVigente())
         <div id="generales" class="tabcontent  datos_tabcontent" style="display: block">
             @include('documento.validar.datosGenerales')
         </div>
@@ -67,6 +72,11 @@
         <div id="incidencias" class="tabcontent datos_tabcontent">
             @include('documento.validar.incidencias')
         </div>
+        @else 
+        <div id="generales" class="tabcontent  datos_tabcontent" style="display: block">
+            @include('documento.validar.cargaAntecedente')
+        </div>
+        @endif
         <input type="hidden"  value="0" id="biss" name="gral[bis]">
         <input type="hidden" name="gral[id]" id="documento_id" value="{{$documento->id}}">
         <input type="submit" id="enviar" style="display: none">
@@ -75,24 +85,13 @@
     </div>
 
 </div>
- @include('documento.validar.modal_eliminar')
+@include('documento.validar.modal_eliminar')
 @endsection
 @section('script')
 @include('vendor.lrgt.ajax_script', ['form' => '#form_validar',
 'request'=>'App/Http/Requests/DocumentoFormRequest','on_start'=>false])
 <script>
-    $('.clik').eq(0).css('background-color', '#ccc');
-    function openSearch(index, city) {
-        $('.clik').css('background-color', '');
-        $('.clik').eq(index).css('background-color', '#ccc');
-
-        $('.tabcontent').hide();
-        $('#' + city).show();
-    }
-    ;
-    $('form').submit(function (e) {
-
-        $('#submit').click();
-    })
+    $('#objeto_imagen').css('height', mitadAlto);
 </script>
+@include('documento.parcial.cambiar_seccion');
 @endsection

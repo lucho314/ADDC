@@ -25,7 +25,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de partida:</label>
-                            <input class="form-control" type="text"  name="gral[nro_partida]"  required="required" id="nro_partida"> </input>
+                            <input class="form-control" type="text" required="required" id="nro_partida" onchange="$('.partidaInex').val(this.value)"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -59,7 +59,6 @@
 
 
                     <input type="hidden" name="imponible" id="imponible">
-                    <input type="hidden" name="gral[vigente]" value='0'>
                     <input type="hidden" name="gral[estado_id]" value="2" id="imponible">
                 </div>
                 <div class="col-md-12">
