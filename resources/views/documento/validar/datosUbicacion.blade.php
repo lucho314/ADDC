@@ -6,7 +6,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Departamento</label>
-                            <select  id="departamento" class="form-control select-modificar sistema" readonly onchange="$('#gral_departamento').val(this.value)"> 
+                            <select  id="departamento" name="gral[departamento_id]" class="form-control select-modificar sistema" readonly onchange="$('#gral_departamento').val(this.value)"> 
                                 @foreach($dptos as $dpto) 
                                 <option value="{{$dpto->div_de}}" 
                                         <?= ($dpto->div_de == $vigente->$relacion->departamento_id) ? 'selected' : '' ?>>{{$dpto->departamento}} 
@@ -18,7 +18,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Distrito</label>
-                            <select id="distrito" readonly class="form-control select-modificar sistema" onchange="$('#gral_distrito').val(this.value)">
+                            <select id="distrito"  name="gral[distrito_id]"  readonly class="form-control select-modificar sistema" onchange="$('#gral_distrito').val(this.value)">
 
                                 @foreach($dtos as $dto) 
                                 <option value="{{$dto->div_di}}" 
@@ -31,7 +31,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Localidad</label>
-                            <select  readonly id="localidad" class="form-control select-modificar sistema" onchange="$('#gral_localidad').val(this.value)">
+                            <select  readonly id="localidad"  name="gral[localidad_id]" class="form-control select-modificar sistema" onchange="$('#gral_localidad').val(this.value)">
                                 @foreach($localidades as $loc) 
                                 <option value="{{$loc->div_lo}}" 
                                         <?= ($loc->div_lo == $vigente->$relacion->localidad_id ) ? 'selected' : '' ?>>{{$loc->localidad}} 

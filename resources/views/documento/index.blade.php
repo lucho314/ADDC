@@ -70,7 +70,7 @@
                                             <div class="col-md-4  col-lg-4  col-sm-4 row">
                                                 <div class="form-group campos form-inline">
                                                     <label class="col-md-4">Departamento:</label>
-                                                    <select name="div_de" id="departamento" class="form-control col-md-6" required>
+                                                    <select name="departamento_id" id="departamento" class="form-control col-md-6" required>
                                                         <option value="">Seleccione Departamento</option>
                                                         @foreach($dptos as $dpto) 
                                                         <option value="{{$dpto->div_de}}">{{$dpto->departamento}}</option>
@@ -82,7 +82,7 @@
                                             <div class="col-md-4 row">
                                                 <div class="form-group campos form-inline">
                                                     <label class="col-md-4">Distrito:</label>
-                                                    <select name="div_di" id="distrito" class="form-control col-md-6" required>
+                                                    <select name="distrito_id" id="distrito" class="form-control col-md-6" required>
                                                         <option>Seleccione Distrito.. &nbsp; &nbsp;</option>
                                                     </select>
                                                 </div>
@@ -90,7 +90,7 @@
                                             <div class="col-md-4 row">
                                                 <div class="form-group campos form-inline">
                                                     <label class="col-md-4">Localidad:</label>
-                                                    <select name="div_lo" id="localidad" class="form-control col-md-6" required>
+                                                    <select name="localidad_id" id="localidad" class="form-control col-md-6" required>
                                                         <option>Seleccione Localidad..</option>
                                                     </select>
                                                 </div>

@@ -4,7 +4,7 @@ var path = '/documento/';
 var dpto = 0;
 var planoDesde = 0;
 var planoHasta = 0;
-var partida = 0;
+var partida = null;
 var tipo_doc = null;
 var partidasFallidas = null;
 var listaTotalPlanos = null;
@@ -15,7 +15,7 @@ var auxFormulario;
 var objetosMensurasEspecialesId = ['4', '5', '6'];
 var alto = screen.height;
 var mitadAlto = alto / 2;
-var fecha_certificado=null;
+var fecha_certificado = null;
 
 $(function () {
     a = $("#responsable").parents()
@@ -157,7 +157,7 @@ function inicializarDatos(nomenclatura) {
 function setPlanos(stringPlano) {
     plano = stringPlano.split('a');
     planoDesde = parseInt(plano[0]);
-    planoHasta=parseInt(plano[0]);
+    planoHasta = parseInt(plano[0]);
     if (typeof plano[1] !== 'undefined')
     {
         cantLetras = plano[1].length;
@@ -195,7 +195,7 @@ function ValidaFecha(arrayFecha)
         var anio = arrayFecha.substring(4, 0);
         var mes = arrayFecha.substring(6, 4);
         var dia = arrayFecha.substring(8, 6);
-        fecha_certificado=anio+"-"+mes+"-"+dia;
+        fecha_certificado = anio + "-" + mes + "-" + dia;
         return !isNaN(Date.parse(fecha_certificado));
     }
 }
@@ -203,10 +203,8 @@ function ValidaFecha(arrayFecha)
 
 
 function getDatos(partidas = null, tipoDoc = null) {
-    if (partida === 0)
-        partidas = null;
     $.get(path + 'getDatos/',
-            {'dpto': dpto, 'plano': planoDesde, 'plano_hasta': planoHasta, 'tipo_doc': tipoDoc},
+            {'dpto': dpto, 'plano': planoDesde, 'plano_hasta': planoHasta, 'tipo_doc': tipoDoc, 'partida': partida},
             function (data) {
                 if (data.existentes.length > 0) {
                     $('#cargaAntecedente').remove();
@@ -231,15 +229,16 @@ function getDatos(partidas = null, tipoDoc = null) {
                 } else
                 {
                     auxFormulario = $('#formularioDocumento');
-                    $('#formularioDocumento').remove();
-                    $('#cargaAntecedente').show();
+                    cargaAntecedente();
 
                     if (data.imponible_historico.length === 0 && data.inexistentes.length > 0) {
                         observarCambioObjeto();
-                    } else {
+                    } 
+                    else {
                         if (data.inexistentes.length > 0)
                         {
                             $.each(data.inexistentes, function (i, valor) {
+                                console.log('inexistente:',valor);
                                 $('form').append('<input type="hidden" name="inexistentes[' + i + '][nro_plano]"  value="' + valor + '" required  class="modificar form-control anexado" readonly/>\n\                                                         <input type="hidden" name="inexistentes[' + i + '][nro_partida]" class="partidaInex">\n\
                                                   <input type="hidden" name="inexistentes[' + i + '][vigente]" value="0">');
 
@@ -248,8 +247,9 @@ function getDatos(partidas = null, tipoDoc = null) {
                         if (data.imponible_historico.length > 0)
                         {
                             $.each(data.imponible_historico, function (i, valor) {
+                                console.log('historico',valor.col10);
                                 clave = valor.clave_imponible.split('-');
-                                $('form').append('<input type="hidden" name="historico[' + i + '][nro_plano]"  value="' + valor + '" required  class="modificar form-control anexado" readonly/>\n\
+                                $('form').append('<input type="hidden" name="historico[' + i + '][nro_plano]"  value="' + valor.col10 + '" required  class="modificar form-control anexado" readonly/>\n\
                                              <input type="hidden" name="historico[' + i + '][nro_partida]" value="' + parseInt(clave[1]) + '">\n\
                                               <input type="hidden" name="historico[' + i + '][imponible_id]" value="' + valor.clave_imponible + '">\n\                                             <input type="hidden" name="historico[' + i + '][vigente]" value="0">\n\
     ');
@@ -260,6 +260,17 @@ function getDatos(partidas = null, tipoDoc = null) {
                 initialize();
             });
 }
+
+
+
+function cargaAntecedente(){
+    $('#formularioDocumento').remove();
+    $('#cargaAntecedente').show();
+    $('#nro_plano').val(planoDesde);
+    $('#nro_plano_hasta').val(planoHasta);
+    $('#nro_dpto').val(dpto);
+    $('#tipo_doc').val(tipo_doc);
+  }
 
 
 function cargarExistentes(existentes) {
@@ -530,7 +541,21 @@ function armarDatatablePlano(url, datos, plano = false) {
             {data: 'nro_plano', name: 'nro_plano'},
             {data: 'nro_partida', name: 'nro_partida'},
             {data: 'documento.fecha_registro', name: 'documento.fecha_registro'},
-            {data: 'documento.estado.descripcion', name: 'documento.estado.descripcion'},
+            {data: 'vigente',
+                render: function (data, type, row) {
+                    switch (data) {
+                        case '0' :
+                            return 'No vigente';
+                            break;
+                        case '1' :
+                            return 'Vigente';
+                            break;
+                        default :
+                            return 'N/A';
+                            break;
+                    }
+                }
+                , name: 'vigente'},
             {data: 'accion', name: 'accion', orderable: false, searchable: false}
         ],
         drawCallback: function (settings) {
@@ -561,13 +586,29 @@ function armarDatatable(url, datos) {
         "processing": true,
         "serverSide": true,
         "ajax": path + url + '?' + datos,
+
         "columns": [
             {data: 'tipo.descripcion', name: 'tipo.descripcion'},
             {data: 'documento_sat[0].nro_dpto', name: 'documentoSat.nro_dpto'},
             {data: 'documento_sat[0].nro_plano', name: 'documentoSat.nro_plano'},
             {data: 'documento_sat[0].nro_partida', name: 'documentoSat.nro_partida'},
             {data: 'fecha_registro', name: 'fecha_registro'},
-            {data: 'estado.descripcion', name: 'estado.descripcion'},
+            {data: 'documento_sat[0].vigente',
+                render: function (data, type, row) {
+                    switch (data) {
+                        case '0' :
+                            return 'No vigente';
+                            break;
+                        case '1' :
+                            return 'Vigente';
+                            break;
+                        default :
+                            return 'N/A';
+                            break;
+                    }
+                }
+
+                , name: 'documentoSat.vigente'},
             {data: 'accion', name: 'accion', orderable: false, searchable: false}
         ],
         "language": {

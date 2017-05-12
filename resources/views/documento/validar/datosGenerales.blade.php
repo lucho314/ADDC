@@ -67,13 +67,13 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Año de inscripción</label>
-                            <input class="form-control modificar sistema" type="text"  readonly  name="gral[inscripcion]" id="gral_inscripcion" value="{{$vigente->$relacion->inscripcion or old('nombre')}}"> </input>
+                            <input class="form-control modificar sistema" type="text"  readonly  name="gral[inscripcion]" id="gral_inscripcion" value="{{$vigente->$relacion->inscripcion}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Matrícula</label>
-                            <input class="form-control modificar sistema" type="text"   name="gral[nro_matricula]" readonly id="gral_nro_matricula" value="{{$vigente->$relacion->matricula or old('nombre')}}"> </input>
+                            <input class="form-control modificar sistema" type="text"   name="gral[nro_matricula]" readonly id="gral_nro_matricula" value="{{$documento->nro_matricula}}"> </input>
                         </div>
                     </div>
                     @if($documento->tipo_doc_id==='1')

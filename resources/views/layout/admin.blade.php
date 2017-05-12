@@ -252,7 +252,7 @@
     <script src="{{asset('js/jquery.fancybox-buttons.js?v=1.0.5')}}"></script>
     <script src="{{asset('js/sweetalert.min.js')}}"></script>
     <script src="{{asset('js/checks.js')}}"></script>
-    <script src="{{asset('js/documento.js')}}"></script>
+    <script src="{{asset('js/documento.js?a=1')}}"></script>
     <script src="{{asset('js/caja.js')}}"></script>
     <!-- Select2---->
     <script src="/js/select2.min.js"></script>

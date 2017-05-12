@@ -13,7 +13,7 @@
                             <div class="form-group row">   <!--    posible_valor planta, Descripcion-->
                                 <label>Tipo planta:</label>
                                 <div class="col-md-11"> 
-                                    <select  id="tipo_planta" name="tipo_planta_id" readonly class="form-control select-modificar row">
+                                    <select  id="tipo_planta" name="gral[tipo_planta_id]" readonly class="form-control select-modificar row">
                                         @foreach($plantas as $pl)
                                             <option value="{{$pl->posible_valor}}"> {{$pl->descripcion}}</option>
                                         @endforeach

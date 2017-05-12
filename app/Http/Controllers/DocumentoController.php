@@ -154,8 +154,10 @@ class DocumentoController extends Controller {
         $problemas['imponible_historico'] = [];
         $planos = VistaSat::where('dpto', '=', "$datos->dpto")
                 ->whereRaw("cast(plano as integer) between " . $datos->get('plano') . " and " . $datos->get('plano_hasta'));
-
-
+        if($datos->tipo_doc=='2' && $datos->partida !=0)
+        {
+            $planos->where('partida',$datos->partida);
+        }
         $noEncontado = array_diff(range($datos->plano, $datos->plano_hasta), $planos->pluck('plano')->toArray());
 
         if (count($noEncontado) > '0') {
@@ -299,7 +301,7 @@ class DocumentoController extends Controller {
                 ->editColumn($columFech, function ($documentos) use($columFech) {
             $instancia = (is_object($documentos->documento)) ? $documentos->documento : $documentos;
             $buscar = new Carbon($instancia->fecha_registro);
-            return $buscar->format('d/m/Y');
+            return ($instancia->fecha_registro !='')?$buscar->format('d/m/Y') :'';
         });
         if ($plano) {
             $datatable->editColumn('nro_plano', function ($documentos)use($plano) {

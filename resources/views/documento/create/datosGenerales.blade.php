@@ -51,20 +51,20 @@
                             <div class="form-group">
                                 <label>Fecha de registro:</label>
                                 <div class="col-md-11 row"><input class="form-control" type="date"  name="gral[fecha_registro]"   id="gral_fecha_registro"></div>
-                                <div class="col-md-1" style="margin-top: 3%"><input type="checkbox" value='1' title="Fecha visible" name="gral[fecha_registro_visible]" checked="true"  id="gral_fecha_registro_visible"></div>
+                                <div class="col-md-1" style="margin-top: 3%"><input type="checkbox" value='0' title="Fecha visible" name="gral[fecha_registro_visible]"  id="gral_fecha_registro_visible"></div>
 
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Año de inscripción</label>
-                                <input class="form-control modificar" type="text" readonly  name="gral[inscripcion]" id="gral_inscripcion" value="{{$documento->temporal[0]->inscripcion or old('nombre')}}"> </input>
+                                <input class="form-control modificar" type="text" readonly  name="gral[inscripcion]" id="gral_inscripcion"> </input> 
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Matrícula</label>
-                                <input class="form-control modificar" type="text"   name="gral[nro_matricula]" readonly id="gral_nro_matricula" value="{{$documento->temporal[0]->nro_matricula or old('nombre')}}"> </input>
+                                <input class="form-control modificar" type="text"   name="gral[nro_matricula]" readonly id="gral_nro_matricula"> </input>
                             </div>
                         </div>
                         <div class="col-md-3" id="grupo_objeto">

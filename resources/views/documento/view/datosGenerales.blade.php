@@ -55,25 +55,21 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Fecha de registro:</label>
-                            @if(isset($documento->fecha_registro))
-                            <div class="col-md-11 row"><input class="form-control" disabled type="date"  name="gral[fecha_registro]"  value="{{$documento->fecha_registro->toDateString()}}"  id="gral_fecha_registro"></div>
+                            <div class="col-md-11 row"><input class="form-control" disabled type="date"  name="gral[fecha_registro]"  value="{{($documento->fecha_registro)?$documento->fecha_registro->toDateString():''}}"  id="gral_fecha_registro"></div>
                             <div class="col-md-1" style="margin-top: 3%"><input  disabled type="checkbox" <?= ($documento->fecha_registro_visible==='1')? 'checked':'' ?> title="Fecha visible" name="gral[fecha_registro_visible]"   id="gral_fecha_registro_visible"></div>
-                            @else
-                            <div class="col-md-11 row"><input class="form-control" type="date" disabled  name="gral[fecha_registro]"   id="gral_fecha_registro"></div>
-                            <div class="col-md-1" style="margin-top: 3%"><input type="checkbox" disabled value='1' title="Fecha visible" name="gral[fecha_registro_visible]"   id="gral_fecha_registro_visible"></div>
-                            @endif
+                           
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Año de inscripción</label>
-                            <input class="form-control" type="text"  name="inscripcion" disabled value="{{$vigente->$relacion->inscripcion or old('nombre')}}"> </input>
+                            <input class="form-control" type="text"  name="inscripcion" disabled value="{{$vigente->$relacion->inscripcion}}"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Matrícula</label>
-                            <input class="form-control" type="text"  name="nro_matricula"  disabled  value="{{$documento->nro_matricula or old('nombre')}}"> </input>
+                            <input class="form-control" type="text"  name="nro_matricula"  disabled  value="{{$documento->nro_matricula}}"> </input>
                         </div>
                     </div>
                       @if($documento->tipo_doc_id == 1)

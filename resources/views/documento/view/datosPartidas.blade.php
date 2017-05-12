@@ -53,15 +53,16 @@
                     <input type="hidden"  name="lote[{{$key}}][imponible_id]" value="{{$documento->imponible_id}}">
                     </tr>
                     @elseif(!is_null($documento->imponible_id))
-                        <tr>
-                            <td class="col-xs-2"><input type="text"  value="{{$documento->nro_plano}}" class="form-control" id="lote_{{$key}}_nro_plano" disabled></td>
-                            <td class="col-xs-10" colspan="5"><input class='form-control' type="text" disabled  value="PLANO NO VIGENTE"></td>
-                        </tr>
+                    <tr>
+                        <td class="col-xs-2"><input type="text"  value="{{$documento->nro_plano}}" class="form-control" id="lote_{{$key}}_nro_plano" disabled></td>
+                        <td class="col-xs-10" colspan="5"><input class='form-control' type="text" disabled  value="PLANO NO VIGENTE"></td>
+                    </tr>
                     @else
-                        <tr>
-                            <td class="col-xs-2"><input type="text"  value="{{$documento->nro_plano}}" class="form-control" id="lote_{{$key}}_nro_plano" disabled></td>
-                            <td class="col-xs-10" colspan="5"><input class='form-control' type="text" disabled  value="SIN DATOS"></td>
-                        </tr>
+                    <tr>
+                        <td class="col-xs-2"><input type="text"  value="{{$documento->nro_plano}}" class="form-control" id="lote_{{$key}}_nro_plano" disabled></td>
+                        <td class="col-xs-2"><input class='form-control' type="text" readonly  value="{{$documento->nro_partida}}"></td>
+                        <td class="col-xs-8" colspan="4"><input class='form-control' type="text" readonly  value="SIN DATOS"></td>
+                    </tr>
                     @endif
                     @endforeach
                     </tbody>

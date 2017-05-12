@@ -17,7 +17,7 @@
                         <td>{{$pre->tipo->descripcion}}</td>
                         <td>{{$pre->documentoSat[0]->nro_plano}}</td>
                         <td>{{$pre->documentoSat[0]->nro_partida}}</td>
-                        <td>{{$pre->fecha_registro->format('d/m/Y')}}</td>
+                        <td>{{($pre->fecha_registro)?$pre->fecha_registro->format('d/m/Y') : ''}}</td>
                         <td><a href="/documento/view/{{$pre->id}}" target="_blank" class="btn btn-info btn-xs">Ver imagen</a></td>
                     </tr>
                     @endforeach

@@ -71,11 +71,7 @@ class DocumentoSat extends Model {
         }
         if (isset($datos['especial'])) {
             foreach ($datos['especial'] as $key => $val) {
-                $datos['especial'][$key]['departamento_id'] = $datos['departamento_id'];
-                $datos['especial'][$key]['distrito_id'] = $datos['distrito_id'];
-                $datos['especial'][$key]['localidad_id'] = $datos['localidad_id'];
-                $datos['especial'][$key]['tipo_planta_id'] = $datos['tipo_planta_id'];
-                $mensuraEspecial = MensuraEspecial::create($datos['especial'][$key]);
+                $mensuraEspecial = MensuraEspecial::create(array_merge($datos['gral'], $datos['especial'][$key]));
                 $datos['especial'][$key]['documento_id'] = $docId;
                 $datos['especial'][$key]['mensura_especial_id'] = $mensuraEspecial->id;
                 DocumentoSat::create(array_merge($datos['gral'], $datos['especial'][$key]));

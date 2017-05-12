@@ -42,6 +42,22 @@
                                 </select>
                         </div> 
                     </div>
+                    
+                    @if($documento->tipo_doc_id==='2')
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Certificado</label>
+                            <input class="form-control modificar ingresado" type="text" readonly  name="gral[certificado]" id='gral_certificado' value="{{$documento->certificado or old('responsable')}}" placeholder="Certificado.."> </input>
+                        </div>
+                    </div>
+                     <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Fecha certificado</label>
+                            <input class="form-control modificar ingresado" type="date" name="gral[fecha_certificado]"   id='gral_fecha_certificado'  readonly  value="{{($documento->fecha_certificado)?$documento->fecha_certificado->toDateString():''}}"> </input>
+                        </div>
+                    </div>
+                    @endif
+                    
                    <div class="col-md-3">
                         <div class="form-group">
                             <label>Fecha de registro:</label>

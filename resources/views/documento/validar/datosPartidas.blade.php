@@ -60,7 +60,8 @@
                               @else
                               <tr>
                                     <td class="col-xs-2"><input type="text" name="lote[{{$key}}][nro_plano]" value="{{$documento->nro_plano}}" class="form-control modificar sistema" id="lote_{{$key}}_nro_plano" readonly></td>
-                                    <td class="col-xs-10" colspan="5"><input class='form-control' type="text" readonly  value="SIN DATOS"></td>
+                                    <td class="col-xs-2"><input class='form-control' type="text" readonly  value="{{$documento->nro_partida}}"></td>
+                                    <td class="col-xs-8" colspan="4"><input class='form-control' type="text" readonly  value="SIN DATOS"></td>
                               </tr>
                               @endif
                     @endforeach
