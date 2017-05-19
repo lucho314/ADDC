@@ -10,11 +10,11 @@ class carga_roles extends Seeder {
      * @return void
      */
     public function run() {
-        DB::table('roles')->insert([
+        DB::table('tbl_roles')->insert([
                 ['id' => '1', 'key' => 'admin', 'nombre' => 'Administrador'],
                 ['id' => '3', 'key' => 'corrector', 'nombre' => 'Corrector'],
                 ['id' => '4', 'key' => 'validador', 'nombre' => 'Validador de documentos'],
-                ['id' => '5', 'key' => 'carga', 'nombre' => 'carga de documentos']
+                ['id' => '5', 'key' => 'carga', 'nombre' => 'Carga de documentos']
                 ]
         );
     }

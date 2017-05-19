@@ -43,15 +43,20 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Fecha certificado</label>
-                                    <input class="form-control" type="date" name="gral[fecha_certificado]"   id='gral_fecha_certificado'> </input>
+                                    <input class="form-control" type="date" name="gral[fecha_certificado]"   id='gral_fecha_certificado' novalidate="true"> </input>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Fecha de registro:</label>
-                                <div class="col-md-11 row"><input class="form-control" type="date"  name="gral[fecha_registro]"   id="gral_fecha_registro"></div>
-                                <div class="col-md-1" style="margin-top: 3%"><input type="checkbox" value='0' title="Fecha visible" name="gral[fecha_registro_visible]"  id="gral_fecha_registro_visible"></div>
+                                <div class="col-md-11 row"><input class="form-control" type="date"  name="gral[fecha_registro]"   id="gral_fecha_registro" novalidate="true"></div>
+                                <div class="col-md-1 squaredFour" style="margin-top: 3%">
+                                    <a href="javascript:fecha_visible(0)"   id="check" style="font-size: 20px;display: none; color: #268a72">          <i class="glyphicon glyphicon-check" ></i>
+                                    </a>
+                                  <a href="javascript:fecha_visible(1)" id="uncheck">  <i class="glyphicon glyphicon-unchecked" style="font-size: 20px; color: #268a72"></i></a>
+                                    <input type="hidden" name="gral[fecha_registro_visible]" value="0" id="fecha_registro_visible">
+                                </div>
 
                             </div>
                         </div>
@@ -90,7 +95,7 @@
                     <div class="form-group">
                         <div class="form-inline"><label>Antecedentes </label><a href="javascript:agregar_antecedente()"><i class="glyphicon glyphicon-plus" style="margin-left: 4%"></i></a></div>                        
                         <div id="grupo_antecedente">
-                            <input type="number" placeholder="Nro plano antecedente"  name="plano_ant[]" id="plano_ant_0" class="form-control" style="margin-bottom: 6%">
+                            <input type="number" placeholder="Nro plano antecedente"  name="plano_ant[]" id="plano_ant_0" class="form-control antecedentes" style="margin-bottom: 6%">
                         </div>
                     </div>    
                 </div>

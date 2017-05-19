@@ -12,7 +12,7 @@ class CreateContenidosTable extends Migration {
      * @return void
      */
     public function up() {
-        Schema::create('contenidos', function (Blueprint $table) {
+        Schema::create('tbl_contenidos', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('numero_desde');
             $table->integer('numero_hasta');
@@ -28,7 +28,7 @@ class CreateContenidosTable extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('contenidos');
+        Schema::dropIfExists('tbl_contenidos');
     }
 
 }

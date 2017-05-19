@@ -13,7 +13,7 @@ class CreateObjetosTable extends Migration
      */
     public function up()
     {
-        Schema::create('objetos', function (Blueprint $table) {
+        Schema::create('tbl_objetos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('descripcion');
         });
@@ -26,6 +26,6 @@ class CreateObjetosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('objetos');
+        Schema::dropIfExists('tbl_objetos');
     }
 }

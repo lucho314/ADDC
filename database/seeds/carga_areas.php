@@ -11,7 +11,7 @@ class carga_areas extends Seeder
      */
     public function run()
     {
-         DB::table('areas')->insert([
+         DB::table('tbl_areas')->insert([
                 ['descripcion' => 'ARCHIVO'],
                 ['descripcion' => 'ECONIMICO'],
                 ['descripcion' => 'TOPOGRAFICO'],

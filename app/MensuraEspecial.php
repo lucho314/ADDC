@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MensuraEspecial extends Model {
 
+    protected $table='tbl_mensura_especials';
     protected $fillable = [
         'inscripcion',
         'tipo_planta_id',

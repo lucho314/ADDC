@@ -18,7 +18,7 @@ class CajaController extends Controller {
     }
 
     public function create(Request $dato) {
-        $sectores = DB::table('sectores')->get();
+        $sectores = DB::table('tbl_sectores')->get();
         $departamentos = DB::table('vw_localidades')
                 ->distinct()
                 ->select('codigo_de', 'departamento', 'div_de')

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DocumentoSat extends Model {
 
+    protected $table='tbl_documento_sats';
     protected $fillable = [
         'documento_id',
         'imponible_id',

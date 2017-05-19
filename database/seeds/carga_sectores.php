@@ -11,7 +11,7 @@ class carga_sectores extends Seeder
      */
     public function run()
     {
-        DB::table('sectores')->insert([
+        DB::table('tbl_sectores')->insert([
             ['nro_sector'=>1],
             ['nro_sector'=>2],
             ['nro_sector'=>3],

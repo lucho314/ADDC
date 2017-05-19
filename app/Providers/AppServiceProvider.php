@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider {
         Validator::extend('doc_unico', function ($attribute, $value, $parameters, $validator) {
 
             //dd($parameters)
-            $row = DB::table('documentos')->where('nro_dpto', '=', $parameters[0])
+            $row = DB::table('tbl_documentos')->where('nro_dpto', '=', $parameters[0])
                     ->where('nro_plano', '<=', $parameters[2])
                     ->where('nro_plano_hasta', '>=', $parameters[1]);
             if (isset($parameters[3])) {

@@ -5,7 +5,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class DocumentoEstado extends Model {
-
+    
+    protected $table='tbl_documento_estados';
     protected $guarded = ['id'];
     public $timestamps = false;
 

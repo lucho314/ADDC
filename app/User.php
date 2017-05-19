@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable {
 
     use Notifiable;
-  
+      protected $table='tbl_users';
 
     /**
      * The attributes that are mass assignable.
@@ -33,7 +33,7 @@ class User extends Authenticatable {
 
 
     public function roles() {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class,'TBL_ROLE_USER');
     }
 
     public function hasRoles(array $roles) {

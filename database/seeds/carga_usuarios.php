@@ -11,7 +11,7 @@ class carga_usuarios extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
+        DB::table('tbl_users')->insert([
                  'id'=>'1',
                 'nom_usuario' => 'CB25907280',
                  'password'=>'a',

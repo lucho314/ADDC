@@ -12,7 +12,7 @@ class CreateDocumentosTable extends Migration {
      * @return void
      */
     public function up() {
-        Schema::create('documentos', function (Blueprint $table) {
+        Schema::create('tbl_documentos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre');
             $table->integer('nro_dpto');
@@ -22,7 +22,7 @@ class CreateDocumentosTable extends Migration {
             $table->string('checksum');
             $table->integer('objeto_id')->nullable();
             $table->date('fecha_registro')->nullable();
-             $table->date('fecha_certificado')->nullable();
+            $table->date('fecha_certificado')->nullable();
             $table->integer('nro_matricula')->nullable();
             $table->binary('imagen');
             $table->integer('certificado')->nullable();
@@ -44,7 +44,7 @@ class CreateDocumentosTable extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('documentos');
+        Schema::dropIfExists('tbl_documentos');
     }
 
 }

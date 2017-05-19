@@ -280,7 +280,8 @@ function cargarExistentes(existentes) {
     $('#gral_titular').val(existentes.responsable);
     $('#tipo_planta').val(existentes.tipo_planta_id);
     $('#gral_seccion').val(existentes.seccion);
-    if (existentes.tipo_planta > '0003') {
+    console.log(existentes.tipo_planta_id);
+    if (existentes.tipo_planta_id > '0003') {
         unidadMedida = 'Has';
     } else {
         unidadMedida = 'm²';
@@ -338,7 +339,7 @@ function observarCambioObjeto() {
             $('#nro_dpto').val(dpto);
             $('#tipo_doc').val(tipo_doc);
             $('#cargando').hide();
-            $('#formularioDocumento').css('opacity', '1');
+            $('#formularioDocumento').css('opacity', '1').css("pointer-events","all");;
             $('.agregar_').show();
             $('#form_carga').append('<input type="hidden" name="gral[objeto_id]" value="' + objetoId + '">');
             $('#grupo_objeto').remove();
@@ -367,7 +368,7 @@ function setUbicacion(datos) {
     $('#localidad').val(datos.existentes[0].localidad);
     $('#seccion').val(datos.existentes[0].seccion);
     $('#cargando').hide();
-    $('#formularioDocumento').css('opacity', '1');
+    $('#formularioDocumento').css('opacity', '1').css("pointer-events","all");
 }
 ;
 function agregar_ubicacion() {
@@ -423,8 +424,11 @@ function partidas_y_superficies(data) {
 \n\</tr>');
     });
     $('#cargando').hide();
-    $('#formularioDocumento').css('opacity', '1');
+    $('#formularioDocumento').css('opacity', '1').css("pointer-events","all");;
 }
+
+
+
 
 
 function calcularExeso(supTitulo, i) {
@@ -562,9 +566,9 @@ function armarDatatablePlano(url, datos, plano = false) {
             json = $tabla.ajax.json();
             if (json.recordsTotal === 0 && plano) {
                 $.get('/verificar_falta', datos, function (data) {
-                    console.log(data.falta);
-                    if (data.falta) {
-                        swal("El documento solicitado se encuentra en falta!", data.mensaje, "error");
+                    if (data) {
+                        console.log(data[0]);
+                        swal("El documento solicitado se encuentra en falta!", data[0].observaciones, "error");
                     }
                 })
             }
@@ -668,7 +672,9 @@ $('#gral_responsable').change(function () {
     }
 });
 function agregar_antecedente() {
-    $('#grupo_antecedente').append('<input type="number" placeholder="Nro plano antecedente" name="plano_ant[]" class="form-control" style="margin-bottom: 6%">');
+    inputNode=$('<input type="number" placeholder="Nro plano antecedente" name="plano_ant[]" class="form-control antecedentes" style="margin-bottom: 6%">');
+    $('#grupo_antecedente').append(inputNode);
+     inputNode.focus(); 
 }
 
 function eliminar_carga(id) {
@@ -796,4 +802,48 @@ function getCambios() {
 
     })
 }
+
+
+$(document).on('click','#cancelar',function(){
+    location.reload();
+
+});
+
+
+function fecha_visible(value){
+      $('#fecha_registro_visible').val(value);
+    if(value===1){
+        $('#uncheck').hide();
+        $('#check').show();
+    }
+    else{
+        $('#uncheck').show();
+        $('#check').hide();
+    }
+
+};
+
+  $('#form_carga').keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+
+  $('#form_validar').keydown(function(event){
+    if(event.keyCode == 13) {
+      event.preventDefault();
+      return false;
+    }
+  });
+
+
+
+
+$(document).on('keyup','.antecedentes',function(e){
+
+     if (e.which == 13) {
+        agregar_antecedente();
+    }
+})
 

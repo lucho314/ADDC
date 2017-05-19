@@ -13,7 +13,7 @@ class CreaTablaSector extends Migration
      */
     public function up()
     {
-        Schema::create('sectores', function (Blueprint $table) {
+        Schema::create('tbl_sectores', function (Blueprint $table) {
            $table->increments('id');
            $table->integer('nro_sector');
         });
@@ -26,6 +26,6 @@ class CreaTablaSector extends Migration
      */
     public function down()
     {
-         Schema::dropIfExists('sectores');
+         Schema::dropIfExists('tbl_sectores');
     }
 }

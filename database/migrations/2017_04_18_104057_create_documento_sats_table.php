@@ -13,7 +13,7 @@ class CreateDocumentoSatsTable extends Migration
      */
     public function up()
     {
-        Schema::create('documento_sats', function (Blueprint $table) {
+        Schema::create('tbl_documento_sats', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('documento_id');
             $table->string('imponible_id')->nullable();
@@ -24,7 +24,7 @@ class CreateDocumentoSatsTable extends Migration
             $table->string('sup_titulo')->nullable();
             $table->string('exceso')->nullable();
             $table->boolean('vigente')->default('1');
-            $table->foreign('documento_id')->references('id')->on('documentos')->onDelete('cascade');
+            $table->foreign('documento_id')->references('id')->on('tbl_documentos')->onDelete('cascade');
         });
     }
 
@@ -35,6 +35,6 @@ class CreateDocumentoSatsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('documento_sats');
+        Schema::dropIfExists('tbl_documento_sats');
     }
 }

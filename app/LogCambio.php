@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LogCambio extends Model
 {
+    protected $table='tbl_log_cambios';
     protected $guarded=[];
     public $timestamps = false;
 

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use DB;
 
 class Caja extends Model {
-
+     protected $table='tbl_cajas';
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $fillable = [

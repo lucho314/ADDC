@@ -23,7 +23,7 @@ class DocumentoController extends Controller {
 
     public function __construct() {
         $this->middleware('auth');
-        $this->middleware('roles:validador,corrector,admin', ['only' => ['viewListaDocumentosPendientes', 'validarDocumento', 'aceptarValidacion']]
+        $this->middleware('roles:validador,corrector,admin', ['only' => ['viewListaDocumentosPendientes']]
         );
     }
 
@@ -65,7 +65,7 @@ class DocumentoController extends Controller {
         $documentos = Documento::getListaPendientes($mio->mio);
         return Datatables::eloquent($documentos)
                         ->addColumn('accion', function ($documentos) use($mio) {
-                            return ($mio->mio) ? '<a href="/documento/view/' . $documentos->id . '" class="btn btn-xs btn-info"> Ver documento</a>'
+                            return ($mio->mio) ? '<a href="/documento/editar/' . $documentos->id . '" class="btn btn-xs btn-info">Editar</a>'
                                     . '&nbsp;&nbsp; <a href="javascript:eliminar_carga(' . $documentos->id . ')" class="btn btn-xs btn-danger">Eliminar</a>' : '<a href="/documento/validar/documento/' . $documentos->id . '" class="btn btn-xs btn-warning"> Validar</a>';
                         })
                         ->editColumn('created_at', function ($documentos) {
@@ -78,7 +78,7 @@ class DocumentoController extends Controller {
                         ->make(true);
     }
 
-    public function validarDocumento($id) {
+    public function editarDocumento($id) {
         $plantas = DB::table('tbl_valores_set_validaciones')->where('set_validacion', '=', '0054')->get();
         $objetos = Objeto::all();
 
@@ -106,8 +106,11 @@ class DocumentoController extends Controller {
         $doc->update($datos->gral);
         LogCambio::where('documento_id', $datos->_token)->update(['documento_id' => $doc->id]);
         Antecedente::Editar($doc, (empty($datos->plano_ant) ? [] : $datos->plano_ant));
-        $this->cambiarEstado($datos->gral['estado_id'], $datos->gral['id'], $datos->gral['observacion'], $datos->area_id);
-        return redirect('documento/validar/lista/0');
+        if(isset($datos->gral['observacion'])){
+             $this->cambiarEstado($datos->gral['estado_id'], $datos->gral['id'], $datos->gral['observacion'], $datos->area_id);
+            return redirect('documento/validar/lista/0');
+        }
+         return redirect('/documento/carga/lista');
     }
 
 
@@ -220,7 +223,7 @@ class DocumentoController extends Controller {
         if ($nroDpto != '') {
             $documento->where('nro_dpto', $nroDpto);
         }
-        return ['falta' => $documento->count()];
+        return [$documento->first()];
     }
 
     public function buscarPartida(Request $buscar) {

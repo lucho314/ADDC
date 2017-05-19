@@ -13,7 +13,7 @@ class CreateTiposTable extends Migration
      */
     public function up()
     {
-        Schema::create('tipo_docs', function (Blueprint $table) {
+        Schema::create('tbl_tipo_docs', function (Blueprint $table) {
             $table->increments('id');
              $table->string('descripcion');
           });
@@ -26,6 +26,6 @@ class CreateTiposTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tipo_docs');
+        Schema::dropIfExists('tbl_tipo_docs');
     }
 }

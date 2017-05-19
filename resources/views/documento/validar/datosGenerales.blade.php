@@ -56,7 +56,27 @@
                             <label>Fecha de registro:</label>
                             @if(isset($documento->fecha_registro))
                             <div class="col-md-11 row"><input class="form-control modificar ingresado" type="date"  name="gral[fecha_registro]"  value="{{$documento->fecha_registro->toDateString()}}"  id="gral_fecha_registro"></div>
-                            <div class="col-md-1" style="margin-top: 3%"><input value="1" type="checkbox" <?= ($documento->fecha_registro_visible === '1') ? 'checked' : '' ?> title="Fecha visible" name="gral[fecha_registro_visible]"   id="gral_fecha_registro_visible"></div>
+                            <div class="col-md-1" style="margin-top: 3%">
+                              
+                                     <a href="javascript:fecha_visible(1)" id="uncheck" style="font-size: 20px; color: #268a72; display: <?= (!$documento->fecha_registro_visible)?'block;':'none;';?>"> 
+                                            <i class="glyphicon glyphicon-unchecked"></i>
+                                        </a>
+
+
+                                        <a href="javascript:fecha_visible(0)"   id="check" style="font-size: 20px; color: #268a72; display: <?= ( $documento->fecha_registro_visible)?'block;':'none;'; ?>">  
+                                            <i class="glyphicon glyphicon-check" ></i>
+                                        </a>
+                               
+                                       
+                               
+                            </div> 
+                            <input type="hidden" name="gral[fecha_registro_visible]" value="{{$documento->fecha_registro_visible}}" id="fecha_registro_visible">
+
+
+
+
+
+
                             @else
                             <div class="col-md-11 row"><input class="form-control ingresado" type="date"  name="gral[fecha_registro]"   id="gral_fecha_registro"></div>
                             <div class="col-md-1" style="margin-top: 3%"><input type="checkbox" value='1' title="Fecha visible" name="gral[fecha_registro_visible]"   id="gral_fecha_registro_visible"></div>

@@ -12,10 +12,10 @@ class CreateDocumentoAntecedenteTable extends Migration {
      * @return void
      */
     public function up() {
-        Schema::create('antecedente_documento', function (Blueprint $table) {
+        Schema::create('tbl_antecedente_documento', function (Blueprint $table) {
             $table->integer('documento_id');
             $table->integer('antecedente_id');
-            $table->foreign('documento_id')->references('id')->on('documentos')->onDelete('cascade');
+            $table->foreign('documento_id')->references('id')->on('tbl_documentos')->onDelete('cascade');
         });
     }
 
@@ -25,7 +25,7 @@ class CreateDocumentoAntecedenteTable extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('antecedente_documento');
+        Schema::dropIfExists('tbl_antecedente_documento');
     }
 
 }

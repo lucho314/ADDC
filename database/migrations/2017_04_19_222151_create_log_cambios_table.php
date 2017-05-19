@@ -12,11 +12,11 @@ class CreateLogCambiosTable extends Migration {
      * @return void
      */
     public function up() {
-        Schema::create('log_cambios', function (Blueprint $table) {
+        Schema::create('tbl_log_cambios', function (Blueprint $table) {
             $table->increments('id');
             $table->string('documento_id');
             $table->string('campo');
-            $table->string('val_original');
+            $table->string('val_original')->nullable();
             $table->string('val_cambio');
         });
     }
@@ -27,7 +27,7 @@ class CreateLogCambiosTable extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('log_cambios');
+        Schema::dropIfExists('tbl_log_cambios');
     }
 
 }

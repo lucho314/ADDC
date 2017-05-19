@@ -9,19 +9,16 @@
             <form id="busquedaCaja" action="#">
                 <div class="form-group campos">
                     <label>Departamento:</label>
-                    <select class="form-control" name="dpto" id="dpto" required="">
-                        @foreach($dptos as $dpto)
-                        <option value="{{$dpto->codigo_de}}">{{$dpto->departamento}}</option>
-                        @endforeach
-                    </select>
+                    <input type="number" class="form-control" name="dpto" id="dpto" required autofocus>
+                   
                 </div>
                 <div class="form-group campos">
                     <label>Plano desde:</label>
-                    <input class="form-control" type="text" name="numero_desde" required placeholder="Plano desde..."> </input>
+                    <input class="form-control" type="number" name="numero_desde" required placeholder="Plano desde..."> </input>
                 </div>
                 <div class="form-group campos">
                     <label>Plano hasta:</label>
-                    <input class="form-control" type="text" name="numero_hasta" placeholder="Plano hasta..."> </input>
+                    <input class="form-control" type="number" name="numero_hasta" placeholder="Plano hasta..."> </input>
                 </div>
                 <div class="form-group campos">
                     <button class="btn btn-success" type="submit">Buscar</button>
@@ -62,7 +59,5 @@
 
 </div>
 @endsection
-
-
 
 

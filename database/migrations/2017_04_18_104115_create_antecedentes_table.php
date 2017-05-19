@@ -13,7 +13,7 @@ class CreateAntecedentesTable extends Migration
      */
     public function up()
     {
-        Schema::create('antecedentes', function (Blueprint $table) {
+        Schema::create('tbl_antecedentes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('nro_dpto');
             $table->integer('nro_plano');
@@ -28,6 +28,6 @@ class CreateAntecedentesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('antecedentes');
+        Schema::dropIfExists('tbl_antecedentes');
     }
 }

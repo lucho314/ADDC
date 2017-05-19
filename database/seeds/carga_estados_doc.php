@@ -10,7 +10,7 @@ class carga_estados_doc extends Seeder {
      * @return void
      */
     public function run() {
-        DB::table('estados')->insert([
+        DB::table('tbl_estados')->insert([
                 ['descripcion' => 'ACTIVO'],
                 ['descripcion' => 'PENDIENTE'],
                 ['descripcion' => 'DERIVADO'],

@@ -12,7 +12,7 @@ class CreateMensuraEspecialsTable extends Migration {
      * @return void
      */
     public function up() {
-        Schema::create('mensura_especials', function (Blueprint $table) {
+        Schema::create('tbl_mensura_especials', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('inscripcion')->nullable();
             $table->integer('tipo_planta_id')->nullable();
@@ -41,7 +41,7 @@ class CreateMensuraEspecialsTable extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('mensura_especials');
+        Schema::dropIfExists('tbl_mensura_especials');
     }
 
 }

@@ -13,7 +13,7 @@ class CrearTablaPivotUserRole extends Migration
      */
     public function up()
     {
-        Schema::create('role_user', function (Blueprint $table) {
+        Schema::create('tbl_role_user', function (Blueprint $table) {
             $table->integer('user_id');
             $table->integer('role_id');
         });
@@ -26,6 +26,6 @@ class CrearTablaPivotUserRole extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('role_user');
+        Schema::dropIfExists('tbl_role_user');
     }
 }

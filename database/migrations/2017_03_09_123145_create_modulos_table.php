@@ -13,7 +13,7 @@ class CreateModulosTable extends Migration
      */
     public function up()
     {
-        Schema::create('modulos', function (Blueprint $table) {
+        Schema::create('tbl_modulos', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('nro_sector');
             $table->integer('nro_modulo');
@@ -28,6 +28,6 @@ class CreateModulosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('modulos');
+        Schema::dropIfExists('tbl_modulos');
     }
 }

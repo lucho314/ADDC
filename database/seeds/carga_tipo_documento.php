@@ -11,7 +11,7 @@ class carga_tipo_documento extends Seeder
      */
     public function run()
     {
-         DB::table('tipo_docs')->insert([
+         DB::table('tbl_tipo_docs')->insert([
                 ['descripcion' => 'Plano de mensura'],
                 ['descripcion' => 'Ficha de transferencia'],
              ]);

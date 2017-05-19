@@ -37,9 +37,18 @@ Route::get('documento/eliminar_registro', 'DocumentoController@eliminarRegistro'
 Route::get('documento/prueba', 'DocumentoController@prueba');
 Route::get('documento/titular', 'DocumentoController@getTitulares');
 Route::get('documento/getDptos', 'DocumentoController@getDeptos');
-Route::post('documento/validado', 'DocumentoController@aceptarValidacion');
+
+Route::post('documento/validado', 'DocumentoController@aceptarValidacion')
+		->middleware('roles:validador,corrector,admin');
+
+Route::post('documento/editado', 'DocumentoController@aceptarValidacion');
+
 Route::get('documento/validar/getLista/', 'DocumentoController@getListaDocumentos');
-Route::get('documento/validar/documento/{id}', 'DocumentoController@validarDocumento');
+
+Route::get('documento/validar/documento/{id}', 'DocumentoController@editarDocumento')->middleware('roles:validador,corrector,admin');
+
+Route::get('documento/editar/{id}', 'DocumentoController@editarDocumento');
+
 Route::get('documento/validar/lista/{mio}', 'DocumentoController@viewListaDocumentosPendientes');
 Route::get('documento/compruebaPartidaRepetida/{n}/{p}', 'DocumentoController@compruebaPartidaRepetida');
 Route::get('documento/checkDatosInex/{nro}/{i}/{f}', 'DocumentoController@checkDatosInex');
@@ -75,6 +84,8 @@ Route::get('/get_documentos_cambio', 'DocumentoController@getCambios');
 Route::get('/verificar_falta', 'DocumentoController@verificarFalta');
 
 Route::get('/usuario_roles', 'UsuarioController@usuarioRoles');
+
+
 Route::get('/eliminar_log', function(){
     \App\LogCambio::whereRaw("REGEXP_LIKE (documento_id, '[^0-9]')")->delete();
 });

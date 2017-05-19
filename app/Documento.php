@@ -7,6 +7,7 @@ use Yajra\Oci8\Eloquent\OracleEloquent as Eloquent;
 
 class Documento extends Eloquent {
 
+    protected $table='tbl_documentos';
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $fillable = [
@@ -59,7 +60,7 @@ class Documento extends Eloquent {
     }
 
     public function Antecedentes() {
-        return $this->belongsToMany(Antecedente::class);
+        return $this->belongsToMany(Antecedente::class,'tbl_antecedente_documento');
     }
 
     public function cambios() {
@@ -106,7 +107,7 @@ class Documento extends Eloquent {
 
     public static function getListaPendientes($mios = false) {
         $doc = Documento::with(['tipo', 'ultimoCambio'])
-                ->select('tipo_doc_id', 'nombre', 'usuario_ultima_mod', 'created_at', 'documentos.id')
+                ->select('tipo_doc_id', 'nombre', 'usuario_ultima_mod', 'created_at', 'tbl_documentos.id')
                 ->where('estado_id', '<>', '1')
                 ->where('estado_id', '<>', '6');
 
@@ -114,7 +115,7 @@ class Documento extends Eloquent {
         if (auth()->user()->isValidador()) {
             $doc->where('estado_id', '=', 2);
         } else if (auth()->user()->isCorrector()) {
-            $doc->where('documentos.estado_id', '=', 3)
+            $doc->where('tbl_documentos.estado_id', '=', 3)
                     ->whereHas('ultimoCambio', function($query) {
                         $query->where('area_id', auth()->user()->area_id);
                     });

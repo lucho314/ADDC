@@ -11,7 +11,7 @@ class carga_usuario_rol extends Seeder
      */
     public function run()
     {
-        DB::table('role_user')->insert([
+        DB::table('tbl_role_user')->insert([
                 'user_id' => '1',
                  'role_id'=>'1'
                  ]);

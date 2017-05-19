@@ -84,31 +84,41 @@
         <div class="col-md-12">
             {!!Form::open(['url'=>'documento', 'method'=>'POST', 'autocomplete'=>'off','files'=>'true', 'rules'=>'create', 'id'=>'form_carga']) !!}
             {{Form::token()}}
-            <div class="form-group col-md-2">
-                <label>Departamento:</label>
-                <select name="gral[nro_dpto]" class="form-control">
-                    @foreach($dptos as $dpto)
-                    <option value="{{$dpto->codigo_de}}">{{$dpto->departamento}}</option>
-                    @endforeach
-                </select>
+            <div class="col-md-8">
+                <div class="form-group col-md-3">
+                    <label>Departamento:</label>
+                    <select name="gral[nro_dpto]" class="form-control">
+                        @foreach($dptos as $dpto)
+                        <option value="{{$dpto->codigo_de}}">{{$dpto->departamento}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Tipo documento:</label>
+                    <select name="gral[tipo_doc_id]" class="form-control">
+                        <option value="1">Plano de mensura</option>
+                        <option value="2">Ficha de transferencia</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Plano desde:</label>
+                    <input type="number" class="form-control" name="gral[nro_plano]">
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Plano hasta:</label>
+                    <input type="number" class="form-control" name="gral[nro_plano_hasta]">
+                </div>
             </div>
-            <div class="form-group col-md-2">
-                <label>Tipo documento:</label>
-                <select name="gral[tipo_doc_id]" class="form-control">
-                    <option value="1">Plano de mensura</option>
-                    <option value="2">Ficha de transferencia</option>
-                </select>
+
+            <div class="col-md-8">
+            <div class="form-group">
+                    <label>Observaciones:</label>
+                    <textarea class="form-control" name="gral[observaciones]"></textarea>
+                </div>
             </div>
-            <div class="form-group col-md-2">
-                <label>Plano desde:</label>
-                <input type="number" class="form-control" name="gral[nro_plano]">
-            </div>
-            <div class="form-group col-md-2">
-                <label>Plano hasta:</label>
-                <input type="number" class="form-control" name="gral[nro_plano_hasta]">
-            </div>
-            <div class="col-md-2">
-                <input type="submit" class="btn btn-success" style="margin-top: 25px;" value="Aceptar">
+
+            <div class="col-md-8 text-right">
+                <input type="submit" class="btn btn-success" value="Aceptar">
             </div>
             <input type="hidden" name="gral[estado_id]" value="6">
             <input type="hidden" name="gral[imagen]" value="">

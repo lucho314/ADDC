@@ -122,4 +122,13 @@ $('#busquedaCaja').submit(function (e) {
             "url": "/js/Spanish.json"
         }
     });
+
 });
+
+    function handleAjaxErrorLoc( xhr, textStatus, error ) {
+
+        $.each(error,function(i,t){
+            console.log(i);
+        });
+
+        }

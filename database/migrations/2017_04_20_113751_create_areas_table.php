@@ -13,7 +13,7 @@ class CreateAreasTable extends Migration
      */
     public function up()
     {
-        Schema::create('areas', function (Blueprint $table) {
+        Schema::create('tbl_areas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('descripcion');
         });
@@ -26,6 +26,6 @@ class CreateAreasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('areas');
+        Schema::dropIfExists('tbl_areas');
     }
 }

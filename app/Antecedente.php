@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use DB;
 
 class Antecedente extends Model {
-
+    
+    protected $table='tbl_antecedentes';
     public $fillable = [
         'nro_plano',
         'nro_dpto'
@@ -24,7 +25,7 @@ class Antecedente extends Model {
     }
 
     public static function Editar($doc, $datos = array()) {
-        DB::table('antecedente_documento')->where('documento_id', '=', $doc->id)->delete();
+        DB::table('tbl_antecedente_documento')->where('documento_id', '=', $doc->id)->delete();
         Antecedente::guardar($datos, $doc);
     }
 

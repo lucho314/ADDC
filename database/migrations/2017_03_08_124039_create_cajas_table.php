@@ -13,7 +13,7 @@ class CreateCajasTable extends Migration
      */
     public function up()
     {
-        Schema::create('cajas', function (Blueprint $table) {
+        Schema::create('tbl_cajas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('dpto');
             $table->integer('numero_caja');
@@ -37,6 +37,6 @@ class CreateCajasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cajas');
+        Schema::dropIfExists('tbl_cajas');
     }
 }
