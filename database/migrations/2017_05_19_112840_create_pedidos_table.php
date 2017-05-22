@@ -17,10 +17,11 @@ class CreatePedidosTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('nro_dpto');
             $table->unsignedInteger('nro_plano');
+            $table->unsignedInteger('tipo_doc');
             $table->unsignedInteger('user_pedido_id');
             $table->string('detalle_pedido')->nullable();
             $table->timestamp('fecha_pedido');
-            $table->boolean('terminado')->defaoult(0);
+            $table->boolean('terminado')->default(0);
             $table->timestamp('fecha_terminado')->nullable();
             $table->string('observaciones')->nullable();
             $table->unsignedInteger('user_atendio_id')->nullable();

@@ -67,95 +67,103 @@
                             </div>
                             <div class="tab-pane fade" id="tab5default">
                                 <form action="#" method="get" id="buscarUbicacion">
-                                            <div class="col-md-4  col-lg-4  col-sm-4 row">
-                                                <div class="form-group campos form-inline">
-                                                    <label class="col-md-4">Departamento:</label>
-                                                    <select name="departamento_id" id="departamento" class="form-control col-md-6" required>
-                                                        <option value="">Seleccione Departamento</option>
-                                                        @foreach($dptos as $dpto) 
-                                                        <option value="{{$dpto->div_de}}">{{$dpto->departamento}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4 row">
-                                                <div class="form-group campos form-inline">
-                                                    <label class="col-md-4">Distrito:</label>
-                                                    <select name="distrito_id" id="distrito" class="form-control col-md-6" required>
-                                                        <option>Seleccione Distrito.. &nbsp; &nbsp;</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 row">
-                                                <div class="form-group campos form-inline">
-                                                    <label class="col-md-4">Localidad:</label>
-                                                    <select name="localidad_id" id="localidad" class="form-control col-md-6" required>
-                                                        <option>Seleccione Localidad..</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 row">
-                                                <div class="form-group campos form-inline">
-                                                    <label class="col-md-4">Seccion:</label>
-                                                    <input class="form-control col-md-6" type="text" name="seccion" > </input>
-                                                </div> 
-                                            </div>
-                                            <div class="col-md-4 row">
-                                                <div class="form-group campos form-inline">
-                                                    <label class="col-md-4">Grupo:</label>
-                                                    <input class="form-control col-md-6" type="text" name="grupo" /> </input>
-                                                </div> 
-                                            </div>
-                                            <div class="col-md-4 row">
-                                                <div class="form-group campos form-inline">
-                                                    <label class="col-md-4">Manzana:</label>
-                                                    <input class="form-control col-md-6" type="text" name="manzana"/> </input>
-                                                </div> 
-                                            </div>
-                                            <div class="col-md-4 row">
-                                                <div class="form-group campos form-inline">
-                                                    <label class="col-md-4">Chacra:</label>
-                                                    <input class="form-control col-md-6" type="text" name="chacra"/> </input>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 row">
-                                                <div class="form-group campos form-inline">
-                                                    <label class="col-md-4">Quinta:</label>
-                                                    <input class="form-control col-md-6" type="text" name="quinta"> </input>
-                                                </div>
-                                            </div> 
-                                    
-                                        <div class="form-group campos text-center">
-                                            <button class="btn btn-success" type="submit" style="margin-top: 10px;">Buscar</button>
+                                    <div class="col-md-4  col-lg-4  col-sm-4 row">
+                                        <div class="form-group campos form-inline">
+                                            <label class="col-md-4">Departamento:</label>
+                                            <select name="departamento_id" id="departamento" class="form-control col-md-6" required>
+                                                <option value="">Seleccione Departamento</option>
+                                                @foreach($dptos as $dpto) 
+                                                <option value="{{$dpto->div_de}}">{{$dpto->departamento}}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                        </div>
+                                    </div>
 
-                                </form>
+                                    <div class="col-md-4 row">
+                                        <div class="form-group campos form-inline">
+                                            <label class="col-md-4">Distrito:</label>
+                                            <select name="distrito_id" id="distrito" class="form-control col-md-6" required>
+                                                <option>Seleccione Distrito.. &nbsp; &nbsp;</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 row">
+                                        <div class="form-group campos form-inline">
+                                            <label class="col-md-4">Localidad:</label>
+                                            <select name="localidad_id" id="localidad" class="form-control col-md-6" required>
+                                                <option>Seleccione Localidad..</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 row">
+                                        <div class="form-group campos form-inline">
+                                            <label class="col-md-4">Seccion:</label>
+                                            <input class="form-control col-md-6" type="text" name="seccion" > </input>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-4 row">
+                                        <div class="form-group campos form-inline">
+                                            <label class="col-md-4">Grupo:</label>
+                                            <input class="form-control col-md-6" type="text" name="grupo" /> </input>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-4 row">
+                                        <div class="form-group campos form-inline">
+                                            <label class="col-md-4">Manzana:</label>
+                                            <input class="form-control col-md-6" type="text" name="manzana"/> </input>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-4 row">
+                                        <div class="form-group campos form-inline">
+                                            <label class="col-md-4">Chacra:</label>
+                                            <input class="form-control col-md-6" type="text" name="chacra"/> </input>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 row">
+                                        <div class="form-group campos form-inline">
+                                            <label class="col-md-4">Quinta:</label>
+                                            <input class="form-control col-md-6" type="text" name="quinta"> </input>
+                                        </div>
+                                    </div> 
+
+                                    <div class="form-group campos text-center">
+                                        <button class="btn btn-success" type="submit" style="margin-top: 10px;">Buscar</button>
+                                    </div>
                             </div>
+
+                            </form>
                         </div>
+                        
+                        
                     </div>
+                    
                 </div>
             </div>
         </div>
-
-        @include('documento.resultadoBusqueda')
     </div>
 
-    @endsection
-    @section('script')
-    <script>
-        //    function openSearch(city) {
-        //        $('.tabcontent').hide();
-        //        $('#' + city).show();
-        //    }
+    @include('documento.resultadoBusqueda')
+    
+    
+    
+    @include('pedido.create')
+</div>
 
-        function openSearch(index, city) {
-            $('.clik').css('background-color', '');
-            $('.clik').eq(index).css('background-color', '#ccc');
+@endsection
+@section('script')
+<script>
+    //    function openSearch(city) {
+    //        $('.tabcontent').hide();
+    //        $('#' + city).show();
+    //    }
 
-            $('.tabcontent').hide();
-            $('#' + city).show();
-        }
+    function openSearch(index, city) {
+        $('.clik').css('background-color', '');
+        $('.clik').eq(index).css('background-color', '#ccc');
+
+        $('.tabcontent').hide();
+        $('#' + city).show();
+    }
+    
     </script>
-    @endsection
+@endsection

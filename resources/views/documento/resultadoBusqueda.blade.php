@@ -16,6 +16,13 @@
             </table>
 
         </div>
+        <br>
+        <p style="display: none" id="texto_realizar_pedido">
+            <b>
+                Si el documento requerido no se muestra en la tabla, realice su pedido desde 
+                <a href="javascript:abrir_modal_pedido()">aquí</a>
+            </b>
+        </p>
     </div>
 </div>
 

@@ -33,6 +33,8 @@ class AppServiceProvider extends ServiceProvider {
             //dd($row->get());
             return $row->count() == 0;
         });
+        
+         
     }
 
     /**

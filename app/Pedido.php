@@ -18,7 +18,8 @@ class Pedido extends Model
         'fecha_terminado',
         'observaciones',
         'user_atendio_id',
-        'detalle_pedido'
+        'detalle_pedido',
+        'tipo_doc'
     ];
     
     

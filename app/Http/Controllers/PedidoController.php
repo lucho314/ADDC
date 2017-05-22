@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Pedido;
+use App\Http\Requests\PedidoFormRequest;
 
 class PedidoController extends Controller
 {
@@ -35,14 +36,14 @@ class PedidoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PedidoFormRequest $request)
     {
-       //if($request->ajax()){
+       if($request->ajax()){
            $pedido=new Pedido($request->all());
-           $pedido->usuarioPidio()->associate(auth()->user())
-                   ->save();
-         //  }
-       //abort(404);
+           return ['respuesta'=>$pedido->usuarioPidio()->associate(auth()->user())
+                   ->save()];
+           }
+       abort(404);
     }
 
     /**

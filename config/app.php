@@ -143,7 +143,9 @@ return [
         /*
          * Package Service Providers...
          */
-
+            
+         Styde\Html\HtmlServiceProvider::class,
+        
         //
 
         /*
@@ -208,6 +210,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'PDF' => Elibyy\TCPDF\Facades\TCPDF::class,
-        'Adldap' => Adldap\Laravel\Facades\Adldap::class
+        'Adldap' => Adldap\Laravel\Facades\Adldap::class,
+        'Access' => Styde\Html\Facades\Access::class,
     ],
 ];

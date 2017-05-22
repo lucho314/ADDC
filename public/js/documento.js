@@ -217,43 +217,42 @@ function getDatos(partidas = null, tipoDoc = null) {
                     if (tipoDoc !== null && tipoDoc === 'plano') {
                         mesa[tipoDoc](data.mesa);
                     }
-                   // if (typeof(data.inexistentes)==='object') {
-                       // console.log('inexistente',data.inexistentes);
-                        cargaInexistente(data.inexistentes);
-                   // }
+                    // if (typeof(data.inexistentes)==='object') {
+                    // console.log('inexistente',data.inexistentes);
+                    cargaInexistente(data.inexistentes);
+                    // }
                     //if (data.imponible_historico.length > 0) {
-                  //      console.log('historico',data.imponible_historico);
-                        cargaHistorico(data.imponible_historico);
-                  //  }
-                  //  console.log(typeof(data.inexistentes));
+                    //      console.log('historico',data.imponible_historico);
+                    cargaHistorico(data.imponible_historico);
+                    //  }
+                    //  console.log(typeof(data.inexistentes));
 
                 } else
                 {
                     auxFormulario = $('#formularioDocumento');
                     cargaAntecedente();
 
-                 
+
                     $.each(data.inexistentes, function (i, valor) {
-                        console.log('inexistente:',valor);
+                        console.log('inexistente:', valor);
                         $('form').append('<input type="hidden" name="inexistentes[' + i + '][nro_plano]"  value="' + valor + '" required  class="modificar form-control anexado" readonly/>\n\                                                         <input type="hidden" name="inexistentes[' + i + '][nro_partida]" class="partidaInex">\n\
                                           <input type="hidden" name="inexistentes[' + i + '][vigente]" value="0">');
 
                     });
-                    if (data.imponible_historico.length === 0){
+                    if (data.imponible_historico.length === 0) {
                         observarCambioObjeto();
-                    }
-                else{
-                    $.each(data.imponible_historico, function (i, valor) {
-                    console.log('historico',valor.col10);
-                    clave = valor.clave_imponible.split('-');
-                    $('form').append('<input type="hidden" name="historico[' + i + '][nro_plano]"  value="' + valor.col10 + '" required  class="modificar form-control anexado" readonly/>\n\
+                    } else {
+                        $.each(data.imponible_historico, function (i, valor) {
+                            console.log('historico', valor.col10);
+                            clave = valor.clave_imponible.split('-');
+                            $('form').append('<input type="hidden" name="historico[' + i + '][nro_plano]"  value="' + valor.col10 + '" required  class="modificar form-control anexado" readonly/>\n\
                                  <input type="hidden" name="historico[' + i + '][nro_partida]" value="' + parseInt(clave[1]) + '">\n\
                                   <input type="hidden" name="historico[' + i + '][imponible_id]" value="' + valor.clave_imponible + '">\n\                                             <input type="hidden" name="historico[' + i + '][vigente]" value="0">\n\
                     ');
-                });
-                            }
-                 
-                   
+                        });
+                    }
+
+
                 }
                 initialize();
             });
@@ -261,14 +260,14 @@ function getDatos(partidas = null, tipoDoc = null) {
 
 
 
-function cargaAntecedente(){
+function cargaAntecedente() {
     $('#formularioDocumento').remove();
     $('#cargaAntecedente').show();
     $('#gral_nro_plano').val(planoDesde);
     $('#gral_nro_plano_hasta').val(planoHasta);
     $('#gral_nro_dpto').val(dpto);
     $('#gral_tipo_doc_id').val(tipo_doc);
-  }
+}
 
 
 function cargarExistentes(existentes) {
@@ -337,7 +336,8 @@ function observarCambioObjeto() {
             $('#nro_dpto').val(dpto);
             $('#tipo_doc').val(tipo_doc);
             $('#cargando').hide();
-            $('#formularioDocumento').css('opacity', '1').css("pointer-events","all");;
+            $('#formularioDocumento').css('opacity', '1').css("pointer-events", "all");
+            ;
             $('.agregar_').show();
             $('#form_carga').append('<input type="hidden" name="gral[objeto_id]" value="' + objetoId + '">');
             $('#grupo_objeto').remove();
@@ -366,7 +366,7 @@ function setUbicacion(datos) {
     $('#localidad').val(datos.existentes[0].localidad);
     $('#seccion').val(datos.existentes[0].seccion);
     $('#cargando').hide();
-    $('#formularioDocumento').css('opacity', '1').css("pointer-events","all");
+    $('#formularioDocumento').css('opacity', '1').css("pointer-events", "all");
 }
 ;
 function agregar_ubicacion() {
@@ -422,7 +422,8 @@ function partidas_y_superficies(data) {
 \n\</tr>');
     });
     $('#cargando').hide();
-    $('#formularioDocumento').css('opacity', '1').css("pointer-events","all");;
+    $('#formularioDocumento').css('opacity', '1').css("pointer-events", "all");
+    ;
 }
 
 
@@ -562,13 +563,22 @@ function armarDatatablePlano(url, datos, plano = false) {
         ],
         drawCallback: function (settings) {
             json = $tabla.ajax.json();
+            $('#texto_realizar_pedido').show();
             if (json.recordsTotal === 0 && plano) {
                 $.get('/verificar_falta', datos, function (data) {
-                    if (data) {
-                        console.log(data[0]);
+                    if (data[0]) {
+                        console.log('respuesta falta', data);
                         swal("El documento solicitado se encuentra en falta!", data[0].observaciones, "error");
+                    } else {
+
+                        var serial = '{"' + decodeURI(datos).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}';
+                        busqueda = JSON.parse(serial);
+                        console.log(busqueda);
+                        $('#form_pedido #nro_dpto').val(busqueda.nroDpto);
+                        $('#form_pedido #nro_plano').val(busqueda.nroPlano);
+                        $('#realizar_pedido').modal('toggle');
                     }
-                })
+                });
             }
         },
         "language": {
@@ -670,9 +680,9 @@ $('#gral_responsable').change(function () {
     }
 });
 function agregar_antecedente() {
-    inputNode=$('<input type="number" placeholder="Nro plano antecedente" name="plano_ant[]" class="form-control antecedentes" style="margin-bottom: 6%">');
+    inputNode = $('<input type="number" placeholder="Nro plano antecedente" name="plano_ant[]" class="form-control antecedentes" style="margin-bottom: 6%">');
     $('#grupo_antecedente').append(inputNode);
-     inputNode.focus(); 
+    inputNode.focus();
 }
 
 function eliminar_carga(id) {
@@ -802,45 +812,45 @@ function getCambios() {
 }
 
 
-$(document).on('click','#cancelar',function(){
+$(document).on('click', '#cancelar', function () {
     location.reload();
 
 });
 
 
-function fecha_visible(value){
-      $('#fecha_registro_visible').val(value);
-    if(value===1){
+function fecha_visible(value) {
+    $('#fecha_registro_visible').val(value);
+    if (value === 1) {
         $('#uncheck').hide();
         $('#check').show();
-    }
-    else{
+    } else {
         $('#uncheck').show();
         $('#check').hide();
     }
 
-};
+}
+;
 
-  $('#form_carga').keydown(function(event){
-    if(event.keyCode == 13) {
-      event.preventDefault();
-      return false;
+$('#form_carga').keydown(function (event) {
+    if (event.keyCode == 13) {
+        event.preventDefault();
+        return false;
     }
-  });
+});
 
-  $('#form_validar').keydown(function(event){
-    if(event.keyCode == 13) {
-      event.preventDefault();
-      return false;
+$('#form_validar').keydown(function (event) {
+    if (event.keyCode == 13) {
+        event.preventDefault();
+        return false;
     }
-  });
+});
 
 
 
 
-$(document).on('keyup','.antecedentes',function(e){
+$(document).on('keyup', '.antecedentes', function (e) {
 
-     if (e.which == 13) {
+    if (e.which == 13) {
         agregar_antecedente();
     }
 })
