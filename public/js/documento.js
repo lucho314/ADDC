@@ -217,45 +217,43 @@ function getDatos(partidas = null, tipoDoc = null) {
                     if (tipoDoc !== null && tipoDoc === 'plano') {
                         mesa[tipoDoc](data.mesa);
                     }
-                    if (data.inexistentes.length > 0) {
-                        console.log(data.inexistentes);
+                   // if (typeof(data.inexistentes)==='object') {
+                       // console.log('inexistente',data.inexistentes);
                         cargaInexistente(data.inexistentes);
-                    }
-                    if (data.imponible_historico.length > 0) {
-                        console.log(data.imponible_historico);
+                   // }
+                    //if (data.imponible_historico.length > 0) {
+                  //      console.log('historico',data.imponible_historico);
                         cargaHistorico(data.imponible_historico);
-                    }
+                  //  }
+                  //  console.log(typeof(data.inexistentes));
 
                 } else
                 {
                     auxFormulario = $('#formularioDocumento');
                     cargaAntecedente();
 
-                    if (data.imponible_historico.length === 0 && data.inexistentes.length > 0) {
-                        observarCambioObjeto();
-                    } 
-                    else {
-                        if (data.inexistentes.length > 0)
-                        {
-                            $.each(data.inexistentes, function (i, valor) {
-                                console.log('inexistente:',valor);
-                                $('form').append('<input type="hidden" name="inexistentes[' + i + '][nro_plano]"  value="' + valor + '" required  class="modificar form-control anexado" readonly/>\n\                                                         <input type="hidden" name="inexistentes[' + i + '][nro_partida]" class="partidaInex">\n\
-                                                  <input type="hidden" name="inexistentes[' + i + '][vigente]" value="0">');
+                 
+                    $.each(data.inexistentes, function (i, valor) {
+                        console.log('inexistente:',valor);
+                        $('form').append('<input type="hidden" name="inexistentes[' + i + '][nro_plano]"  value="' + valor + '" required  class="modificar form-control anexado" readonly/>\n\                                                         <input type="hidden" name="inexistentes[' + i + '][nro_partida]" class="partidaInex">\n\
+                                          <input type="hidden" name="inexistentes[' + i + '][vigente]" value="0">');
 
-                            });
-                        }
-                        if (data.imponible_historico.length > 0)
-                        {
-                            $.each(data.imponible_historico, function (i, valor) {
-                                console.log('historico',valor.col10);
-                                clave = valor.clave_imponible.split('-');
-                                $('form').append('<input type="hidden" name="historico[' + i + '][nro_plano]"  value="' + valor.col10 + '" required  class="modificar form-control anexado" readonly/>\n\
-                                             <input type="hidden" name="historico[' + i + '][nro_partida]" value="' + parseInt(clave[1]) + '">\n\
-                                              <input type="hidden" name="historico[' + i + '][imponible_id]" value="' + valor.clave_imponible + '">\n\                                             <input type="hidden" name="historico[' + i + '][vigente]" value="0">\n\
-    ');
-                            });
-                        }
+                    });
+                    if (data.imponible_historico.length === 0){
+                        observarCambioObjeto();
                     }
+                else{
+                    $.each(data.imponible_historico, function (i, valor) {
+                    console.log('historico',valor.col10);
+                    clave = valor.clave_imponible.split('-');
+                    $('form').append('<input type="hidden" name="historico[' + i + '][nro_plano]"  value="' + valor.col10 + '" required  class="modificar form-control anexado" readonly/>\n\
+                                 <input type="hidden" name="historico[' + i + '][nro_partida]" value="' + parseInt(clave[1]) + '">\n\
+                                  <input type="hidden" name="historico[' + i + '][imponible_id]" value="' + valor.clave_imponible + '">\n\                                             <input type="hidden" name="historico[' + i + '][vigente]" value="0">\n\
+                    ');
+                });
+                            }
+                 
+                   
                 }
                 initialize();
             });
@@ -266,10 +264,10 @@ function getDatos(partidas = null, tipoDoc = null) {
 function cargaAntecedente(){
     $('#formularioDocumento').remove();
     $('#cargaAntecedente').show();
-    $('#nro_plano').val(planoDesde);
-    $('#nro_plano_hasta').val(planoHasta);
-    $('#nro_dpto').val(dpto);
-    $('#tipo_doc').val(tipo_doc);
+    $('#gral_nro_plano').val(planoDesde);
+    $('#gral_nro_plano_hasta').val(planoHasta);
+    $('#gral_nro_dpto').val(dpto);
+    $('#gral_tipo_doc_id').val(tipo_doc);
   }
 
 

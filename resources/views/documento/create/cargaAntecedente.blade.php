@@ -6,32 +6,32 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro Departamento:</label>
-                            <input class="form-control" type="text"name="gral[nro_dpto]"  required="required" id="nro_dpto"> </input>
+                            <input class="form-control" type="text"name="gral[nro_dpto]"  required="required" id="gral_nro_dpto"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano desde:</label>
-                            <input class="form-control" type="text"  name="gral[nro_plano]"  required="required" id="nro_plano"> </input>
+                            <input class="form-control" type="text"  name="gral[nro_plano]"  required="required" id="gral_nro_plano"> </input>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de plano hasta:</label>
-                            <input class="form-control" type="text"  name="gral[nro_plano_hasta]"  required="required" id='nro_plano_hasta'> </input>
+                            <input class="form-control" type="text"  name="gral[nro_plano_hasta]"  required="required" id='gral_nro_plano_hasta'> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Nro de partida:</label>
-                            <input class="form-control" type="text" required="required" id="nro_partida" onchange="$('.partidaInex').val(this.value)"> </input>
+                            <input class="form-control" type="text" required="required" id="gral_nro_partida" onchange="$('.partidaInex').val(this.value)"> </input>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Tipo de documento:</label>
-                            <select class="form-control"  name="gral[tipo_doc_id]" id="tipo_doc">
+                            <select class="form-control"  name="gral[tipo_doc_id]" id="gral_tipo_doc_id">
                                 <option value="1">Plano de mensura</option>
                                 <option value="2">Ficha de transferencia</option>
                             </select>
@@ -40,7 +40,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Fecha de registro:</label>
-                            <div class="col-md-11 row"><input class="form-control" type="date"  name="gral[fecha_registro]"   id="fecha_registro"></div>
+                            <div class="col-md-11 row"><input class="form-control" type="date"  name="gral[fecha_registro]"   id="gral_fecha_registro"></div>
                             <div class="col-md-1" style="margin-top: 3%">
                                     <a href="javascript:fecha_visible(0)"   id="check" style="font-size: 20px;display: none; color: #268a72">  
                                         <i class="glyphicon glyphicon-check" ></i>
@@ -86,6 +86,7 @@
                     </div>
                 </div>    
             </div>
+            <div class="col-md-8 col-md-offset-1 errores"></div>
         </div>
     </div>
 </div>

@@ -167,7 +167,7 @@ class DocumentoController extends Controller {
             $problemas = AvaluoHistorico::getImponibleHistoricoPlano($noEncontado, $datos->dpto);
         }
         $datos_mesa = []; //($datos->tipo_doc==1)? \App\Mesa_plano::get($datos->dpto, $datos->get('plano')):[];
-        return ['existentes' => $planos->get(), 'inexistentes' => $problemas['inexistentes'], 'mesa' => $datos_mesa, 'imponible_historico' => $problemas['imponible_historico']];
+        return ['existentes' => $planos->get(), 'inexistentes' =>$problemas['inexistentes'], 'mesa' => $datos_mesa, 'imponible_historico' =>$problemas['imponible_historico']];
     }
     
 

@@ -41,7 +41,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Certificado</label>
-                            <input class="form-control modificar ingresado" type="text" readonly  name="gral[certificado]" id='gral_certificado' value="{{$documento->certificado or old('responsable')}}" placeholder="Certificado.."> </input>
+                            <input class="form-control ingresado modificar" type="text" readonly  name="gral[certificado]" id='gral_certificado' value="{{$documento->certificado or old('responsable')}}" placeholder="Certificado.."> </input>
                         </div>
                     </div>
                      <div class="col-md-3">

@@ -37,7 +37,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Certificado</label>
-                                    <input class="form-control modificar" type="text"  name="gral[certificado]" id='gral_certificado' placeholder="Certificado.."> </input>
+                                    <input class="form-control" type="text"  name="gral[certificado]" id='gral_certificado' placeholder="Certificado.."> </input>
                                 </div>
                             </div>
                             <div class="col-md-3">
