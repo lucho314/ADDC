@@ -30,6 +30,7 @@ class Pedido extends Model {
         
         static::saving(function($table) {
             $table->fecha_terminado = Carbon::now();
+            $table->usuario_atendio_id = auth()->user()->id;
         });
     }
 
