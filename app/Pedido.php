@@ -43,4 +43,23 @@ public static function boot() {
     public function usuarioAtendio(){
         return $this->belongsTo(User::class,'user_atendio_id');
     }
+    
+    public function getDescAvanzadaAttribute(){
+       
+       $des="";
+        
+        $datos= VistaSat::with('Localidad','titular')->where('dpto', $this->nro_dpto)
+                ->where('plano', $this->nro_plano)
+                ->first();
+        if(!empty($datos)){
+           $des='DIS: '.$datos->localidad->distrito.", LOC: ".$datos->localidad->localidad.', SEC:'.$datos->seccion;
+           $des.=', GPO:'.$datos->grupo.", MZA:".$datos->manzana." | TIT: ".$datos->titular->nombre_completo.' | ';
+           $caja= Contenido::buscar($this->nro_dpto, $this->nro_plano);
+           $des.=$caja->desc_ubicacion;
+           
+        }
+        return $des;
+    }
+    
+    
 }

@@ -36,5 +36,11 @@ class Contenido extends Model {
                         ->where('numero_hasta', '>=', $nro_plano)
                         ->first();
     }
+    
+       public function getDescUbicacionAttribute(){
+        $des= 'SEC: '.$this->caja->sector.', MOD: '.$this->caja->modulo.', EST: '.$this->caja->estante;
+        return $des.=', POS: '.$this->caja->posicion.", PROF: ".$this->caja->profundidad;
+    }
+
 
 }

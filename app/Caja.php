@@ -41,7 +41,8 @@ class Caja extends Model {
         $aux = ($estantes[0]->numero_caja > $estantes[1]->numero_caja) ? $estantes[0] : $estantes[1];
         return $aux;
     }
-
+    
+    
     public function buscarUltimoRango() {
         $mayor = 0;
         foreach ($this->contenidos as $contenido) {

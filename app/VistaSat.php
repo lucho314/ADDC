@@ -15,4 +15,9 @@ class VistaSat extends Model
                   ->select('tipo_documento','numero_documento','cuit','nombre_completo','persona_id')
                 ;
     }
+    
+    public function Localidad(){
+        return $this->belongsTo(Localidad::class,'localidad_id','div_lo')
+                ->select('div_lo','localidad','distrito');
+    }
 }

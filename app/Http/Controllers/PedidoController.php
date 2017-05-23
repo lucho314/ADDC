@@ -5,19 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Pedido;
 use App\Http\Requests\PedidoFormRequest;
+use Yajra\Datatables\Facades\Datatables;
+use Carbon\Carbon;
 
-class PedidoController extends Controller
-{
+class PedidoController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        $pedidos= Pedido::all();
-        
-        return view('pedido.index', compact('pedidos'));
+    public function index() {
+        return view('pedido.listado_pendiente');
     }
 
     /**
@@ -25,8 +24,22 @@ class PedidoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function listadoPendiente() {
+        $pendientes = Pedido::with('usuarioPidio')->where('terminado', 0)->orderBy('fecha_pedido');
+        return Datatables::eloquent($pendientes)
+                        ->addColumn('acciones', function ($pendientes){
+                            return '<a href="#">Terminado</a>';
+                        })
+                        ->addColumn('desAv', function ($pendientes){
+                            return $pendientes->desc_avanzada;
+                        })
+                        ->editColumn('fecha_pedido', function ($pendientes) {
+                            return $pendientes->fecha_pedido ? with(new Carbon($pendientes->fecha_pedido))->format('d/m/Y') : '';
+                        })
+                        ->make(true);
+    }
+
+    public function create() {
         return view('pedido.create');
     }
 
@@ -36,14 +49,13 @@ class PedidoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PedidoFormRequest $request)
-    {
-       if($request->ajax()){
-           $pedido=new Pedido($request->all());
-           return ['respuesta'=>$pedido->usuarioPidio()->associate(auth()->user())
-                   ->save()];
-           }
-       abort(404);
+    public function store(PedidoFormRequest $request) {
+        if ($request->ajax()) {
+            $pedido = new Pedido($request->all());
+            return ['respuesta' => $pedido->usuarioPidio()->associate(auth()->user())
+                        ->save()];
+        }
+        abort(404);
     }
 
     /**
@@ -52,8 +64,7 @@ class PedidoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show($id) {
         //
     }
 
@@ -63,8 +74,7 @@ class PedidoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
+    public function edit($id) {
         //
     }
 
@@ -75,8 +85,7 @@ class PedidoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id) {
         //
     }
 
@@ -86,8 +95,8 @@ class PedidoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    public function destroy($id) {
         //
     }
+
 }

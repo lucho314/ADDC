@@ -14,8 +14,8 @@
         <link rel="stylesheet" href="{{asset('css/font-awesome.css')}}">
         <!-- Theme style -->
         <link rel="stylesheet" href="{{asset('css/AdminLTE.min.css')}}">
-                <!-- AdminLTE Skins. Choose a skin from the css/skins
-             folder instead of downloading all of them to reduce the load. -->    
+        <!-- AdminLTE Skins. Choose a skin from the css/skins
+     folder instead of downloading all of them to reduce the load. -->    
 
 
         <link rel="stylesheet" href="{{asset('css/_all-skins.min.css')}}">
@@ -78,7 +78,7 @@
                     <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
                         <li class="header"></li>
-
+                        <!--MENU DOCUMENTO-->
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-book"></i>
@@ -114,7 +114,34 @@
                                 </li>
                             </ul>
                         </li>
+                        <!--FIN DOCUMENTO-->
+
+
+                        <!--MENU PEDIDOS-->
                         @if(auth()->user()->hasRoles(['admin','carga']))
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa  fa-list-alt"></i>
+                                <span>Pedidos</span>
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </a>
+                            <ul class="treeview-menu">
+
+                                <li>
+                                    <a href="{{URL::action('PedidoController@index')}}">
+                                        <i class="fa fa-circle-o"></i> Lista pendientes
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+
+
+                        <!--FIN PEDIDOS-->
+
+
+
+                        <!--MENU CAJA-->
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-th-large"></i>
@@ -141,8 +168,10 @@
 
                             </ul>
                         </li>
+                        <!--FIN CAJA-->
                         @endif
 
+                        <!--MENU USUARIOS-->
                         @if(auth()->user()->hasRoles(['admin']))
                         <li class="treeview">
                             <a href="#">
@@ -156,6 +185,9 @@
                             </ul>
                         </li>
                         @endif
+                        <!--FIN USUARIOS-->
+
+                        <!--MENU MI CUENTA-->
                         <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-lock"></i>
@@ -176,7 +208,7 @@
 
                             </ul>
                         </li>
-
+                        <!--FIN MI CUENTA-->
 
                     </ul>
                 </section>
@@ -236,12 +268,9 @@
     <script src="{{asset('js/jquery.dataTables.min.js')}}"></script>
 
     <script src="{{asset('js/dataTables.buttons.min.js')}}"></script>
-    <script src="{{asset('js/buttons.flash.min.js')}}"></script>
-    <script src="{{asset('js/jszip.min.js')}}"></script>
-    <script src="{{asset('js/pdfmake.min.js')}}"></script>
-    <script src="{{asset('js/vfs_fonts.js')}}"></script>
     <script src="{{asset('js/buttons.html5.min.js')}}"></script>
     <script src="{{asset('js/buttons.print.min.js')}}"></script>
+    <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.colVis.min.js"></script>
 
     <!-- AdminLTE App -->
     <script src="{{asset('js/app.min.js')}}"></script>
@@ -253,13 +282,14 @@
     <script src="{{asset('js/sweetalert.min.js')}}"></script>
     <script src="{{asset('js/checks.js')}}"></script>
     <script src="{{asset('js/documento.js?a=1')}}"></script>
-     <script src="{{asset('js/pedido.js?a=1')}}"></script>
+    <script src="{{asset('js/pedido.js?a=1')}}"></script>
     <script src="{{asset('js/caja.js')}}"></script>
     <!-- Select2---->
     <script src="/js/select2.min.js"></script>
     <script type="text/javascript">
-       $(document).ready(function () {
-            $(".js-example-basic-single").select2(); });
+                                           $(document).ready(function () {
+                                               $(".js-example-basic-single").select2();
+                                           });
     </script>
 
     @yield('script')

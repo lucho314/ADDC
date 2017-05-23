@@ -598,6 +598,8 @@ function armarDatatable(url, datos) {
         "processing": true,
         "serverSide": true,
         "ajax": path + url + '?' + datos,
+         "order": [[ 6, "desc" ]],
+         
 
         "columns": [
             {data: 'tipo.descripcion', name: 'tipo.descripcion'},
