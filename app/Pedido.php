@@ -1,14 +1,14 @@
 <?php
 
 namespace App;
-use Carbon\Carbon;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class Pedido extends Model
-{
-   protected $table='tbl_pedidos';
-    public $timestamps =false;
+class Pedido extends Model {
+
+    protected $table = 'tbl_pedidos';
+    public $timestamps = false;
     protected $fillable = [
         'nro_plano',
         'nro_dpto',
@@ -21,45 +21,51 @@ class Pedido extends Model
         'detalle_pedido',
         'tipo_doc'
     ];
-    
-    
-public static function boot() {
+
+    public static function boot() {
         parent::boot();
         static::creating(function($table) {
             $table->fecha_pedido = Carbon::now();
         });
-}
+        
+        static::saving(function($table) {
+            $table->fecha_terminado = Carbon::now();
+        });
+    }
 
+    public function setObservacionesAttribute($value) {
+        $this->attributes['observaciones'] = $value;
+        if ($value === '') {
+            $this->attributes['observaciones'] = 'La documentación solicitada fue encontrada';
+        }
+    }
 
-
-     public function getDates() {
+    public function getDates() {
         return array('fecha_terminado', 'fecha_pedido');
     }
 
-    public function usuarioPidio(){
-        return $this->belongsTo(User::class,'user_pedido_id');
+    public function usuarioPidio() {
+        return $this->belongsTo(User::class, 'user_pedido_id');
     }
-    
-    public function usuarioAtendio(){
-        return $this->belongsTo(User::class,'user_atendio_id');
+
+    public function usuarioAtendio() {
+        return $this->belongsTo(User::class, 'user_atendio_id');
     }
-    
-    public function getDescAvanzadaAttribute(){
-       
-       $des="";
-        
-        $datos= VistaSat::with('Localidad','titular')->where('dpto', $this->nro_dpto)
+
+    public function getDescAvanzadaAttribute() {
+
+        $des = "";
+
+        $datos = VistaSat::with('Localidad', 'titular')->where('dpto', $this->nro_dpto)
                 ->where('plano', $this->nro_plano)
                 ->first();
-        if(!empty($datos)){
-           $des='DIS: '.$datos->localidad->distrito.", LOC: ".$datos->localidad->localidad.', SEC:'.$datos->seccion;
-           $des.=', GPO:'.$datos->grupo.", MZA:".$datos->manzana." | TIT: ".$datos->titular->nombre_completo.' | ';
-           $caja= Contenido::buscar($this->nro_dpto, $this->nro_plano);
-           $des.=$caja->desc_ubicacion;
-           
+        if (!empty($datos)) {
+            $des = 'DIS: ' . $datos->localidad->distrito . ", LOC: " . $datos->localidad->localidad . ', SEC:' . $datos->seccion;
+            $des .= ', GPO:' . $datos->grupo . ", MZA:" . $datos->manzana . " | TIT: " . $datos->titular->nombre_completo . ' | ';
+            $caja = Contenido::buscar($this->nro_dpto, $this->nro_plano);
+            $des .= $caja->desc_ubicacion;
         }
         return $des;
     }
-    
-    
+
 }

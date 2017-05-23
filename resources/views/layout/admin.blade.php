@@ -270,7 +270,7 @@
     <script src="{{asset('js/dataTables.buttons.min.js')}}"></script>
     <script src="{{asset('js/buttons.html5.min.js')}}"></script>
     <script src="{{asset('js/buttons.print.min.js')}}"></script>
-    <script src="//cdn.datatables.net/buttons/1.3.1/js/buttons.colVis.min.js"></script>
+    <script src="{{asset('js/buttons.colVis.min.js')}}"></script>
 
     <!-- AdminLTE App -->
     <script src="{{asset('js/app.min.js')}}"></script>

@@ -23,5 +23,7 @@
 
     </div>
 </div>
+
+@include('pedido.detalle_terminado')
 @endsection
 

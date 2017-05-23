@@ -27,10 +27,12 @@ class PedidoController extends Controller {
     public function listadoPendiente() {
         $pendientes = Pedido::with('usuarioPidio')->where('terminado', 0)->orderBy('fecha_pedido');
         return Datatables::eloquent($pendientes)
-                        ->addColumn('acciones', function ($pendientes){
-                            return '<a href="#">Terminado</a>';
+                        ->addColumn('acciones', function ($pendientes) {
+                            return '<a href="#" title="Confirmar pedido"><i class="fa fa-check-square"></i></a>&nbsp;'
+                                    . '<a href="#" title="Agregar detalle"><i class="fa fa-warning"></i></a>&nbsp;'
+                                    . '<a href="#" title="Eliminar pedido"><i class="fa  fa-times-circle"></i></a>';
                         })
-                        ->addColumn('desAv', function ($pendientes){
+                        ->addColumn('desAv', function ($pendientes) {
                             return $pendientes->desc_avanzada;
                         })
                         ->editColumn('fecha_pedido', function ($pendientes) {
@@ -96,7 +98,14 @@ class PedidoController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) {
-        //
+       $pedido=Pedido::find($id);
+       return ['respuesta'=>$pedido->delete()];
+    }
+    
+    public function terminado(Request $request){
+        $pedido= Pedido::find($request->id);
+        $pedido->fill(array_merge($request->all(),['terminado'=>1]));
+        return ['respuesta'=>$pedido->save()];
     }
 
 }

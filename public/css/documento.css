@@ -222,3 +222,22 @@ select[readonly] option{
 .skin-blue .main-header .navbar:hover {
     background-color: #33b383;
 }
+
+
+.fa.fa-check-square{
+    color: green;
+    font-size: 15pt;
+    margin-right: 10%;
+}
+
+.fa.fa-warning{
+    color: #f9b004;
+    font-size: 15pt;
+    margin-right: 10%;
+}
+
+.fa.fa-times-circle{
+    color: red;
+    font-size: 15pt;
+    margin-right: 10%;
+}

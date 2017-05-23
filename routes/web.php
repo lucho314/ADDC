@@ -74,5 +74,7 @@ Route::resource('documento', 'DocumentoController');
 //---------------------------------------------------------------------------------------------------------------------------------
 //--------------------rutas de Pedidos-----------------------------------------------------------------------------------------
 Route::get('/pedido/listado_pendiente', 'PedidoController@listadoPendiente');
+Route::get('/pedido/terminado', 'PedidoController@terminado');
 Route::resource('pedido', 'PedidoController');
+
 

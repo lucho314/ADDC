@@ -27,7 +27,7 @@ $('#form_pedido').submit(function (e) {
     });
 });
 
-$('#pedidos_pendientes').DataTable({
+var table = $('#pedidos_pendientes').DataTable({
 
     "dom": 'Bfrtip',
     buttons: [
@@ -48,10 +48,10 @@ $('#pedidos_pendientes').DataTable({
         },
         'colvis'
     ],
-    columnDefs: [{
-            targets: 0,
-            visible: false
-        }],
+    /*columnDefs: [{
+     targets: 0,
+     visible: false
+     }],*/
     "bDestroy": true,
     "processing": true,
     "serverSide": true,
@@ -61,17 +61,7 @@ $('#pedidos_pendientes').DataTable({
         {data: 'tipo_doc',
 
             render: function (data, type, row) {
-                switch (data) {
-                    case '1' :
-                        return 'Plano de mensura';
-                        break;
-                    case '2' :
-                        return 'Ficha de transferencia';
-                        break;
-                    default :
-                        return 'Ficha y Plano';
-                        break;
-                }
+                return getTipoDocumento(data);
             },
 
             name: 'tipo_doc'},
@@ -81,14 +71,108 @@ $('#pedidos_pendientes').DataTable({
         {data: 'usuario_pidio.nombre', name: 'usuarioPidio.nombre'},
         {data: 'fecha_pedido', name: 'fecha_pedido'},
         {data: 'desAv', name: 'desAv', orderable: false, searchable: false},
-        {data: 'acciones', name: 'acciones', orderable: false, searchable: false}
+        {data: 'acciones', name: 'acciones', orderable: false, searchable: false, width: "10%"}
     ],
 
     "language": {
         "url": "/js/Spanish.json"
     }
+});
+
+$('#pedidos_pendientes tbody').on('click', '.fa.fa-check-square', function () {
+    var data = table.row($(this).parents('tr')).data();
+    terminarPedido(data.id);
+});
+
+
+$('#pedidos_pendientes tbody').on('click', '.fa.fa-warning', function () {
+    var data = table.row($(this).parents('tr')).data();
+    $('#detalle_terminado #nro_dpto').val(data.nro_dpto);
+    $('#detalle_terminado #nro_plano').val(data.nro_plano);
+    $('#detalle_terminado .id').val(data.id).text(data.id);
+    $('#detalle_terminado #tipo_doc').val(getTipoDocumento(data.tipo_doc));
+    $('#detalle_terminado').modal('toggle');
+});
 
 
 
-})
+//ELIMINAR.
+$('#pedidos_pendientes tbody').on('click', '.fa.fa-times-circle', function () {
+    var data = table.row($(this).parents('tr')).data();
+
+
+    swal({
+        title: "Está seguro?",
+        text: "Esta acción eliminará el pedido seleccionado",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: '#DD6B55',
+        confirmButtonText: 'Eliminar',
+        cancelButtonText: "Cancelar",
+        closeOnCancel: true,
+        closeOnConfirm: false,
+        showLoaderOnConfirm: true,
+    },
+            function () {
+
+                $.post('/pedido/' + data.id, {"_method": "DELETE", '_token': $("input[name='_token']").val()}, function (data) {
+                    if (data.respuesta) {
+                        swal("Eliminado!", "Se elimino el pedido correctamente!", "success");
+                        $('#pedidos_pendientes').dataTable()._fnAjaxUpdate();
+                    } else {
+                        swal("Error!", "Surgió un error al eliminar el pedido,intente nuevamente!", "error");
+                    }
+                });
+            });
+});
+
+
+
+
+$('#form_detalle_terminado').submit(function (e) {
+    e.preventDefault();
+    var id = $('#pedido_id').val();
+    var descripcion = $('#descripcion').val();
+    $('#descripcion').val('');
+    terminarPedido(id, descripcion);
+    $('#detalle_terminado').modal('toggle');
+
+});
+
+
+function terminarPedido(id, descripcion = null) {
+    $.get('/pedido/terminado', {'id': id, 'observaciones': descripcion}, function (data) {
+        if (data.respuesta) {
+            swal("Finalizado!", "Se finalizo el pedido correctamente!", "success");
+
+            $('#pedidos_pendientes').dataTable()._fnAjaxUpdate();
+
+
+        } else {
+            swal("Error!", "Surgió un error al finalizar el pedido,intente nuevamente!", "error");
+        }
+    });
+}
+;
+
+
+
+
+
+
+function getTipoDocumento(data) {
+    switch (data) {
+        case '1' :
+            return 'Plano de mensura';
+            break;
+        case '2' :
+            return 'Ficha de transferencia';
+            break;
+        default :
+            return 'Ficha y Plano';
+            break;
+    }
+
+}
+;
 
