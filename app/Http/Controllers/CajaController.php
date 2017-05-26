@@ -72,10 +72,10 @@ class CajaController extends Controller {
 
     public function getNumeroCaja(Request $dato) {
         $caja = Caja::with('contenidos')
-                ->where('tipo_doc', '=', 2)
+                ->where('tipo_doc', '=', 1)
                 ->where('dpto', '=', $dato->dpto)
                 ->whereIn('numero_caja', Caja::where('dpto', '=', $dato->dpto)
-                        ->where('tipo_doc', '=', 2)->selectRaw('max(Numero_Caja)')
+                        ->where('tipo_doc', '=', 1)->selectRaw('max(Numero_Caja)')
                         ->get()
                 )
                 ->first();
@@ -133,7 +133,7 @@ class CajaController extends Controller {
                             return $caja->contenidos->pluck('numero_hasta')->implode(' - ');
                         })
                         ->editColumn('tipo_doc', function ($caja) {
-                            return ($caja->tipo_doc == 1) ? 'Antecedente' : 'Tela';
+                            return ($caja->tipo_doc == 2) ? 'Antecedente' : 'Tela';
                         })
                         ->make(true);
     }

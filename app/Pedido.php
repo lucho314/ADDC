@@ -27,7 +27,7 @@ class Pedido extends Model {
         static::creating(function($table) {
             $table->fecha_pedido = Carbon::now();
         });
-        
+
         static::saving(function($table) {
             $table->fecha_terminado = Carbon::now();
             $table->user_atendio_id = auth()->user()->id;
@@ -63,10 +63,15 @@ class Pedido extends Model {
         if (!empty($datos)) {
             $des = 'DIS: ' . $datos->localidad->distrito . ", LOC: " . $datos->localidad->localidad . ', SEC:' . $datos->seccion;
             $des .= ', GPO:' . $datos->grupo . ", MZA:" . $datos->manzana . " | TIT: " . $datos->titular->nombre_completo . ' | ';
-            $caja = Contenido::buscar($this->nro_dpto, $this->nro_plano);
-            $des .= $caja->desc_ubicacion;
         }
+        $tipo = ($this->tipo_doc == 3) ? 1 : $this->tipo_doc;
+        $caja = Contenido::buscar($this->nro_dpto, $this->nro_plano, $tipo);
+        $des .= (!empty($caja)) ? $caja->desc_ubicacion : '';
         return $des;
+    }
+
+    public function scopeTerminado($query, $terminado = false) {
+        return $query->where('terminado', $terminado);
     }
 
 }

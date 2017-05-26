@@ -31,7 +31,7 @@ class Caja extends Model {
         static::saving(function($table) {
             $table->usuario_alta = auth()->user()->nom_usuario;
             $table->completo = '0';
-            $table->tipo_doc = '2';
+            $table->tipo_doc = '1';
         });
     }
 

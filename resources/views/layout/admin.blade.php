@@ -132,7 +132,14 @@
                                         <i class="fa fa-circle-o"></i> Lista pendientes
                                     </a>
                                 </li>
+                                 <li>
+                                    <a href="{{URL::action('PedidoController@viewTerminado')}}">
+                                        <i class="fa fa-circle-o"></i> Lista terminados
+                                    </a>
+                                </li>
                             </ul>
+                            
+                            
                         </li>
 
 

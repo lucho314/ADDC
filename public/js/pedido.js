@@ -27,9 +27,9 @@ $('#form_pedido').submit(function (e) {
     });
 });
 
-var table = $('#pedidos_pendientes').DataTable({
+var tablePendiente = $('#pedidos_pendientes').DataTable({
 
-    "dom": 'Bfrtip',
+    "dom": 'Blfrtip',
     buttons: [
         {
             extend: 'print',
@@ -79,14 +79,60 @@ var table = $('#pedidos_pendientes').DataTable({
     }
 });
 
+
+
+var tableTerminado = $('#pedidos_terminados').DataTable({
+
+    "dom": 'lfrtip',
+    "bDestroy": true,
+    "processing": true,
+    "serverSide": true,
+    "ajax": '/pedido/listado_terminados',
+    "columns": [
+        {data: 'tipo_doc',
+
+            render: function (data, type, row) {
+                return getTipoDocumento(data);
+            },
+
+            name: 'tipo_doc'},
+        {data: 'nro_dpto', name: 'nro_dpto'},
+        {data: 'nro_plano', name: 'nro_plano'},
+        {data: 'detalle_pedido', name: 'detalle_pedido'},
+        {data: 'usuario_pidio.nombre', name: 'usuarioPidio.nombre'},
+        {data: 'fecha_pedido', name: 'fecha_pedido'},
+        {data: 'fecha_terminado', name: 'fecha_terminado'},
+        {data: 'usuario_atendio.nombre', name: 'usuarioAtendio.nombre'},
+        {data: 'observaciones', name: 'observaciones'}
+    ],
+
+    "language": {
+        "url": "/js/Spanish.json"
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 $('#pedidos_pendientes tbody').on('click', '.fa.fa-check-square', function () {
-    var data = table.row($(this).parents('tr')).data();
+    var data = tablePendiente.row($(this).parents('tr')).data();
     terminarPedido(data.id);
 });
 
 
 $('#pedidos_pendientes tbody').on('click', '.fa.fa-warning', function () {
-    var data = table.row($(this).parents('tr')).data();
+    var data = tablePendiente.row($(this).parents('tr')).data();
     $('#detalle_terminado #nro_dpto').val(data.nro_dpto);
     $('#detalle_terminado #nro_plano').val(data.nro_plano);
     $('#detalle_terminado .id').val(data.id).text(data.id);
@@ -98,7 +144,7 @@ $('#pedidos_pendientes tbody').on('click', '.fa.fa-warning', function () {
 
 //ELIMINAR.
 $('#pedidos_pendientes tbody').on('click', '.fa.fa-times-circle', function () {
-    var data = table.row($(this).parents('tr')).data();
+    var data = tablePendiente.row($(this).parents('tr')).data();
 
 
     swal({
