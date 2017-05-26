@@ -73,8 +73,8 @@ class PedidoController extends Controller {
         if ($request->ajax()) {
             $pedido = new Pedido($request->all());
             return [
-                'respuesta' => $pedido->usuarioPidio()->associate(auth()->user())
-                        ->save()
+                'respuesta' => auth()->user()->pedido()
+                        ->save($pedido)
                     ];
         }
         abort(404);

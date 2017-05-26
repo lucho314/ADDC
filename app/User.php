@@ -55,6 +55,10 @@ class User extends Authenticatable {
     public function area(){
         return $this->belongsTo(Area::class);
     }
+    
+    public function pedido(){
+        return $this->hasMany(Pedido::class);
+    }
 
 
 
