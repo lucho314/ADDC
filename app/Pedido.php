@@ -12,7 +12,7 @@ class Pedido extends Model {
     protected $fillable = [
         'nro_plano',
         'nro_dpto',
-        'user_pedido_id',
+        'USER_PEDIDO_ID',
         'fecha_pedido',
         'terminado',
         'fecha_terminado',
@@ -26,11 +26,12 @@ class Pedido extends Model {
         parent::boot();
         static::creating(function($table) {
             $table->fecha_pedido = Carbon::now();
+            $table->USER_PEDIDO_ID = (string) auth()->user()->id;
         });
 
-        static::saving(function($table) {
+        static::updating(function($table) {
             $table->fecha_terminado = Carbon::now();
-            $table->user_atendio_id = auth()->user()->id;
+            $table->user_atendio_id = (string) auth()->user()->id;
         });
     }
 
@@ -55,6 +56,8 @@ class Pedido extends Model {
 
     public function getDescAvanzadaAttribute() {
 
+        $this->nro_dpto = \str_pad($this->nro_dpto, 2, "0", STR_PAD_LEFT);
+
         $des = "";
 
         $datos = VistaSat::with('Localidad', 'titular')->where('dpto', $this->nro_dpto)
@@ -63,7 +66,13 @@ class Pedido extends Model {
         if (!empty($datos)) {
             $des = 'DIS: ' . $datos->localidad->distrito . ", LOC: " . $datos->localidad->localidad . ', SEC:' . $datos->seccion;
             $des .= ', GPO:' . $datos->grupo . ", MZA:" . $datos->manzana . " | TIT: " . $datos->titular->nombre_completo;
-            $des.=" FT:".AvaluoHistorico::getFechaUltimaTranferencia($datos->clave).'|';
+            $fecha_alta = AvaluoHistorico::getFechaUltimaTranferencia($datos->clave);
+
+            if (!is_null($fecha_alta)) {
+                $des .= " FT:" . $fecha_alta->fecha_alta->format('d/m/Y');
+            }
+
+            $des .= '| ';
         }
         $tipo = ($this->tipo_doc == 3) ? 1 : $this->tipo_doc;
         $caja = Contenido::buscar($this->nro_dpto, $this->nro_plano, $tipo);

@@ -16,10 +16,11 @@ class PedidoController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
+        //return auth()->user()->id;        
         return view('pedido.listado_pendiente');
     }
-    
-    public function viewTerminado(){
+
+    public function viewTerminado() {
         return view('pedido.listado_terminado');
     }
 
@@ -50,9 +51,9 @@ class PedidoController extends Controller {
     }
 
     public function listadoTerminado() {
-        $pendientes = Pedido::with('usuarioPidio','usuarioAtendio')
+        $pendientes = Pedido::with('usuarioPidio', 'usuarioAtendio')
                 ->terminado(true)
-                ->orderBy('fecha_terminado','desc');
+                ->orderBy('fecha_terminado', 'desc');
         return Datatables::eloquent($pendientes)
                         ->editColumn('fecha_pedido', function ($pendientes) {
                             return $pendientes->fecha_pedido ? with(new Carbon($pendientes->fecha_pedido))->format('d/m/Y') : '';
@@ -71,11 +72,9 @@ class PedidoController extends Controller {
      */
     public function store(PedidoFormRequest $request) {
         if ($request->ajax()) {
-            $pedido = new Pedido($request->all());
             return [
-                'respuesta' => auth()->user()->pedido()
-                        ->save($pedido)
-                    ];
+                'respuesta' => Pedido::create($request->all())
+            ];
         }
         abort(404);
     }

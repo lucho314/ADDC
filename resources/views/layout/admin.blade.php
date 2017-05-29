@@ -32,11 +32,8 @@
         <link rel="stylesheet" href="{{asset('css/documento.css')}}">
 
         <!--toastr -->
-         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-
-       
-
-
+         <link rel="stylesheet" href="{{asset('css/toastr.min.css')}}">
+         
 
 
     </head>
@@ -131,6 +128,11 @@
                             <a href="#">
                                 <i class="fa  fa-list-alt"></i>
                                 <span>Pedidos</span>
+                               @if ($pedidos=auth()->user()->notificaciones()->count()>0)
+                                <span class="badge" style="margin-left: 4%; background: #268a72;">
+                                    {{$pedidos}}
+                                </span>
+                               @endif
                                 <i class="fa fa-angle-left pull-right"></i>
                             </a>
                             <ul class="treeview-menu">
@@ -291,7 +293,7 @@
     <script src="{{asset('js/app.min.js')}}"></script>
 
      <!-- Toastr---->
-  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="{{asset('js/toastr.min.js')}}"></script>
 
     <script src="{{asset('js/lightbox.js')}}"></script>
     <script src="{{asset('js/jquery.fancybox.js')}}"></script>

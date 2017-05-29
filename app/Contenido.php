@@ -26,11 +26,11 @@ class Contenido extends Model {
     }
 
     public static function buscar($dpto, $nro_plano, $tipo = null) {
-        return Contenido::with('caja')
+         return Contenido::with('caja')
                 ->whereHas('caja', function($query) use($dpto,$tipo) {
-                    $query->where('dpto', '=', $dpto);
-                    $query->where('activo', '=', '1');
-                    if (!empty($tipo)) {
+                    $query->where('dpto', '=', "$dpto");
+                    $query->where('activo', '=','1');
+                   if (!empty($tipo)) {
                         $query->where('tipo_doc', $tipo);
                     }
                 })

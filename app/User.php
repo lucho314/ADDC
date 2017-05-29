@@ -52,14 +52,25 @@ class User extends Authenticatable {
         return $this->hasRoles(['corrector']);
     }
     
+      public function isCarga() {
+        return $this->hasRoles(['carga']);
+    }
+    
     public function area(){
         return $this->belongsTo(Area::class);
     }
     
     public function pedido(){
-        return $this->hasMany(Pedido::class,'user_pedido_id');
+        return $this->hasMany(Pedido::class,'user_pedido_id','id');
     }
 
+    public function notificaciones(){
+        if($this->isCarga() || $this->isAdmin())
+        {
+            return Pedido::select('id')->where('terminado',false);
+        }
+        // retornar notificaciones.
+    }
 
 
 //    public static function listaUsuarios($rol) {

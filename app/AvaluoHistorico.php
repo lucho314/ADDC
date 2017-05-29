@@ -11,6 +11,12 @@ class AvaluoHistorico extends Model {
     protected $primaryKey = 'clave_imponible';
     public $incrementing = false;
 
+       public function getDates() {
+        return array('fecha_alta');
+    }
+    
+    
+    
     //select Clave_Imponible from Tbl_Grupos_Inf_X_Imponibles where Clave_Imponible like '001-%'
     // and col10='23711' Group by Clave_Imponible;
     public static function getImponibleHistoricoPlano(array $planos, $nro_dpto) {
