@@ -8,6 +8,7 @@ use Yajra\Datatables\Facades\Datatables;
 use DB;
 use FPDI;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Session;
 
 class CajaController extends Controller {
 
@@ -34,6 +35,7 @@ class CajaController extends Controller {
         $datos = $request->all();
         $datos['caja_id'] = $caja->id;
         \App\Contenido::create($datos);
+        Session::flash('success','Caja creada exitosamente');
         return redirect('caja/create');
     }
 

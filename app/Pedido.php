@@ -62,7 +62,8 @@ class Pedido extends Model {
                 ->first();
         if (!empty($datos)) {
             $des = 'DIS: ' . $datos->localidad->distrito . ", LOC: " . $datos->localidad->localidad . ', SEC:' . $datos->seccion;
-            $des .= ', GPO:' . $datos->grupo . ", MZA:" . $datos->manzana . " | TIT: " . $datos->titular->nombre_completo . ' | ';
+            $des .= ', GPO:' . $datos->grupo . ", MZA:" . $datos->manzana . " | TIT: " . $datos->titular->nombre_completo;
+            $des.=" FT:".AvaluoHistorico::getFechaUltimaTranferencia($datos->clave).'|';
         }
         $tipo = ($this->tipo_doc == 3) ? 1 : $this->tipo_doc;
         $caja = Contenido::buscar($this->nro_dpto, $this->nro_plano, $tipo);

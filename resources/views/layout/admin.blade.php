@@ -31,6 +31,14 @@
         <link href="/css/select2.min.css" rel="stylesheet">
         <link rel="stylesheet" href="{{asset('css/documento.css')}}">
 
+        <!--toastr -->
+         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+       
+
+
+
+
     </head>
     <body class="hold-transition skin-blue sidebar-mini {{$min or ''}}">                
         <div>
@@ -282,6 +290,9 @@
     <!-- AdminLTE App -->
     <script src="{{asset('js/app.min.js')}}"></script>
 
+     <!-- Toastr---->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <script src="{{asset('js/lightbox.js')}}"></script>
     <script src="{{asset('js/jquery.fancybox.js')}}"></script>
     <script src="{{asset('js/jquery.fancybox.pack.js')}}"></script>
@@ -298,6 +309,8 @@
                                                $(".js-example-basic-single").select2();
                                            });
     </script>
+
+    @include('layout.mensajes')
 
     @yield('script')
 </body>

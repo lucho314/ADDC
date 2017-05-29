@@ -57,50 +57,10 @@
 
 @include('documento.view.tablaAntecedenteModal')
 @endsection
-@section('script')
-<script>
-    $('#objeto_imagen').css('height', mitadAlto);
-</script>
-@include('documento.parcial.cambiar_seccion');
-
-<script>
-    function verAntecedente(nroPlano, nroDpto) {
-        $.get('/documento/buscarPlano', {'nroPlano': nroPlano, 'nroDpto': nroDpto}, function (data) {
-            if (data.recordsTotal > 0) {
-                armarDatatableAntecedente(nroPlano, nroDpto);
-            } else {
-                alert('no se encontro');
-            }
-        })
-
-
-
-        function armarDatatableAntecedente(nroPlano, nroDpto) {
-            $('#tabla_antecedentes').DataTable({
-                "dom": 'rtip',
-                "bDestroy": true,
-                "processing": true,
-                "serverSide": true,
-                "ajax": "/documento/buscarPlano?nroPlano="+nroPlano+"&nroDpto="+nroDpto,
-                "columns": [
-                    {data: 'documento.tipo.descripcion', name: 'documento.tipo.descripcion', orderable: false, searchable: false},
-                    {data: 'nro_partida', name: 'nro_partida'},
-                    {data: 'documento.fecha_registro', name: 'documento.fecha_registro'},
-                    {data: 'accion', name: 'accion', orderable: false, searchable: false}
-                ],
-                "language": {
-                    "url": "/js/Spanish.json"
-                }
-            });
-            
-            $('#tabla_antecedentes_modal').modal('toggle');
-            
-        }
-
-
-
-
-    }
-</script>
+    @section('script')
+    <script>
+        $('#objeto_imagen').css('height', mitadAlto);
+    </script>
+    @include('documento.parcial.cambiar_seccion');
 
 @endsection

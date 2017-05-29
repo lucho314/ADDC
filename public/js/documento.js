@@ -255,6 +255,10 @@ function getDatos(partidas = null, tipoDoc = null) {
 
                 }
                 initialize();
+            }).fail(function(){
+                alert('Ocurrió un error inesperado, intente nuevamente');
+                location.reload();
+
             });
 }
 
@@ -857,3 +861,46 @@ $(document).on('keyup', '.antecedentes', function (e) {
     }
 })
 
+
+
+
+function verAntecedente(nroPlano, nroDpto) {
+    $.get('/documento/buscarPlano', {'nroPlano': nroPlano, 'nroDpto': nroDpto}, function (data) {
+        if (data.recordsTotal > 0) {
+            armarDatatableAntecedente(nroPlano, nroDpto);
+        } else {
+            swal("No encontrado!", "El antecedente no se encuentra cargado!", "error");
+        }
+    })
+
+    function armarDatatableAntecedente(nroPlano, nroDpto) {
+        $('#tabla_antecedentes').DataTable({
+            "dom": 'rtip',
+            "bDestroy": true,
+            "processing": true,
+            "serverSide": true,
+            "ajax": "/documento/buscarPlano?nroPlano="+nroPlano+"&nroDpto="+nroDpto,
+            "columns": [
+                {data: 'documento.tipo.descripcion', name: 'documento.tipo.descripcion', orderable: false, searchable: false},
+                {data: 'nro_partida', name: 'nro_partida'},
+                {data: 'documento.fecha_registro', name: 'documento.fecha_registro'},
+                {data: 'accion', name: 'accion', orderable: false, searchable: false}
+            ],
+            "language": {
+                "url": "/js/Spanish.json"
+            }
+        });
+        
+        $('#tabla_antecedentes_modal').modal('toggle');
+        
+    }
+
+}
+
+
+
+toastr.options = {
+  "closeButton": true,
+  "progressBar": true,
+
+}

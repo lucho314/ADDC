@@ -18,6 +18,7 @@ use App\Area;
 use App\VistaSat;
 use App\AvaluoHistorico;
 use App\DocumentoEstado;
+use Illuminate\Support\Facades\Session;
 
 class DocumentoController extends Controller {
 
@@ -49,7 +50,7 @@ class DocumentoController extends Controller {
         Antecedente::guardar($datos->plano_ant, $doc);
         $this->cambiarEstado(2, $doc->id, 'Carga del documento');
         DocumentoSat::insertar($datos->all(), $doc->id);
-
+        Session::flash('success','Documento cargado exitosamente');
         return redirect('documento/create');
     }
 

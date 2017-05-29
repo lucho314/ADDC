@@ -100,10 +100,13 @@
                 <div class="form-group">
                     <div class="form-inline"><label>Antecedentes </label><a href="javascript:agregar_antecedente()"><i class="glyphicon glyphicon-plus" style="margin-left: 4%"></i></a></div>                        
                     <div id="grupo_antecedente">
-                        <input type="number" placeholder="Nro plano antecedente"  name="plano_ant[]" id="plano_ant_0" class="form-control" style="margin-bottom: 6%">
+                        @foreach($documento->antecedentes as $key=>$ant)
+                        <input type="text" value="{{$ant->nro_plano}}" placeholder="Nro plano antecedente" readonly  name="plano_ant[]" id="plano_ant_{{$key}}" class="form-control ingresado" style="margin-bottom: 6%">
+                        @endforeach 
                     </div>
                 </div>    
             </div>
+            <div class="col-md-8 col-md-offset-1 errores"></div>
         </div>
     </div>
 </div>

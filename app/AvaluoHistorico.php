@@ -26,5 +26,23 @@ class AvaluoHistorico extends Model {
 
         return (['inexistentes' => $inexistente, 'imponible_historico' => $imponible]);
     }
+    
+    
+    /*
+
+     * SELECT FECHA_ALTA FROM TBL_GRUPOS_INF_X_IMPONIBLES WHERE TIPO_GRUPO_INF='0010' AND TIPO_IMPONIBLE='0005'
+and CLAVE_IMPONIBLE='010-0031679-007' and col01='W' and  rownum < 2 
+order by rowid asc;
+     *      */
+    
+    public static function getFechaUltimaTranferencia($imponible){
+        return AvaluoHistorico::select('fecha_alta')
+                                ->where('tipo_grupo_inf','0010')
+                                ->where('tipo_imponible','0005')
+                                ->where('col01','T')
+                                ->where('clave_imponible',"$imponible")
+                                ->orderBy('fecha_alta','desc')
+                                ->first();
+    }
 
 }

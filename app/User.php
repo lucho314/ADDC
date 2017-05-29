@@ -57,7 +57,7 @@ class User extends Authenticatable {
     }
     
     public function pedido(){
-        return $this->hasMany(Pedido::class);
+        return $this->hasMany(Pedido::class,'user_pedido_id');
     }
 
 
